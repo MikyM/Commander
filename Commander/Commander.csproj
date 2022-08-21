@@ -16,7 +16,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Options" Version="6.0.0" />
     <PackageReference Include="MikyM.Autofac.Extensions" Version="1.0.8" />
-    <PackageReference Include="MikyM.Common.Utilities" Version="1.0.10" />
+    <PackageReference Include="MikyM.Common.Utilities" Version="1.1.1" />
   </ItemGroup>
 
 </Project>
