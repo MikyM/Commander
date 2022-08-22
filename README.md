@@ -25,12 +25,12 @@ Since the library utilizes Autofac, base Autofac configuration is required to us
 To register handlers with the DI container use the ContainerBuilder extension method provided by the library:
 
 ```csharp
-builder.AddCommandHandlers();
+builder.AddResultCommander();
 ```
 
-To register decorators or adapters use the methods available on CommanderConfiguration like so:
+To register decorators or adapters use the methods available on ResultCommanderConfiguration like so:
 ```csharp
-builder.AddCommandHandlers(options => 
+builder.AddResultCommander(options => 
 {
     options.AddDecorator<FancyDecorator, SimpleHandler>();
 });

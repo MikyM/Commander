@@ -8,9 +8,9 @@ namespace ResultCommander;
 /// Command handler options.
 /// </summary>
 [PublicAPI]
-public sealed class CommanderConfiguration : IOptions<CommanderConfiguration>
+public sealed class ResultCommanderConfiguration : IOptions<ResultCommanderConfiguration>
 {
-    internal CommanderConfiguration(ContainerBuilder builder)
+    internal ResultCommanderConfiguration(ContainerBuilder builder)
     {
         Builder = builder;
     }
@@ -27,5 +27,5 @@ public sealed class CommanderConfiguration : IOptions<CommanderConfiguration>
     public Lifetime DefaultHandlerFactoryLifetime { get; set; } = Lifetime.InstancePerLifetimeScope;
 
     /// <inheritdoc/>
-    public CommanderConfiguration Value => this;
+    public ResultCommanderConfiguration Value => this;
 }

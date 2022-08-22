@@ -19,14 +19,14 @@ public static class DependancyInjectionExtensions
     /// Registers command handlers with the <see cref="ContainerBuilder"/>.
     /// </summary>
     /// <param name="builder">Current instance of <see cref="ContainerBuilder"/>.</param>
-    /// <param name="configuration">Optional <see cref="CommanderConfiguration"/> configuration.</param>
+    /// <param name="configuration">Optional <see cref="ResultCommanderConfiguration"/> configuration.</param>
     /// <returns>Current <see cref="ContainerBuilder"/> instance.</returns>
-    public static ContainerBuilder AddCommandHandlers(this ContainerBuilder builder, Action<CommanderConfiguration>? configuration = null)
+    public static ContainerBuilder AddResultCommander(this ContainerBuilder builder, Action<ResultCommanderConfiguration>? configuration = null)
     {
-        var config = new CommanderConfiguration(builder);
+        var config = new ResultCommanderConfiguration(builder);
         configuration?.Invoke(config);
 
-        builder.Register(x => config).As<IOptions<CommanderConfiguration>>().SingleInstance();
+        builder.Register(x => config).As<IOptions<ResultCommanderConfiguration>>().SingleInstance();
 
         foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
         {
@@ -449,8 +449,8 @@ public static class DependancyInjectionExtensions
     /// </summary>
     /// <param name="options">Options.</param>
     /// <param name="condition">Condition to decide whether the decorator should be applied.</param>
-    /// <returns>Current <see cref="CommanderConfiguration"/> instance.</returns>
-    public static CommanderConfiguration AddDecorator<TDecorator>(this CommanderConfiguration options, Func<IDecoratorContext, bool>? condition = null) where TDecorator : ICommandHandlerBase
+    /// <returns>Current <see cref="ResultCommanderConfiguration"/> instance.</returns>
+    public static ResultCommanderConfiguration AddDecorator<TDecorator>(this ResultCommanderConfiguration options, Func<IDecoratorContext, bool>? condition = null) where TDecorator : ICommandHandlerBase
     {
         if (typeof(TDecorator).IsGenericType || typeof(TDecorator).IsGenericTypeDefinition)
             throw new NotSupportedException("Given decorator type is a generic type, use AddGenericDecorator method instead");
@@ -474,8 +474,8 @@ public static class DependancyInjectionExtensions
     /// </summary>
     /// <param name="options">Options.</param>
     /// <param name="condition">Condition to decide whether the decorator should be applied.</param>
-    /// <returns>Current <see cref="CommanderConfiguration"/> instance.</returns>
-    public static CommanderConfiguration AddDecorator<TDecorator, TDecoratedHandler>(this CommanderConfiguration options, Func<IDecoratorContext, bool>? condition = null) where TDecorator : ICommandHandlerBase where TDecoratedHandler : ICommandHandlerBase
+    /// <returns>Current <see cref="ResultCommanderConfiguration"/> instance.</returns>
+    public static ResultCommanderConfiguration AddDecorator<TDecorator, TDecoratedHandler>(this ResultCommanderConfiguration options, Func<IDecoratorContext, bool>? condition = null) where TDecorator : ICommandHandlerBase where TDecoratedHandler : ICommandHandlerBase
     {
         if (typeof(TDecorator).IsGenericType || typeof(TDecorator).IsGenericTypeDefinition)
             throw new NotSupportedException("Given decorator type is a generic type, use AddGenericDecorator method instead");
@@ -530,8 +530,8 @@ public static class DependancyInjectionExtensions
     /// <param name="options">Options.</param>
     /// <param name="decoratorType">Decorator type.</param>
     /// <param name="condition">Condition to decide whether the decorator should be applied.</param>
-    /// <returns>Current <see cref="CommanderConfiguration"/> instance</returns>
-    public static CommanderConfiguration AddGenericDecorator(this CommanderConfiguration options, Type decoratorType, Func<IDecoratorContext, bool>? condition = null)
+    /// <returns>Current <see cref="ResultCommanderConfiguration"/> instance</returns>
+    public static ResultCommanderConfiguration AddGenericDecorator(this ResultCommanderConfiguration options, Type decoratorType, Func<IDecoratorContext, bool>? condition = null)
     {
         if (!decoratorType.IsGenericType && !decoratorType.IsGenericTypeDefinition)
             throw new NotSupportedException("Given decorator type is not a generic type");
@@ -556,8 +556,8 @@ public static class DependancyInjectionExtensions
     /// <param name="options">Options.</param>
     /// <param name="decoratorType">Decorator type.</param>
     /// <param name="condition">Condition to decide whether the decorator should be applied.</param>
-    /// <returns>Current <see cref="CommanderConfiguration"/> instance.</returns>
-    public static CommanderConfiguration AddGenericDecorator<TDecoratedHandler>(this CommanderConfiguration options, Type decoratorType, Func<IDecoratorContext, bool>? condition = null) where TDecoratedHandler : ICommandHandlerBase
+    /// <returns>Current <see cref="ResultCommanderConfiguration"/> instance.</returns>
+    public static ResultCommanderConfiguration AddGenericDecorator<TDecoratedHandler>(this ResultCommanderConfiguration options, Type decoratorType, Func<IDecoratorContext, bool>? condition = null) where TDecoratedHandler : ICommandHandlerBase
     {
         if (!decoratorType.IsGenericType && !decoratorType.IsGenericTypeDefinition)
             throw new NotSupportedException("Given decorator type is not a generic type");
@@ -611,9 +611,9 @@ public static class DependancyInjectionExtensions
     /// </summary>
     /// <param name="options">Options.</param>
     /// <param name="adapter">Func that used to adapt service to another.</param>
-    /// <returns>Current <see cref="CommanderConfiguration"/> instance.</returns>
-    public static CommanderConfiguration AddAdapter<TAdapter, THandler>(
-        this CommanderConfiguration options, Func<THandler, TAdapter> adapter)
+    /// <returns>Current <see cref="ResultCommanderConfiguration"/> instance.</returns>
+    public static ResultCommanderConfiguration AddAdapter<TAdapter, THandler>(
+        this ResultCommanderConfiguration options, Func<THandler, TAdapter> adapter)
         where THandler : class, ICommandHandlerBase where TAdapter : notnull
     {
         options.Builder.RegisterAdapter(adapter);
