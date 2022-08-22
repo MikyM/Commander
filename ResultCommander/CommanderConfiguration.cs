@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Options;
 using MikyM.Autofac.Extensions;
 
-namespace Commander;
+namespace ResultCommander;
 
 /// <summary>
 /// Command handler options.

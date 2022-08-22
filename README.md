@@ -1,10 +1,10 @@
-# Commander
+# ResultCommander
 
 [![Build Status](https://github.com/MikyM/Commander/actions/workflows/release.yml/badge.svg)](https://github.com/MikyM/Commander/actions)
 
 Library featuring a command handler pattern for both synchronous and asynchronous operations.
 
-Utilizes Autofac thus Autofac is required.
+Utilizes Autofac thus Autofac is required and a functional result approach for failure-prone operations.
 
 ## Features
 
@@ -38,6 +38,8 @@ builder.AddCommandHandlers(options =>
 You can register multiple decorators and they'll be applied in the order that you register them - read more at [Autofac's docs regarding decorators and adapters](https://autofac.readthedocs.io/en/latest/advanced/adapters-decorators.html).
 
 ## Example usage
+
+<b> You should never throw exceptions from within handlers, they should be exception free - instead return appropriate error results (and catch possible exceptions).</b> Library offers a simple error catching, logging and exception to result error decorators for uses where writing try-catch blocks becomes a pain - but remember that these results will never be as informative as manually returned proper result error types.
 
 A command without a concrete result:
 ```csharp

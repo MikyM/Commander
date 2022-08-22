@@ -7,7 +7,7 @@ using MikyM.Autofac.Extensions;
 using MikyM.Autofac.Extensions.Attributes;
 using MikyM.Common.Utilities.Extensions;
 
-namespace Commander;
+namespace ResultCommander;
 
 /// <summary>
 /// DI extensions for <see cref="ContainerBuilder"/>.

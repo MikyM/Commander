@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace Commander;
+namespace ResultCommander;
 
 /// <summary>
 /// Defines a base command. <b>Used ONLY as a marker interface.</b>

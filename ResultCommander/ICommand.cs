@@ -1,4 +1,4 @@
-﻿namespace Commander;
+﻿namespace ResultCommander;
 
 /// <summary>
 /// Defines a base command. <b>Shouldn't be implemented manually, implement <see cref="ICommand"/> or <see cref="ICommand{TResult}"/> instead.</b>

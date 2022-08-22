@@ -1,6 +1,6 @@
 ﻿using Autofac;
 
-namespace Commander;
+namespace ResultCommander;
 
 /// <summary>
 /// <para>
