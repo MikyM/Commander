@@ -4,11 +4,11 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <PackageId>Commander</PackageId>
+    <PackageId>ResultCommander</PackageId>
     <Version>1.0.0</Version>
     <Authors>Krzysztof Kupisz</Authors>
     <PackageDescription>Library featuring a command handler pattern.</PackageDescription>
-    <RepositoryUrl>https://github.com/MikyM/Commander</RepositoryUrl>
+    <RepositoryUrl>https://github.com/MikyM/ResultCommander</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
