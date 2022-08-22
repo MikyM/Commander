@@ -1,6 +1,6 @@
 # Commander
 
-[![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
+[![Build Status](https://github.com/MikyM/Commander/actions/workflows/release.yml/badge.svg)](https://github.com/MikyM/Commander/actions)
 
 Library featuring a command handler pattern for both synchronous and asynchronous operations.
 
