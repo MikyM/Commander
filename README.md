@@ -1,6 +1,6 @@
 # ResultCommander
 
-[![Build Status](https://github.com/MikyM/Commander/actions/workflows/release.yml/badge.svg)](https://github.com/MikyM/Commander/actions)
+[![Build Status](https://github.com/MikyM/ResultCommander/actions/workflows/release.yml/badge.svg)](https://github.com/MikyM/ResultCommander/actions)
 
 Library featuring a command handler pattern for both synchronous and asynchronous operations.
 
