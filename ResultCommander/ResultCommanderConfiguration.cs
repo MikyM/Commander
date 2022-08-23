@@ -28,10 +28,10 @@ public sealed class ResultCommanderConfiguration
     /// </summary>
     public Lifetime DefaultHandlerFactoryLifetime { get; set; } = Lifetime.InstancePerLifetimeScope;
     
-        /// <summary>
+    /// <summary>
     /// Registers a decorator for command handlers with the <see cref="ContainerBuilder"/>.
     /// </summary>
-        /// <param name="condition">Condition to decide whether the decorator should be applied.</param>
+    /// <param name="condition">Condition to decide whether the decorator should be applied.</param>
     /// <returns>Current <see cref="ResultCommanderConfiguration"/> instance.</returns>
     public ResultCommanderConfiguration AddDecorator<TDecorator>(Func<IDecoratorContext, bool>? condition = null) where TDecorator : ICommandHandlerBase
     {
@@ -112,7 +112,7 @@ public sealed class ResultCommanderConfiguration
             if (condition is not null)
                 predicate += condition;
             
-            Builder.RegisterDecorator(decoratorType, typeof(IAsyncCommandHandler<>), predicate);
+            Builder.RegisterGenericDecorator(decoratorType, typeof(IAsyncCommandHandler<>), predicate);
         }
         else if (decoratorType.IsAssignableToWithGenerics(typeof(IAsyncCommandHandler<,>)) &&
                 typeof(TDecoratedHandler).IsAssignableToWithGenerics(typeof(IAsyncCommandHandler<,>)))
@@ -121,7 +121,7 @@ public sealed class ResultCommanderConfiguration
             if (condition is not null)
                 predicate += condition;
             
-            Builder.RegisterDecorator(decoratorType, typeof(IAsyncCommandHandler<,>), predicate);
+            Builder.RegisterGenericDecorator(decoratorType, typeof(IAsyncCommandHandler<,>), predicate);
         }
         else if (decoratorType.IsAssignableToWithGenerics(typeof(ISyncCommandHandler<>)) &&
             typeof(TDecoratedHandler).IsAssignableToWithGenerics(typeof(ISyncCommandHandler<>)))
@@ -130,7 +130,7 @@ public sealed class ResultCommanderConfiguration
             if (condition is not null)
                 predicate += condition;
             
-            Builder.RegisterDecorator(decoratorType, typeof(ISyncCommandHandler<>), predicate);
+            Builder.RegisterGenericDecorator(decoratorType, typeof(ISyncCommandHandler<>), predicate);
         }
         else if (decoratorType.IsAssignableToWithGenerics(typeof(ISyncCommandHandler<,>)) &&
                  typeof(TDecoratedHandler).IsAssignableToWithGenerics(typeof(ISyncCommandHandler<,>)))
@@ -139,7 +139,7 @@ public sealed class ResultCommanderConfiguration
             if (condition is not null)
                 predicate += condition;
             
-            Builder.RegisterDecorator(decoratorType, typeof(ISyncCommandHandler<,>), predicate);
+            Builder.RegisterGenericDecorator(decoratorType, typeof(ISyncCommandHandler<,>), predicate);
         }
         else
             throw new NotSupportedException("Given decorator type can't decorate given command handler");
