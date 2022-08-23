@@ -1,9 +1,11 @@
 ﻿using System.Reflection;
 using Autofac;
 using Autofac.Extras.DynamicProxy;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MikyM.Autofac.Extensions;
 using MikyM.Autofac.Extensions.Attributes;
+using MikyM.Utilities.Extensions;
 
 namespace ResultCommander;
 
@@ -443,5 +445,372 @@ public static class DependancyInjectionExtensions
         }
 
         return builder;
+    }
+    
+        /// <summary>
+    /// Registers command handlers with the <see cref="ContainerBuilder"/>.
+    /// </summary>
+    /// <param name="serviceCollection">Current instance of <see cref="IServiceCollection"/>.</param>
+    /// <param name="configuration">Optional <see cref="ResultCommanderConfiguration"/> configuration.</param>
+    /// <returns>Current <see cref="IServiceCollection"/> instance.</returns>
+    public static IServiceCollection AddResultCommander(this IServiceCollection serviceCollection, Action<ResultCommanderConfiguration>? configuration = null)
+    {
+        var config = new ResultCommanderConfiguration(serviceCollection);
+        configuration?.Invoke(config);
+
+        var iopt = Options.Create(config);
+        serviceCollection.AddSingleton(iopt);
+        serviceCollection.AddSingleton(x =>
+            x.GetRequiredService<IOptions<ResultCommanderConfiguration>>().Value);
+
+        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+        {
+            var commandSet = assembly.GetTypes()
+                .Where(x => x.GetInterfaces().Any(y =>
+                                y.IsGenericType && y.GetGenericTypeDefinition() == typeof(IAsyncCommandHandler<>)) &&
+                            x.IsClass &&
+                            !x.IsAbstract)
+                .ToList();
+
+            var commandResultSet = assembly.GetTypes()
+                .Where(x => x.GetInterfaces().Any(y =>
+                                y.IsGenericType && y.GetGenericTypeDefinition() == typeof(IAsyncCommandHandler<,>)) &&
+                            x.IsClass &&
+                            !x.IsAbstract)
+                .ToList();
+
+            var commandSubSet = commandSet
+                .Where(x => (x.GetCustomAttribute<LifetimeAttribute>(false) is not null ||
+                             x.GetCustomAttributes<InterceptedByAttribute>(false).Any()) && x.IsClass &&
+                            !x.IsAbstract)
+                .ToList();
+
+            var commandResultSubSet = commandResultSet
+                .Where(x => (x.GetCustomAttribute<LifetimeAttribute>(false) is not null ||
+                             x.GetCustomAttributes<InterceptedByAttribute>(false).Any()) && x.IsClass &&
+                            !x.IsAbstract)
+                .ToList();
+
+            var syncCommandSet = assembly.GetTypes()
+                .Where(x => x.GetInterfaces().Any(y =>
+                                y.IsGenericType && y.GetGenericTypeDefinition() == typeof(ISyncCommandHandler<>)) &&
+                            x.IsClass &&
+                            !x.IsAbstract)
+                .ToList();
+
+            var syncCommandResultSet = assembly.GetTypes()
+                .Where(x => x.GetInterfaces().Any(y =>
+                                y.IsGenericType && y.GetGenericTypeDefinition() == typeof(ISyncCommandHandler<,>)) &&
+                            x.IsClass &&
+                            !x.IsAbstract)
+                .ToList();
+
+            var syncCommandSubSet = commandSet
+                .Where(x => (x.GetCustomAttribute<LifetimeAttribute>(false) is not null ||
+                             x.GetCustomAttributes<InterceptedByAttribute>(false).Any()) && x.IsClass &&
+                            !x.IsAbstract)
+                .ToList();
+
+            var syncCommandResultSubSet = commandResultSet
+                .Where(x => (x.GetCustomAttribute<LifetimeAttribute>(false) is not null ||
+                             x.GetCustomAttributes<InterceptedByAttribute>(false).Any()) && x.IsClass &&
+                            !x.IsAbstract)
+                .ToList();
+
+            foreach (var type in commandSubSet)
+            {
+                var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
+
+                var closedGenericType = typeof(IAsyncCommandHandler<>).MakeGenericType(type.GetInterfaces().First(x =>
+                    x.IsGenericType && x.IsGenericTypeDefinition &&
+                    x.IsAssignableToWithGenerics(typeof(IAsyncCommandHandler<>))).GenericTypeArguments.First());
+
+                var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
+
+                switch (scope)
+                {
+                    case Lifetime.SingleInstance:
+                        serviceCollection.AddSingleton(closedGenericType, type);
+                        break;
+                    case Lifetime.InstancePerRequest:
+                        serviceCollection.AddScoped(closedGenericType, type);
+                        break;
+                    case Lifetime.InstancePerLifetimeScope:
+                        serviceCollection.AddScoped(closedGenericType, type);
+                        break;
+                    case Lifetime.InstancePerDependency:
+                        serviceCollection.AddTransient(closedGenericType, type);
+                        break;
+                    case Lifetime.InstancePerMatchingLifetimeScope:
+                        throw new NotSupportedException("Supported only when using Autofac.");
+                    case Lifetime.InstancePerOwned:
+                        throw new NotSupportedException("Supported only when using Autofac.");
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            foreach (var type in commandResultSubSet)
+            {
+                var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
+
+                var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
+
+                var closedGenericType = typeof(IAsyncCommandHandler<,>).MakeGenericType(type.GetInterfaces().First(x =>
+                    x.IsGenericType && x.IsGenericTypeDefinition &&
+                    x.IsAssignableToWithGenerics(typeof(IAsyncCommandHandler<,>))).GenericTypeArguments.First());
+
+                switch (scope)
+                {
+                    case Lifetime.SingleInstance:
+                        serviceCollection.AddSingleton(closedGenericType, type);
+                        break;
+                    case Lifetime.InstancePerRequest:
+                        serviceCollection.AddScoped(closedGenericType, type);
+                        break;
+                    case Lifetime.InstancePerLifetimeScope:
+                        serviceCollection.AddScoped(closedGenericType, type);
+                        break;
+                    case Lifetime.InstancePerDependency:
+                        serviceCollection.AddTransient(closedGenericType, type);
+                        break;
+                    case Lifetime.InstancePerMatchingLifetimeScope:
+                        throw new NotSupportedException("Supported only when using Autofac.");
+                    case Lifetime.InstancePerOwned:
+                        throw new NotSupportedException("Supported only when using Autofac.");
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            commandSet.RemoveAll(x => commandSubSet.Any(y => y == x));
+            commandResultSet.RemoveAll(x => commandResultSubSet.Any(y => y == x));
+
+            if (commandSet.Any())
+            {
+                foreach (var command in commandSet)
+                {
+                    var closedGenericType = typeof(IAsyncCommandHandler<>).MakeGenericType(command.GetInterfaces()
+                        .First(x =>
+                            x.IsGenericType && x.IsGenericTypeDefinition &&
+                            x.IsAssignableToWithGenerics(typeof(IAsyncCommandHandler<>))).GenericTypeArguments.First());
+
+                    switch (config.DefaultHandlerLifetime)
+                    {
+                        case Lifetime.SingleInstance:
+                            serviceCollection.AddSingleton(closedGenericType, command);
+                            break;
+                        case Lifetime.InstancePerRequest:
+                            serviceCollection.AddScoped(closedGenericType, command);
+                            break;
+                        case Lifetime.InstancePerLifetimeScope:
+                            serviceCollection.AddScoped(closedGenericType, command);
+                            break;
+                        case Lifetime.InstancePerMatchingLifetimeScope:
+                            throw new NotSupportedException("Supported only when using Autofac.");
+                        case Lifetime.InstancePerOwned:
+                            throw new NotSupportedException("Supported only when using Autofac.");
+                        case Lifetime.InstancePerDependency:
+                            serviceCollection.AddTransient(closedGenericType, command);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+            }
+
+            if (commandResultSet.Any())
+            {
+                foreach (var command in commandResultSet)
+                {
+                    var closedGenericType = typeof(IAsyncCommandHandler<,>).MakeGenericType(command.GetInterfaces()
+                        .First(x =>
+                            x.IsGenericType && x.IsGenericTypeDefinition &&
+                            x.IsAssignableToWithGenerics(typeof(IAsyncCommandHandler<,>))).GenericTypeArguments
+                        .First());
+
+                    switch (config.DefaultHandlerLifetime)
+                    {
+                        case Lifetime.SingleInstance:
+                            serviceCollection.AddSingleton(closedGenericType, command);
+                            break;
+                        case Lifetime.InstancePerRequest:
+                            serviceCollection.AddScoped(closedGenericType, command);
+                            break;
+                        case Lifetime.InstancePerLifetimeScope:
+                            serviceCollection.AddScoped(closedGenericType, command);
+                            break;
+                        case Lifetime.InstancePerMatchingLifetimeScope:
+                            throw new NotSupportedException("Supported only when using Autofac.");
+                        case Lifetime.InstancePerOwned:
+                            throw new NotSupportedException("Supported only when using Autofac.");
+                        case Lifetime.InstancePerDependency:
+                            serviceCollection.AddTransient(closedGenericType, command);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+            }
+
+            foreach (var type in syncCommandSubSet)
+            {
+                var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
+
+                var closedGenericType = typeof(ISyncCommandHandler<>).MakeGenericType(type.GetInterfaces().First(x =>
+                    x.IsGenericType && x.IsGenericTypeDefinition &&
+                    x.IsAssignableToWithGenerics(typeof(ISyncCommandHandler<>))).GenericTypeArguments.First());
+
+                var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
+
+                switch (scope)
+                {
+                    case Lifetime.SingleInstance:
+                        serviceCollection.AddSingleton(closedGenericType, type);
+                        break;
+                    case Lifetime.InstancePerRequest:
+                        serviceCollection.AddScoped(closedGenericType, type);
+                        break;
+                    case Lifetime.InstancePerLifetimeScope:
+                        serviceCollection.AddScoped(closedGenericType, type);
+                        break;
+                    case Lifetime.InstancePerDependency:
+                        serviceCollection.AddTransient(closedGenericType, type);
+                        break;
+                    case Lifetime.InstancePerMatchingLifetimeScope:
+                        throw new NotSupportedException("Supported only when using Autofac.");
+                    case Lifetime.InstancePerOwned:
+                        throw new NotSupportedException("Supported only when using Autofac.");
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            foreach (var type in syncCommandResultSubSet)
+            {
+                var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
+
+                var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
+
+                var closedGenericType = typeof(ISyncCommandHandler<,>).MakeGenericType(type.GetInterfaces().First(x =>
+                    x.IsGenericType && x.IsGenericTypeDefinition &&
+                    x.IsAssignableToWithGenerics(typeof(ISyncCommandHandler<,>))).GenericTypeArguments.First());
+
+                switch (scope)
+                {
+                    case Lifetime.SingleInstance:
+                        serviceCollection.AddSingleton(closedGenericType, type);
+                        break;
+                    case Lifetime.InstancePerRequest:
+                        serviceCollection.AddScoped(closedGenericType, type);
+                        break;
+                    case Lifetime.InstancePerLifetimeScope:
+                        serviceCollection.AddScoped(closedGenericType, type);
+                        break;
+                    case Lifetime.InstancePerDependency:
+                        serviceCollection.AddTransient(closedGenericType, type);
+                        break;
+                    case Lifetime.InstancePerMatchingLifetimeScope:
+                        throw new NotSupportedException("Supported only when using Autofac.");
+                    case Lifetime.InstancePerOwned:
+                        throw new NotSupportedException("Supported only when using Autofac.");
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            commandSet.RemoveAll(x => commandSubSet.Any(y => y == x));
+            commandResultSet.RemoveAll(x => commandResultSubSet.Any(y => y == x));
+
+            if (syncCommandSet.Any())
+            {
+                foreach (var command in syncCommandSet)
+                {
+                    var closedGenericType = typeof(ISyncCommandHandler<>).MakeGenericType(command.GetInterfaces()
+                        .First(x =>
+                            x.IsGenericType && x.IsGenericTypeDefinition &&
+                            x.IsAssignableToWithGenerics(typeof(ISyncCommandHandler<>))).GenericTypeArguments.First());
+
+                    switch (config.DefaultHandlerLifetime)
+                    {
+                        case Lifetime.SingleInstance:
+                            serviceCollection.AddSingleton(closedGenericType, command);
+                            break;
+                        case Lifetime.InstancePerRequest:
+                            serviceCollection.AddScoped(closedGenericType, command);
+                            break;
+                        case Lifetime.InstancePerLifetimeScope:
+                            serviceCollection.AddScoped(closedGenericType, command);
+                            break;
+                        case Lifetime.InstancePerMatchingLifetimeScope:
+                            throw new NotSupportedException("Supported only when using Autofac.");
+                        case Lifetime.InstancePerOwned:
+                            throw new NotSupportedException("Supported only when using Autofac.");
+                        case Lifetime.InstancePerDependency:
+                            serviceCollection.AddTransient(closedGenericType, command);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+            }
+
+            if (syncCommandResultSet.Any())
+            {
+                foreach (var command in syncCommandResultSet)
+                {
+                    var closedGenericType = typeof(ISyncCommandHandler<,>).MakeGenericType(command.GetInterfaces()
+                        .First(x =>
+                            x.IsGenericType && x.IsGenericTypeDefinition &&
+                            x.IsAssignableToWithGenerics(typeof(ISyncCommandHandler<,>))).GenericTypeArguments.First());
+
+                    switch (config.DefaultHandlerLifetime)
+                    {
+                        case Lifetime.SingleInstance:
+                            serviceCollection.AddSingleton(closedGenericType, command);
+                            break;
+                        case Lifetime.InstancePerRequest:
+                            serviceCollection.AddScoped(closedGenericType, command);
+                            break;
+                        case Lifetime.InstancePerLifetimeScope:
+                            serviceCollection.AddScoped(closedGenericType, command);
+                            break;
+                        case Lifetime.InstancePerMatchingLifetimeScope:
+                            throw new NotSupportedException("Supported only when using Autofac.");
+                        case Lifetime.InstancePerOwned:
+                            throw new NotSupportedException("Supported only when using Autofac.");
+                        case Lifetime.InstancePerDependency:
+                            serviceCollection.AddTransient(closedGenericType, command);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
+            }
+
+            switch (config.DefaultHandlerFactoryLifetime)
+            {
+                case Lifetime.SingleInstance:
+                    serviceCollection.AddSingleton<ICommandHandlerFactory, CommandHandlerFactory>();
+                    break;
+                case Lifetime.InstancePerRequest:
+                    serviceCollection.AddScoped<ICommandHandlerFactory, CommandHandlerFactory>();
+                    break;
+                case Lifetime.InstancePerLifetimeScope:
+                    serviceCollection.AddScoped<ICommandHandlerFactory, CommandHandlerFactory>();
+                    break;
+                case Lifetime.InstancePerMatchingLifetimeScope:
+                    throw new NotSupportedException();
+                case Lifetime.InstancePerDependency:
+                    serviceCollection.AddTransient<ICommandHandlerFactory, CommandHandlerFactory>();
+                    break;
+                case Lifetime.InstancePerOwned:
+                    throw new NotSupportedException();
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+        
+        return serviceCollection;
     }
 }

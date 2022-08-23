@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Autofac.Features.Decorators;
+using Microsoft.Extensions.DependencyInjection;
 using MikyM.Autofac.Extensions;
 using MikyM.Utilities.Extensions;
 
@@ -15,8 +16,14 @@ public sealed class ResultCommanderConfiguration
     {
         Builder = builder;
     }
+    
+    internal ResultCommanderConfiguration(IServiceCollection serviceCollection)
+    {
+        ServiceCollection = serviceCollection;
+    }
 
-    internal ContainerBuilder Builder { get; set; }
+    internal ContainerBuilder? Builder { get; set; }
+    internal IServiceCollection? ServiceCollection { get; set; }
 
     /// <summary>
     /// Gets or sets the default lifetime of command handlers.
@@ -34,6 +41,10 @@ public sealed class ResultCommanderConfiguration
     /// <returns>Current <see cref="ResultCommanderConfiguration"/> instance.</returns>
     public ResultCommanderConfiguration AddDecorator<TDecorator>(Func<IDecoratorContext, bool>? condition = null) where TDecorator : ICommandHandlerBase
     {
+        if (Builder is null)
+            throw new NotSupportedException(
+                "Decorators aren't supported when using base Microsoft DI, you must use Autofac instead.");
+        
         if (typeof(TDecorator).IsGenericType && typeof(TDecorator).IsGenericTypeDefinition)
             throw new NotSupportedException("Given decorator type is an open generic type, use AddGenericDecorator method instead");
         
@@ -58,6 +69,10 @@ public sealed class ResultCommanderConfiguration
     /// <returns>Current <see cref="ResultCommanderConfiguration"/> instance.</returns>
     public ResultCommanderConfiguration AddDecorator<TDecorator, TDecoratedHandler>(Func<IDecoratorContext, bool>? condition = null) where TDecorator : TDecoratedHandler where TDecoratedHandler : ICommandHandlerBase
     {
+        if (Builder is null)
+            throw new NotSupportedException(
+                "Decorators aren't supported when using base Microsoft DI, you must use Autofac instead.");
+        
         if (typeof(TDecorator).IsGenericType && typeof(TDecorator).IsGenericTypeDefinition)
             throw new NotSupportedException("Given decorator type is an open generic type, use AddGenericDecorator method instead");
         if (typeof(TDecoratedHandler).IsGenericType && typeof(TDecoratedHandler).IsGenericTypeDefinition)
@@ -76,6 +91,10 @@ public sealed class ResultCommanderConfiguration
     /// <returns>Current <see cref="ResultCommanderConfiguration"/> instance</returns>
     public ResultCommanderConfiguration AddGenericDecorator(Type decoratorType, Func<IDecoratorContext, bool>? condition = null)
     {
+        if (Builder is null)
+            throw new NotSupportedException(
+                "Decorators aren't supported when using base Microsoft DI, you must use Autofac instead.");
+        
         if (!decoratorType.IsGenericType || !decoratorType.IsGenericTypeDefinition)
             throw new NotSupportedException("Given decorator type is not a generic type");
         
@@ -101,6 +120,10 @@ public sealed class ResultCommanderConfiguration
     /// <returns>Current <see cref="ResultCommanderConfiguration"/> instance.</returns>
     public ResultCommanderConfiguration AddGenericDecorator<TDecoratedHandler>(Type decoratorType, Func<IDecoratorContext, bool>? condition = null) where TDecoratedHandler : ICommandHandlerBase
     {
+        if (Builder is null)
+            throw new NotSupportedException(
+                "Decorators aren't supported when using base Microsoft DI, you must use Autofac instead.");
+        
         if (!decoratorType.IsGenericType || !decoratorType.IsGenericTypeDefinition)
             throw new NotSupportedException("Given decorator type is not a generic type");
 
@@ -154,6 +177,10 @@ public sealed class ResultCommanderConfiguration
     public ResultCommanderConfiguration AddAdapter<TAdapter, THandler>(Func<THandler, TAdapter> adapter)
         where THandler : class, ICommandHandlerBase where TAdapter : notnull
     {
+        if (Builder is null)
+            throw new NotSupportedException(
+                "Adapters aren't supported when using base Microsoft DI, you must use Autofac instead.");
+        
         Builder.RegisterAdapter(adapter);
         return this;
     }
