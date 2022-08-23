@@ -32,7 +32,7 @@ To register decorators or adapters use the methods available on ResultCommanderC
 ```csharp
 builder.AddResultCommander(options => 
 {
-    options.AddDecorator<FancyDecorator, SimpleHandler>();
+    options.AddDecorator<FancyDecorator, ISyncCommandHandler<SimpleCommand>();
 });
 ```
 You can register multiple decorators and they'll be applied in the order that you register them - read more at [Autofac's docs regarding decorators and adapters](https://autofac.readthedocs.io/en/latest/advanced/adapters-decorators.html).
