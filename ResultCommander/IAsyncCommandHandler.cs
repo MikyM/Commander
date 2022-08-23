@@ -1,4 +1,4 @@
-﻿using MikyM.Common.Utilities.Results;
+﻿using MikyM.Utilities.Results;
 
 namespace ResultCommander;
 

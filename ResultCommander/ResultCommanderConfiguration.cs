@@ -1,8 +1,7 @@
 ﻿using Autofac;
 using Autofac.Features.Decorators;
-using Microsoft.Extensions.Options;
 using MikyM.Autofac.Extensions;
-using MikyM.Common.Utilities.Extensions;
+using MikyM.Utilities.Extensions;
 
 namespace ResultCommander;
 
