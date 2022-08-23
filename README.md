@@ -4,7 +4,7 @@
 
 Library featuring a command handler pattern for both synchronous and asynchronous operations.
 
-Utilizes Autofac thus Autofac is required and a functional result approach for failure-prone operations.
+Utilizes Autofac thus Autofac is required and a functional [Result](https://github.com/Remora/Remora.Results) approach for failure-prone operations.
 
 ## Features
 
@@ -14,9 +14,9 @@ Utilizes Autofac thus Autofac is required and a functional result approach for f
 
 ## Description
 
-There are two command types - one that only returns a [Result](https://github.com/MikyM/MikyM.Common.Utilities/blob/master/MikyM.Common.Utilities/Results/Result.cs) and one that returns an additional entity contained within the [Result](https://github.com/MikyM/MikyM.Common.Utilities/blob/master/MikyM.Common.Utilities/Results/Result.cs).
+There are two command types - one that only returns a [Result](https://github.com/Remora/Remora.Results) and one that returns an additional entity contained within the [Result](https://github.com/Remora/Remora.Results).
 
-Every handler must return a [Result](https://github.com/MikyM/MikyM.Common.Utilities/blob/master/MikyM.Common.Utilities/Results/Result.cs) struct which determines whether the operation succedeed or not, handlers may or may not return additional results contained within the Result struct - this is defined by the handled comand.
+Every handler must return a [Result](https://github.com/Remora/Remora.Results) struct which determines whether the operation succedeed or not, handlers may or may not return additional results contained within the Result struct - this is defined by the handled comand.
 
 ## Installation
 
