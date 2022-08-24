@@ -468,52 +468,52 @@ public static class DependancyInjectionExtensions
                 .Where(x => x.GetInterfaces().Any(y =>
                                 y.IsGenericType && y.GetGenericTypeDefinition() == typeof(IAsyncCommandHandler<>)) &&
                             x.IsClass &&
-                            !x.IsAbstract)
+                            !x.IsAbstract && x.GetCustomAttribute<SkipHandlerRegistrationAttribute>() is null)
                 .ToList();
 
             var commandResultSet = assembly.GetTypes()
                 .Where(x => x.GetInterfaces().Any(y =>
                                 y.IsGenericType && y.GetGenericTypeDefinition() == typeof(IAsyncCommandHandler<,>)) &&
                             x.IsClass &&
-                            !x.IsAbstract)
+                            !x.IsAbstract && x.GetCustomAttribute<SkipHandlerRegistrationAttribute>() is null)
                 .ToList();
 
             var commandSubSet = commandSet
                 .Where(x => (x.GetCustomAttribute<LifetimeAttribute>(false) is not null ||
                              x.GetCustomAttributes<InterceptedByAttribute>(false).Any()) && x.IsClass &&
-                            !x.IsAbstract)
+                            !x.IsAbstract && x.GetCustomAttribute<SkipHandlerRegistrationAttribute>() is null)
                 .ToList();
 
             var commandResultSubSet = commandResultSet
                 .Where(x => (x.GetCustomAttribute<LifetimeAttribute>(false) is not null ||
                              x.GetCustomAttributes<InterceptedByAttribute>(false).Any()) && x.IsClass &&
-                            !x.IsAbstract)
+                            !x.IsAbstract && x.GetCustomAttribute<SkipHandlerRegistrationAttribute>() is null)
                 .ToList();
 
             var syncCommandSet = assembly.GetTypes()
                 .Where(x => x.GetInterfaces().Any(y =>
                                 y.IsGenericType && y.GetGenericTypeDefinition() == typeof(ISyncCommandHandler<>)) &&
                             x.IsClass &&
-                            !x.IsAbstract)
+                            !x.IsAbstract && x.GetCustomAttribute<SkipHandlerRegistrationAttribute>() is null)
                 .ToList();
 
             var syncCommandResultSet = assembly.GetTypes()
                 .Where(x => x.GetInterfaces().Any(y =>
                                 y.IsGenericType && y.GetGenericTypeDefinition() == typeof(ISyncCommandHandler<,>)) &&
                             x.IsClass &&
-                            !x.IsAbstract)
+                            !x.IsAbstract && x.GetCustomAttribute<SkipHandlerRegistrationAttribute>() is null)
                 .ToList();
 
             var syncCommandSubSet = commandSet
                 .Where(x => (x.GetCustomAttribute<LifetimeAttribute>(false) is not null ||
                              x.GetCustomAttributes<InterceptedByAttribute>(false).Any()) && x.IsClass &&
-                            !x.IsAbstract)
+                            !x.IsAbstract && x.GetCustomAttribute<SkipHandlerRegistrationAttribute>() is null)
                 .ToList();
 
             var syncCommandResultSubSet = commandResultSet
                 .Where(x => (x.GetCustomAttribute<LifetimeAttribute>(false) is not null ||
                              x.GetCustomAttributes<InterceptedByAttribute>(false).Any()) && x.IsClass &&
-                            !x.IsAbstract)
+                            !x.IsAbstract && x.GetCustomAttribute<SkipHandlerRegistrationAttribute>() is null)
                 .ToList();
 
             foreach (var type in commandSubSet)

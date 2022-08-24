@@ -8,6 +8,7 @@ namespace ResultCommander;
 /// </summary>
 /// <typeparam name="TCommand">Command type.</typeparam>
 [PublicAPI]
+[SkipHandlerRegistration]
 public class ExceptionAsyncHandlerDecorator<TCommand> : IAsyncCommandHandler<TCommand> where TCommand : class, ICommand
 {
     private readonly IAsyncCommandHandler<TCommand> _handler;
@@ -47,6 +48,7 @@ public class ExceptionAsyncHandlerDecorator<TCommand> : IAsyncCommandHandler<TCo
 /// <typeparam name="TCommand">Command type.</typeparam>
 /// <typeparam name="TResult">Result type.</typeparam>
 [PublicAPI]
+[SkipHandlerRegistration]
 public class ExceptionAsyncHandlerDecorator<TCommand, TResult> : IAsyncCommandHandler<TCommand, TResult> where TCommand : class, ICommand<TResult>
 {
     private readonly IAsyncCommandHandler<TCommand, TResult> _handler;
@@ -85,6 +87,7 @@ public class ExceptionAsyncHandlerDecorator<TCommand, TResult> : IAsyncCommandHa
 /// </summary>
 /// <typeparam name="TCommand">Command type.</typeparam>
 [PublicAPI]
+[SkipHandlerRegistration]
 public class ExceptionSyncHandlerDecorator<TCommand> : ISyncCommandHandler<TCommand> where TCommand : class, ICommand
 {
     private readonly ISyncCommandHandler<TCommand> _handler;
@@ -124,6 +127,7 @@ public class ExceptionSyncHandlerDecorator<TCommand> : ISyncCommandHandler<TComm
 /// <typeparam name="TCommand">Command type.</typeparam>
 /// <typeparam name="TResult">Result type.</typeparam>
 [PublicAPI]
+[SkipHandlerRegistration]
 public class ExceptionSyncHandlerDecorator<TCommand, TResult> : ISyncCommandHandler<TCommand, TResult> where TCommand : class, ICommand<TResult>
 {
     private readonly ISyncCommandHandler<TCommand, TResult> _handler;
