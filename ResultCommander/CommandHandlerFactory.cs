@@ -9,6 +9,9 @@ namespace ResultCommander;
 /// <para>
 ///     Use this only when for some reason you don't want to utilize Autofac's <see cref="Lazy{T}"/> and when dealing with optional dependencies which creation is expensive.
 /// </para>
+/// <para>
+///     <b>Not supported when used with Microsoft's base DI container.</b>
+/// </para>
 /// </summary>
 [PublicAPI]
 public interface ICommandHandlerFactory

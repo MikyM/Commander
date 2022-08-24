@@ -78,7 +78,7 @@ public static class DependancyInjectionExtensions
             {
                 var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
 
-                var registrationBuilder = builder.RegisterTypes(type).AsClosedInterfacesOf(typeof(IAsyncCommandHandler<>));
+                var registrationBuilder = builder.RegisterTypes(type).AsClosedInterfacesOf(typeof(IAsyncCommandHandler<>)).AsImplementedInterfaces();
 
                 var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
 
@@ -130,7 +130,7 @@ public static class DependancyInjectionExtensions
             {
                 var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
 
-                var registrationBuilder = builder.RegisterTypes(type).AsClosedInterfacesOf(typeof(IAsyncCommandHandler<,>));
+                var registrationBuilder = builder.RegisterTypes(type).AsClosedInterfacesOf(typeof(IAsyncCommandHandler<,>)).AsImplementedInterfaces();
 
                 var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
 
@@ -189,24 +189,24 @@ public static class DependancyInjectionExtensions
                 {
                     case Lifetime.SingleInstance:
                         builder.RegisterTypes(commandSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<>))
+                            .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<>)).AsImplementedInterfaces()
                             .SingleInstance();
                         break;
                     case Lifetime.InstancePerRequest:
                         builder.RegisterTypes(commandSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<>))
+                            .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<>)).AsImplementedInterfaces()
                             .InstancePerRequest();
                         break;
                     case Lifetime.InstancePerLifetimeScope:
                         builder.RegisterTypes(commandSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<>))
+                            .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<>)).AsImplementedInterfaces()
                             .InstancePerLifetimeScope();
                         break;
                     case Lifetime.InstancePerMatchingLifetimeScope:
                         throw new NotSupportedException();
                     case Lifetime.InstancePerDependency:
                         builder.RegisterTypes(commandSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<>))
+                            .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<>)).AsImplementedInterfaces()
                             .InstancePerDependency();
                         break;
                     case Lifetime.InstancePerOwned:
@@ -221,24 +221,24 @@ public static class DependancyInjectionExtensions
                 {
                     case Lifetime.SingleInstance:
                         builder.RegisterTypes(commandResultSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<,>))
+                            .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<,>)).AsImplementedInterfaces()
                             .SingleInstance();
                         break;
                     case Lifetime.InstancePerRequest:
                         builder.RegisterTypes(commandResultSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<,>))
+                            .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<,>)).AsImplementedInterfaces()
                             .InstancePerRequest();
                         break;
                     case Lifetime.InstancePerLifetimeScope:
                         builder.RegisterTypes(commandResultSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<,>))
+                            .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<,>)).AsImplementedInterfaces()
                             .InstancePerLifetimeScope();
                         break;
                     case Lifetime.InstancePerMatchingLifetimeScope:
                         throw new NotSupportedException();
                     case Lifetime.InstancePerDependency:
                         builder.RegisterTypes(commandResultSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<,>))
+                            .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<,>)).AsImplementedInterfaces()
                             .InstancePerDependency();
                         break;
                     case Lifetime.InstancePerOwned:
@@ -252,7 +252,7 @@ public static class DependancyInjectionExtensions
             {
                 var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
 
-                var registrationBuilder = builder.RegisterTypes(type).AsClosedInterfacesOf(typeof(ISyncCommandHandler<>));
+                var registrationBuilder = builder.RegisterTypes(type).AsClosedInterfacesOf(typeof(ISyncCommandHandler<>)).AsImplementedInterfaces();
 
                 var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
 
@@ -304,7 +304,7 @@ public static class DependancyInjectionExtensions
             {
                 var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
 
-                var registrationBuilder = builder.RegisterTypes(type).AsClosedInterfacesOf(typeof(ISyncCommandHandler<,>));
+                var registrationBuilder = builder.RegisterTypes(type).AsClosedInterfacesOf(typeof(ISyncCommandHandler<,>)).AsImplementedInterfaces();
 
                 var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
 
@@ -363,24 +363,24 @@ public static class DependancyInjectionExtensions
                 {
                     case Lifetime.SingleInstance:
                         builder.RegisterTypes(syncCommandSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(ISyncCommandHandler<>))
+                            .AsClosedInterfacesOf(typeof(ISyncCommandHandler<>)).AsImplementedInterfaces()
                             .SingleInstance();
                         break;
                     case Lifetime.InstancePerRequest:
                         builder.RegisterTypes(syncCommandSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(ISyncCommandHandler<>))
+                            .AsClosedInterfacesOf(typeof(ISyncCommandHandler<>)).AsImplementedInterfaces()
                             .InstancePerRequest();
                         break;
                     case Lifetime.InstancePerLifetimeScope:
                         builder.RegisterTypes(syncCommandSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(ISyncCommandHandler<>))
+                            .AsClosedInterfacesOf(typeof(ISyncCommandHandler<>)).AsImplementedInterfaces()
                             .InstancePerLifetimeScope();
                         break;
                     case Lifetime.InstancePerMatchingLifetimeScope:
                         throw new NotSupportedException();
                     case Lifetime.InstancePerDependency:
                         builder.RegisterTypes(syncCommandSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(ISyncCommandHandler<>))
+                            .AsClosedInterfacesOf(typeof(ISyncCommandHandler<>)).AsImplementedInterfaces()
                             .InstancePerDependency();
                         break;
                     case Lifetime.InstancePerOwned:
@@ -395,24 +395,24 @@ public static class DependancyInjectionExtensions
                 {
                     case Lifetime.SingleInstance:
                         builder.RegisterTypes(syncCommandResultSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(ISyncCommandHandler<,>))
+                            .AsClosedInterfacesOf(typeof(ISyncCommandHandler<,>)).AsImplementedInterfaces()
                             .SingleInstance();
                         break;
                     case Lifetime.InstancePerRequest:
                         builder.RegisterTypes(syncCommandResultSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(ISyncCommandHandler<,>))
+                            .AsClosedInterfacesOf(typeof(ISyncCommandHandler<,>)).AsImplementedInterfaces()
                             .InstancePerRequest();
                         break;
                     case Lifetime.InstancePerLifetimeScope:
                         builder.RegisterTypes(syncCommandResultSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(ISyncCommandHandler<,>))
+                            .AsClosedInterfacesOf(typeof(ISyncCommandHandler<,>)).AsImplementedInterfaces()
                             .InstancePerLifetimeScope();
                         break;
                     case Lifetime.InstancePerMatchingLifetimeScope:
                         throw new NotSupportedException();
                     case Lifetime.InstancePerDependency:
                         builder.RegisterTypes(syncCommandResultSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(ISyncCommandHandler<,>))
+                            .AsClosedInterfacesOf(typeof(ISyncCommandHandler<,>)).AsImplementedInterfaces()
                             .InstancePerDependency();
                         break;
                     case Lifetime.InstancePerOwned:
@@ -522,7 +522,7 @@ public static class DependancyInjectionExtensions
             {
                 var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
 
-                var closedGenericTypes = type.GetInterfaces().Where(x => x.IsClosedTypeOf(typeof(IAsyncCommandHandler<>))).ToList();
+                var closedGenericTypes = type.GetInterfaces().ToList();
 
                 var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
 
@@ -555,7 +555,7 @@ public static class DependancyInjectionExtensions
 
                 var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
 
-                var closedGenericTypes = type.GetInterfaces().Where(x => x.IsClosedTypeOf(typeof(IAsyncCommandHandler<,>))).ToList();
+                var closedGenericTypes = type.GetInterfaces().ToList();
 
                 switch (scope)
                 {
@@ -587,7 +587,7 @@ public static class DependancyInjectionExtensions
             {
                 foreach (var command in commandSet)
                 {
-                    var closedGenericTypes = command.GetInterfaces().Where(x => x.IsClosedTypeOf(typeof(IAsyncCommandHandler<>))).ToList();
+                    var closedGenericTypes = command.GetInterfaces().ToList();
 
                     switch (config.DefaultHandlerLifetime)
                     {
@@ -617,7 +617,7 @@ public static class DependancyInjectionExtensions
             {
                 foreach (var command in commandResultSet)
                 {
-                    var closedGenericTypes = command.GetInterfaces().Where(x => x.IsClosedTypeOf(typeof(IAsyncCommandHandler<,>))).ToList();
+                    var closedGenericTypes = command.GetInterfaces().ToList();
 
                     switch (config.DefaultHandlerLifetime)
                     {
@@ -647,7 +647,7 @@ public static class DependancyInjectionExtensions
             {
                 var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
 
-                var closedGenericTypes = type.GetInterfaces().Where(x => x.IsClosedTypeOf(typeof(ISyncCommandHandler<>))).ToList();
+                var closedGenericTypes = type.GetInterfaces().ToList();
 
                 var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
 
@@ -680,7 +680,7 @@ public static class DependancyInjectionExtensions
 
                 var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
 
-                var closedGenericTypes = type.GetInterfaces().Where(x => x.IsClosedTypeOf(typeof(ISyncCommandHandler<,>))).ToList();
+                var closedGenericTypes = type.GetInterfaces().ToList();
 
                 switch (scope)
                 {
@@ -712,7 +712,7 @@ public static class DependancyInjectionExtensions
             {
                 foreach (var command in syncCommandSet)
                 {
-                    var closedGenericTypes = command.GetInterfaces().Where(x => x.IsClosedTypeOf(typeof(ISyncCommandHandler<>))).ToList();
+                    var closedGenericTypes = command.GetInterfaces().ToList();
 
                     switch (config.DefaultHandlerLifetime)
                     {
@@ -742,7 +742,7 @@ public static class DependancyInjectionExtensions
             {
                 foreach (var command in syncCommandResultSet)
                 {
-                    var closedGenericTypes = command.GetInterfaces().Where(x => x.IsClosedTypeOf(typeof(ISyncCommandHandler<,>))).ToList();
+                    var closedGenericTypes = command.GetInterfaces().ToList();
 
                     switch (config.DefaultHandlerLifetime)
                     {
@@ -766,28 +766,6 @@ public static class DependancyInjectionExtensions
                             throw new ArgumentOutOfRangeException();
                     }
                 }
-            }
-
-            switch (config.DefaultHandlerFactoryLifetime)
-            {
-                case Lifetime.SingleInstance:
-                    serviceCollection.AddSingleton<ICommandHandlerFactory, CommandHandlerFactory>();
-                    break;
-                case Lifetime.InstancePerRequest:
-                    serviceCollection.AddScoped<ICommandHandlerFactory, CommandHandlerFactory>();
-                    break;
-                case Lifetime.InstancePerLifetimeScope:
-                    serviceCollection.AddScoped<ICommandHandlerFactory, CommandHandlerFactory>();
-                    break;
-                case Lifetime.InstancePerMatchingLifetimeScope:
-                    throw new NotSupportedException();
-                case Lifetime.InstancePerDependency:
-                    serviceCollection.AddTransient<ICommandHandlerFactory, CommandHandlerFactory>();
-                    break;
-                case Lifetime.InstancePerOwned:
-                    throw new NotSupportedException();
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
         }
         

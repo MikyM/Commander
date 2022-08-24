@@ -12,6 +12,8 @@ namespace ResultCommander;
 [PublicAPI]
 public sealed class ResultCommanderConfiguration
 {
+    internal bool UsingAutofac => Builder is not null;
+    
     internal ResultCommanderConfiguration(ContainerBuilder builder)
     {
         Builder = builder;
