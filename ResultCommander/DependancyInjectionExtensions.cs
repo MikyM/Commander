@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Xml.Schema;
 using Autofac;
 using Autofac.Extras.DynamicProxy;
 using Microsoft.Extensions.DependencyInjection;
@@ -521,24 +522,23 @@ public static class DependancyInjectionExtensions
             {
                 var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
 
-                var closedGenericType = typeof(IAsyncCommandHandler<>).MakeGenericType(type.GetInterfaces().First(x =>
-                    x.IsGenericType && x.IsGenericTypeDefinition && x.GetGenericTypeDefinition() == typeof(IAsyncCommandHandler<>)).GenericTypeArguments.First());
+                var closedGenericTypes = type.GetInterfaces().Where(x => x.IsClosedTypeOf(typeof(IAsyncCommandHandler<>))).ToList();
 
                 var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
 
                 switch (scope)
                 {
                     case Lifetime.SingleInstance:
-                        serviceCollection.AddSingleton(closedGenericType, type);
+                        closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, type));
                         break;
                     case Lifetime.InstancePerRequest:
-                        serviceCollection.AddScoped(closedGenericType, type);
+                        closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));
                         break;
                     case Lifetime.InstancePerLifetimeScope:
-                        serviceCollection.AddScoped(closedGenericType, type);
+                        closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));;
                         break;
                     case Lifetime.InstancePerDependency:
-                        serviceCollection.AddTransient(closedGenericType, type);
+                        closedGenericTypes.ForEach(x => serviceCollection.AddTransient(x, type));
                         break;
                     case Lifetime.InstancePerMatchingLifetimeScope:
                         throw new NotSupportedException("Supported only when using Autofac.");
@@ -555,22 +555,21 @@ public static class DependancyInjectionExtensions
 
                 var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
 
-                var closedGenericType = typeof(IAsyncCommandHandler<,>).MakeGenericType(type.GetInterfaces().First(x =>
-                    x.IsGenericType && x.IsGenericTypeDefinition && x.GetGenericTypeDefinition() == typeof(IAsyncCommandHandler<,>)).GenericTypeArguments.First());
+                var closedGenericTypes = type.GetInterfaces().Where(x => x.IsClosedTypeOf(typeof(IAsyncCommandHandler<,>))).ToList();
 
                 switch (scope)
                 {
                     case Lifetime.SingleInstance:
-                        serviceCollection.AddSingleton(closedGenericType, type);
+                        closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, type));
                         break;
                     case Lifetime.InstancePerRequest:
-                        serviceCollection.AddScoped(closedGenericType, type);
+                        closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));
                         break;
                     case Lifetime.InstancePerLifetimeScope:
-                        serviceCollection.AddScoped(closedGenericType, type);
+                        closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));
                         break;
                     case Lifetime.InstancePerDependency:
-                        serviceCollection.AddTransient(closedGenericType, type);
+                        closedGenericTypes.ForEach(x => serviceCollection.AddTransient(x, type));
                         break;
                     case Lifetime.InstancePerMatchingLifetimeScope:
                         throw new NotSupportedException("Supported only when using Autofac.");
@@ -588,26 +587,25 @@ public static class DependancyInjectionExtensions
             {
                 foreach (var command in commandSet)
                 {
-                    var closedGenericType = typeof(IAsyncCommandHandler<>).MakeGenericType(command.GetInterfaces().First(x =>
-                        x.IsGenericType && x.IsGenericTypeDefinition && x.GetGenericTypeDefinition() == typeof(IAsyncCommandHandler<>)).GenericTypeArguments.First());
+                    var closedGenericTypes = command.GetInterfaces().Where(x => x.IsClosedTypeOf(typeof(IAsyncCommandHandler<>))).ToList();
 
                     switch (config.DefaultHandlerLifetime)
                     {
                         case Lifetime.SingleInstance:
-                            serviceCollection.AddSingleton(closedGenericType, command);
+                            closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, command));
                             break;
                         case Lifetime.InstancePerRequest:
-                            serviceCollection.AddScoped(closedGenericType, command);
+                            closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, command));
                             break;
                         case Lifetime.InstancePerLifetimeScope:
-                            serviceCollection.AddScoped(closedGenericType, command);
+                            closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, command));
                             break;
                         case Lifetime.InstancePerMatchingLifetimeScope:
                             throw new NotSupportedException("Supported only when using Autofac.");
                         case Lifetime.InstancePerOwned:
                             throw new NotSupportedException("Supported only when using Autofac.");
                         case Lifetime.InstancePerDependency:
-                            serviceCollection.AddTransient(closedGenericType, command);
+                            closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, command));
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -619,26 +617,25 @@ public static class DependancyInjectionExtensions
             {
                 foreach (var command in commandResultSet)
                 {
-                    var closedGenericType = typeof(IAsyncCommandHandler<,>).MakeGenericType(command.GetInterfaces().First(x =>
-                        x.IsGenericType && x.IsGenericTypeDefinition && x.GetGenericTypeDefinition() == typeof(IAsyncCommandHandler<,>)).GenericTypeArguments.First());
+                    var closedGenericTypes = command.GetInterfaces().Where(x => x.IsClosedTypeOf(typeof(IAsyncCommandHandler<,>))).ToList();
 
                     switch (config.DefaultHandlerLifetime)
                     {
                         case Lifetime.SingleInstance:
-                            serviceCollection.AddSingleton(closedGenericType, command);
+                            closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, command));
                             break;
                         case Lifetime.InstancePerRequest:
-                            serviceCollection.AddScoped(closedGenericType, command);
+                            closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, command));
                             break;
                         case Lifetime.InstancePerLifetimeScope:
-                            serviceCollection.AddScoped(closedGenericType, command);
+                            closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, command));
                             break;
                         case Lifetime.InstancePerMatchingLifetimeScope:
                             throw new NotSupportedException("Supported only when using Autofac.");
                         case Lifetime.InstancePerOwned:
                             throw new NotSupportedException("Supported only when using Autofac.");
                         case Lifetime.InstancePerDependency:
-                            serviceCollection.AddTransient(closedGenericType, command);
+                            closedGenericTypes.ForEach(x => serviceCollection.AddTransient(x, command));
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -650,24 +647,23 @@ public static class DependancyInjectionExtensions
             {
                 var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
 
-                var closedGenericType = typeof(ISyncCommandHandler<>).MakeGenericType(type.GetInterfaces().First(x =>
-                    x.IsGenericType && x.IsGenericTypeDefinition && x.GetGenericTypeDefinition() == typeof(ISyncCommandHandler<>)).GenericTypeArguments.First());
+                var closedGenericTypes = type.GetInterfaces().Where(x => x.IsClosedTypeOf(typeof(ISyncCommandHandler<>))).ToList();
 
                 var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
 
                 switch (scope)
                 {
                     case Lifetime.SingleInstance:
-                        serviceCollection.AddSingleton(closedGenericType, type);
+                        closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, type));
                         break;
                     case Lifetime.InstancePerRequest:
-                        serviceCollection.AddScoped(closedGenericType, type);
+                        closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));
                         break;
                     case Lifetime.InstancePerLifetimeScope:
-                        serviceCollection.AddScoped(closedGenericType, type);
+                        closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));
                         break;
                     case Lifetime.InstancePerDependency:
-                        serviceCollection.AddTransient(closedGenericType, type);
+                        closedGenericTypes.ForEach(x => serviceCollection.AddTransient(x, type));
                         break;
                     case Lifetime.InstancePerMatchingLifetimeScope:
                         throw new NotSupportedException("Supported only when using Autofac.");
@@ -684,22 +680,21 @@ public static class DependancyInjectionExtensions
 
                 var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
 
-                var closedGenericType = typeof(ISyncCommandHandler<,>).MakeGenericType(type.GetInterfaces().First(x =>
-                    x.IsGenericType && x.IsGenericTypeDefinition && x.GetGenericTypeDefinition() == typeof(ISyncCommandHandler<,>)).GenericTypeArguments.First());
+                var closedGenericTypes = type.GetInterfaces().Where(x => x.IsClosedTypeOf(typeof(ISyncCommandHandler<,>))).ToList();
 
                 switch (scope)
                 {
                     case Lifetime.SingleInstance:
-                        serviceCollection.AddSingleton(closedGenericType, type);
+                        closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, type));
                         break;
                     case Lifetime.InstancePerRequest:
-                        serviceCollection.AddScoped(closedGenericType, type);
+                        closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));
                         break;
                     case Lifetime.InstancePerLifetimeScope:
-                        serviceCollection.AddScoped(closedGenericType, type);
+                        closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));
                         break;
                     case Lifetime.InstancePerDependency:
-                        serviceCollection.AddTransient(closedGenericType, type);
+                        closedGenericTypes.ForEach(x => serviceCollection.AddTransient(x, type));
                         break;
                     case Lifetime.InstancePerMatchingLifetimeScope:
                         throw new NotSupportedException("Supported only when using Autofac.");
@@ -717,26 +712,25 @@ public static class DependancyInjectionExtensions
             {
                 foreach (var command in syncCommandSet)
                 {
-                    var closedGenericType = typeof(ISyncCommandHandler<>).MakeGenericType(command.GetInterfaces().First(x =>
-                        x.IsGenericType && x.IsGenericTypeDefinition && x.GetGenericTypeDefinition() == typeof(ISyncCommandHandler<>)).GenericTypeArguments.First());
+                    var closedGenericTypes = command.GetInterfaces().Where(x => x.IsClosedTypeOf(typeof(ISyncCommandHandler<>))).ToList();
 
                     switch (config.DefaultHandlerLifetime)
                     {
                         case Lifetime.SingleInstance:
-                            serviceCollection.AddSingleton(closedGenericType, command);
+                            closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, command));
                             break;
                         case Lifetime.InstancePerRequest:
-                            serviceCollection.AddScoped(closedGenericType, command);
+                            closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, command));
                             break;
                         case Lifetime.InstancePerLifetimeScope:
-                            serviceCollection.AddScoped(closedGenericType, command);
+                            closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, command));
                             break;
                         case Lifetime.InstancePerMatchingLifetimeScope:
                             throw new NotSupportedException("Supported only when using Autofac.");
                         case Lifetime.InstancePerOwned:
                             throw new NotSupportedException("Supported only when using Autofac.");
                         case Lifetime.InstancePerDependency:
-                            serviceCollection.AddTransient(closedGenericType, command);
+                            closedGenericTypes.ForEach(x => serviceCollection.AddTransient(x, command));
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
@@ -748,26 +742,25 @@ public static class DependancyInjectionExtensions
             {
                 foreach (var command in syncCommandResultSet)
                 {
-                    var closedGenericType = typeof(ISyncCommandHandler<,>).MakeGenericType(command.GetInterfaces().First(x =>
-                        x.IsGenericType && x.IsGenericTypeDefinition && x.GetGenericTypeDefinition() == typeof(ISyncCommandHandler<,>)).GenericTypeArguments.First());
+                    var closedGenericTypes = command.GetInterfaces().Where(x => x.IsClosedTypeOf(typeof(ISyncCommandHandler<,>))).ToList();
 
                     switch (config.DefaultHandlerLifetime)
                     {
                         case Lifetime.SingleInstance:
-                            serviceCollection.AddSingleton(closedGenericType, command);
+                            closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, command));
                             break;
                         case Lifetime.InstancePerRequest:
-                            serviceCollection.AddScoped(closedGenericType, command);
+                            closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, command));
                             break;
                         case Lifetime.InstancePerLifetimeScope:
-                            serviceCollection.AddScoped(closedGenericType, command);
+                            closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, command));
                             break;
                         case Lifetime.InstancePerMatchingLifetimeScope:
                             throw new NotSupportedException("Supported only when using Autofac.");
                         case Lifetime.InstancePerOwned:
                             throw new NotSupportedException("Supported only when using Autofac.");
                         case Lifetime.InstancePerDependency:
-                            serviceCollection.AddTransient(closedGenericType, command);
+                            closedGenericTypes.ForEach(x => serviceCollection.AddTransient(x, command));
                             break;
                         default:
                             throw new ArgumentOutOfRangeException();
