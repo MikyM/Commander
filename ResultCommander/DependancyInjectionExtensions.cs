@@ -651,7 +651,7 @@ public static class DependancyInjectionExtensions
                 var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
 
                 var closedGenericType = typeof(ISyncCommandHandler<>).MakeGenericType(type.GetInterfaces().First(x =>
-                    x.IsGenericType && x.IsGenericTypeDefinition && x.GetGenericTypeDefinition() == typeof(IAsyncCommandHandler<>)).GenericTypeArguments.First());
+                    x.IsGenericType && x.IsGenericTypeDefinition && x.GetGenericTypeDefinition() == typeof(ISyncCommandHandler<>)).GenericTypeArguments.First());
 
                 var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
 
@@ -685,7 +685,7 @@ public static class DependancyInjectionExtensions
                 var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
 
                 var closedGenericType = typeof(ISyncCommandHandler<,>).MakeGenericType(type.GetInterfaces().First(x =>
-                    x.IsGenericType && x.IsGenericTypeDefinition && x.GetGenericTypeDefinition() == typeof(IAsyncCommandHandler<,>)).GenericTypeArguments.First());
+                    x.IsGenericType && x.IsGenericTypeDefinition && x.GetGenericTypeDefinition() == typeof(ISyncCommandHandler<,>)).GenericTypeArguments.First());
 
                 switch (scope)
                 {
@@ -718,7 +718,7 @@ public static class DependancyInjectionExtensions
                 foreach (var command in syncCommandSet)
                 {
                     var closedGenericType = typeof(ISyncCommandHandler<>).MakeGenericType(command.GetInterfaces().First(x =>
-                        x.IsGenericType && x.IsGenericTypeDefinition && x.GetGenericTypeDefinition() == typeof(IAsyncCommandHandler<>)).GenericTypeArguments.First());
+                        x.IsGenericType && x.IsGenericTypeDefinition && x.GetGenericTypeDefinition() == typeof(ISyncCommandHandler<>)).GenericTypeArguments.First());
 
                     switch (config.DefaultHandlerLifetime)
                     {
@@ -749,7 +749,7 @@ public static class DependancyInjectionExtensions
                 foreach (var command in syncCommandResultSet)
                 {
                     var closedGenericType = typeof(ISyncCommandHandler<,>).MakeGenericType(command.GetInterfaces().First(x =>
-                        x.IsGenericType && x.IsGenericTypeDefinition && x.GetGenericTypeDefinition() == typeof(IAsyncCommandHandler<,>)).GenericTypeArguments.First());
+                        x.IsGenericType && x.IsGenericTypeDefinition && x.GetGenericTypeDefinition() == typeof(ISyncCommandHandler<,>)).GenericTypeArguments.First());
 
                     switch (config.DefaultHandlerLifetime)
                     {
