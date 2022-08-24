@@ -4,7 +4,9 @@
 
 Library featuring a command handler pattern for both synchronous and asynchronous operations.
 
-Utilizes Autofac thus Autofac is required and a functional [Result](https://github.com/Remora/Remora.Results) approach for failure-prone operations.
+Uses a functional [Result](https://github.com/Remora/Remora.Results) approach for failure-prone operations.
+
+To utilize all features using Autofac is required. 
 
 ## Features
 
@@ -20,9 +22,7 @@ Every handler must return a [Result](https://github.com/Remora/Remora.Results) s
 
 ## Installation
 
-Since the library utilizes Autofac, base Autofac configuration is required to use command handlers - [Autofac's docs](https://autofac.readthedocs.io/en/latest/index.html).
-
-To register handlers with the DI container use the ContainerBuilder extension method provided by the library:
+To register handlers with the DI container use the `ContainerBuilder` or `IServiceCollection` extension methods provided by the library:
 
 ```csharp
 builder.AddResultCommander();
