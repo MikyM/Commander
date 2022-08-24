@@ -1,7 +1,7 @@
-﻿using Autofac;
+﻿using AttributeBasedRegistration;
+using Autofac;
 using Autofac.Features.Decorators;
 using Microsoft.Extensions.DependencyInjection;
-using MikyM.Autofac.Extensions;
 using MikyM.Utilities.Extensions;
 
 namespace ResultCommander;

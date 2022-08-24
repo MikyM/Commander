@@ -1,12 +1,10 @@
 ﻿using System.Reflection;
-using System.Xml.Schema;
+using AttributeBasedRegistration;
+using AttributeBasedRegistration.Attributes;
 using Autofac;
 using Autofac.Extras.DynamicProxy;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using MikyM.Autofac.Extensions;
-using MikyM.Autofac.Extensions.Attributes;
-using MikyM.Utilities.Extensions;
 
 namespace ResultCommander;
 
