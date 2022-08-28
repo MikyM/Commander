@@ -7,7 +7,7 @@ namespace ResultCommander;
 /// </summary>
 /// <remarks>Overrides <see cref="ToString"/> to return a Json representation.</remarks>
 [PublicAPI]
-public abstract class Command : ICommand
+public abstract record Command : ICommand
 {
     /// <summary>
     /// Serializes this to json using <see cref="JsonSerializer"/>.
@@ -22,7 +22,7 @@ public abstract class Command : ICommand
 /// <typeparam name="TResult">The type of the result of this command.</typeparam>
 /// <remarks>Overrides <see cref="ToString"/> to return a Json representation.</remarks>
 [PublicAPI]
-public abstract class Command<TResult> : ICommand<TResult>
+public abstract record Command<TResult> : ICommand<TResult>
 {
     /// <summary>
     /// Serializes this to json using <see cref="JsonSerializer"/>.
