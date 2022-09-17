@@ -18,19 +18,30 @@ public static class DependancyInjectionExtensions
     /// Registers command handlers with the <see cref="ContainerBuilder"/>.
     /// </summary>
     /// <param name="builder">Current instance of <see cref="ContainerBuilder"/>.</param>
-    /// <param name="configuration">Optional <see cref="ResultCommanderConfiguration"/> configuration.</param>
+    /// <param name="assembliesContainingTypesToScan">Assemblies containing types to scan for handlers.</param>
+    /// <param name="options">Optional <see cref="ResultCommanderConfiguration"/> configuration.</param>
     /// <returns>Current <see cref="ContainerBuilder"/> instance.</returns>
-    public static ContainerBuilder AddResultCommander(this ContainerBuilder builder, Action<ResultCommanderConfiguration>? configuration = null)
+    public static ContainerBuilder AddResultCommander(this ContainerBuilder builder, IEnumerable<Type> assembliesContainingTypesToScan, Action<ResultCommanderConfiguration>? options = null)
+        => AddResultCommander(builder, assembliesContainingTypesToScan.Select(x => x.Assembly).Distinct(), options);
+    
+    /// <summary>
+    /// Registers command handlers with the <see cref="ContainerBuilder"/>.
+    /// </summary>
+    /// <param name="builder">Current instance of <see cref="ContainerBuilder"/>.</param>
+    /// <param name="assembliesToScan">Assemblies to scan for handlers.</param>
+    /// <param name="options">Optional <see cref="ResultCommanderConfiguration"/> configuration.</param>
+    /// <returns>Current <see cref="ContainerBuilder"/> instance.</returns>
+    public static ContainerBuilder AddResultCommander(this ContainerBuilder builder, IEnumerable<Assembly> assembliesToScan, Action<ResultCommanderConfiguration>? options = null)
     {
         var config = new ResultCommanderConfiguration(builder);
-        configuration?.Invoke(config);
+        options?.Invoke(config);
 
         var iopt = Options.Create(config);
 
         builder.RegisterInstance(iopt).As<IOptions<ResultCommanderConfiguration>>().SingleInstance();
         builder.Register(x => x.Resolve<IOptions<ResultCommanderConfiguration>>().Value).As<ResultCommanderConfiguration>().SingleInstance();
 
-        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+        foreach (var assembly in assembliesToScan)
         {
             var commandSet = assembly.GetTypes()
                 .Where(x =>
@@ -457,24 +468,36 @@ public static class DependancyInjectionExtensions
 
         return builder;
     }
-    
-        /// <summary>
+
+    /// <summary>
     /// Registers command handlers with the <see cref="ContainerBuilder"/>.
     /// </summary>
     /// <param name="serviceCollection">Current instance of <see cref="IServiceCollection"/>.</param>
-    /// <param name="configuration">Optional <see cref="ResultCommanderConfiguration"/> configuration.</param>
+    /// <param name="assembliesContainingTypesToScan">Assemblies contianing types to scan for handlers.</param>
+    /// <param name="options">Optional <see cref="ResultCommanderConfiguration"/> configuration.</param>
     /// <returns>Current <see cref="IServiceCollection"/> instance.</returns>
-    public static IServiceCollection AddResultCommander(this IServiceCollection serviceCollection, Action<ResultCommanderConfiguration>? configuration = null)
+    public static IServiceCollection AddResultCommander(this IServiceCollection serviceCollection,
+        IEnumerable<Type> assembliesContainingTypesToScan, Action<ResultCommanderConfiguration>? options = null)
+        => AddResultCommander(serviceCollection, assembliesContainingTypesToScan.Select(x => x.Assembly).Distinct(), options);
+        
+    /// <summary>
+    /// Registers command handlers with the <see cref="ContainerBuilder"/>.
+    /// </summary>
+    /// <param name="serviceCollection">Current instance of <see cref="IServiceCollection"/>.</param>
+    /// <param name="assembliesToScaAn">Assemblies to scan for handlers.</param>
+    /// <param name="options">Optional <see cref="ResultCommanderConfiguration"/> configuration.</param>
+    /// <returns>Current <see cref="IServiceCollection"/> instance.</returns>
+    public static IServiceCollection AddResultCommander(this IServiceCollection serviceCollection, IEnumerable<Assembly> assembliesToScaAn, Action<ResultCommanderConfiguration>? options = null)
     {
         var config = new ResultCommanderConfiguration(serviceCollection);
-        configuration?.Invoke(config);
+        options?.Invoke(config);
 
         var iopt = Options.Create(config);
         serviceCollection.AddSingleton(iopt);
         serviceCollection.AddSingleton(x =>
             x.GetRequiredService<IOptions<ResultCommanderConfiguration>>().Value);
 
-        foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+        foreach (var assembly in assembliesToScaAn)
         {
             var commandSet = assembly.GetTypes()
                 .Where(x => x.GetInterfaces().Any(y =>
