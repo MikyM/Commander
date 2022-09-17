@@ -473,7 +473,7 @@ public static class DependancyInjectionExtensions
     /// Registers command handlers with the <see cref="ContainerBuilder"/>.
     /// </summary>
     /// <param name="serviceCollection">Current instance of <see cref="IServiceCollection"/>.</param>
-    /// <param name="assembliesContainingTypesToScan">Assemblies contianing types to scan for handlers.</param>
+    /// <param name="assembliesContainingTypesToScan">Assemblies containing types to scan for handlers.</param>
     /// <param name="options">Optional <see cref="ResultCommanderConfiguration"/> configuration.</param>
     /// <returns>Current <see cref="IServiceCollection"/> instance.</returns>
     public static IServiceCollection AddResultCommander(this IServiceCollection serviceCollection,

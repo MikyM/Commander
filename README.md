@@ -25,12 +25,12 @@ Every handler must return a [Result](https://github.com/Remora/Remora.Results) s
 To register handlers with the DI container use the `ContainerBuilder` or `IServiceCollection` extension methods provided by the library:
 
 ```csharp
-builder.AddResultCommander();
+builder.AddResultCommander(assembliesToScan);
 ```
 
 To register decorators or adapters use the methods available on ResultCommanderConfiguration like so:
 ```csharp
-builder.AddResultCommander(options => 
+builder.AddResultCommander(assembliesToScan, options => 
 {
     options.AddDecorator<FancyDecorator, ISyncCommandHandler<SimpleCommand>();
 });
