@@ -103,7 +103,7 @@ public static class DependancyInjectionExtensions
 
                 var registrationBuilder = builder.RegisterTypes(type).AsClosedInterfacesOf(typeof(IAsyncCommandHandler<>)).AsImplementedInterfaces();
 
-                var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
+                var scope = lifeAttr?.ServiceLifetime ?? config.DefaultHandlerLifetime;
 
                 switch (scope)
                 {
@@ -121,7 +121,7 @@ public static class DependancyInjectionExtensions
                         break;
                     case ServiceLifetime.InstancePerMatchingLifetimeScope:
                         registrationBuilder =
-                            registrationBuilder.InstancePerMatchingLifetimeScope(lifeAttr?.Tags.ToArray() ?? throw new InvalidOperationException());
+                            registrationBuilder.InstancePerMatchingLifetimeScope(lifeAttr?.Tags?.ToArray() ?? throw new InvalidOperationException());
                         break;
                     case ServiceLifetime.InstancePerOwned:
                         if (lifeAttr?.Owned is null) throw new InvalidOperationException("Owned type was null");
@@ -155,7 +155,7 @@ public static class DependancyInjectionExtensions
 
                 var registrationBuilder = builder.RegisterTypes(type).AsClosedInterfacesOf(typeof(IAsyncCommandHandler<,>)).AsImplementedInterfaces();
 
-                var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
+                var scope = lifeAttr?.ServiceLifetime ?? config.DefaultHandlerLifetime;
 
                 switch (scope)
                 {
@@ -173,7 +173,7 @@ public static class DependancyInjectionExtensions
                         break;
                     case ServiceLifetime.InstancePerMatchingLifetimeScope:
                         registrationBuilder =
-                            registrationBuilder.InstancePerMatchingLifetimeScope(lifeAttr?.Tags.ToArray() ?? throw new InvalidOperationException());
+                            registrationBuilder.InstancePerMatchingLifetimeScope(lifeAttr?.Tags?.ToArray() ?? throw new InvalidOperationException());
                         break;
                     case ServiceLifetime.InstancePerOwned:
                         if (lifeAttr?.Owned is null) throw new InvalidOperationException("Owned type was null");
@@ -277,7 +277,7 @@ public static class DependancyInjectionExtensions
 
                 var registrationBuilder = builder.RegisterTypes(type).AsClosedInterfacesOf(typeof(ISyncCommandHandler<>)).AsImplementedInterfaces();
 
-                var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
+                var scope = lifeAttr?.ServiceLifetime ?? config.DefaultHandlerLifetime;
 
                 switch (scope)
                 {
@@ -295,7 +295,7 @@ public static class DependancyInjectionExtensions
                         break;
                     case ServiceLifetime.InstancePerMatchingLifetimeScope:
                         registrationBuilder =
-                            registrationBuilder.InstancePerMatchingLifetimeScope(lifeAttr?.Tags.ToArray() ?? throw new InvalidOperationException());
+                            registrationBuilder.InstancePerMatchingLifetimeScope(lifeAttr?.Tags?.ToArray() ?? throw new InvalidOperationException());
                         break;
                     case ServiceLifetime.InstancePerOwned:
                         if (lifeAttr?.Owned is null) throw new InvalidOperationException("Owned type was null");
@@ -329,7 +329,7 @@ public static class DependancyInjectionExtensions
 
                 var registrationBuilder = builder.RegisterTypes(type).AsClosedInterfacesOf(typeof(ISyncCommandHandler<,>)).AsImplementedInterfaces();
 
-                var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
+                var scope = lifeAttr?.ServiceLifetime ?? config.DefaultHandlerLifetime;
 
                 switch (scope)
                 {
@@ -347,7 +347,7 @@ public static class DependancyInjectionExtensions
                         break;
                     case ServiceLifetime.InstancePerMatchingLifetimeScope:
                         registrationBuilder =
-                            registrationBuilder.InstancePerMatchingLifetimeScope(lifeAttr?.Tags.ToArray() ?? throw new InvalidOperationException());
+                            registrationBuilder.InstancePerMatchingLifetimeScope(lifeAttr?.Tags?.ToArray() ?? throw new InvalidOperationException());
                         break;
                     case ServiceLifetime.InstancePerOwned:
                         if (lifeAttr?.Owned is null) throw new InvalidOperationException("Owned type was null");
@@ -559,7 +559,7 @@ public static class DependancyInjectionExtensions
 
                 var closedGenericTypes = type.GetInterfaces().ToList();
 
-                var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
+                var scope = lifeAttr?.ServiceLifetime ?? config.DefaultHandlerLifetime;
 
                 switch (scope)
                 {
@@ -588,7 +588,7 @@ public static class DependancyInjectionExtensions
             {
                 var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
 
-                var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
+                var scope = lifeAttr?.ServiceLifetime ?? config.DefaultHandlerLifetime;
 
                 var closedGenericTypes = type.GetInterfaces().ToList();
 
@@ -684,7 +684,7 @@ public static class DependancyInjectionExtensions
 
                 var closedGenericTypes = type.GetInterfaces().ToList();
 
-                var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
+                var scope = lifeAttr?.ServiceLifetime ?? config.DefaultHandlerLifetime;
 
                 switch (scope)
                 {
@@ -713,7 +713,7 @@ public static class DependancyInjectionExtensions
             {
                 var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
 
-                var scope = lifeAttr?.Scope ?? config.DefaultHandlerLifetime;
+                var scope = lifeAttr?.ServiceLifetime ?? config.DefaultHandlerLifetime;
 
                 var closedGenericTypes = type.GetInterfaces().ToList();
 
