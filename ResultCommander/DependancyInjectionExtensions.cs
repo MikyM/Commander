@@ -3,8 +3,10 @@ using AttributeBasedRegistration;
 using AttributeBasedRegistration.Attributes;
 using Autofac;
 using Autofac.Extras.DynamicProxy;
+using Castle.DynamicProxy;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using ServiceLifetime = AttributeBasedRegistration.ServiceLifetime;
 
 namespace ResultCommander;
 
@@ -105,23 +107,23 @@ public static class DependancyInjectionExtensions
 
                 switch (scope)
                 {
-                    case Lifetime.SingleInstance:
+                    case ServiceLifetime.SingleInstance:
                         registrationBuilder = registrationBuilder.SingleInstance();
                         break;
-                    case Lifetime.InstancePerRequest:
+                    case ServiceLifetime.InstancePerRequest:
                         registrationBuilder = registrationBuilder.InstancePerRequest();
                         break;
-                    case Lifetime.InstancePerLifetimeScope:
+                    case ServiceLifetime.InstancePerLifetimeScope:
                         registrationBuilder = registrationBuilder.InstancePerLifetimeScope();
                         break;
-                    case Lifetime.InstancePerDependency:
+                    case ServiceLifetime.InstancePerDependency:
                         registrationBuilder = registrationBuilder.InstancePerDependency();
                         break;
-                    case Lifetime.InstancePerMatchingLifetimeScope:
+                    case ServiceLifetime.InstancePerMatchingLifetimeScope:
                         registrationBuilder =
                             registrationBuilder.InstancePerMatchingLifetimeScope(lifeAttr?.Tags.ToArray() ?? throw new InvalidOperationException());
                         break;
-                    case Lifetime.InstancePerOwned:
+                    case ServiceLifetime.InstancePerOwned:
                         if (lifeAttr?.Owned is null) throw new InvalidOperationException("Owned type was null");
 
                         registrationBuilder = registrationBuilder.InstancePerOwned(lifeAttr.Owned);
@@ -137,13 +139,13 @@ public static class DependancyInjectionExtensions
 
                 var intrAttrs = type.GetCustomAttributes<InterceptedByAttribute>(false);
 
-                foreach (var attr in intrAttrs)
+                foreach (var interceptor in intrAttrs.SelectMany(x => x.Interceptors))
                 {
                     registrationBuilder = registrationBuilder.EnableInterfaceInterceptors();
-                    registrationBuilder = attr.IsAsync
+                    registrationBuilder = IsInterceptorAsync(interceptor)
                         ? registrationBuilder.InterceptedBy(
-                            typeof(AsyncInterceptorAdapter<>).MakeGenericType(attr.Interceptor))
-                        : registrationBuilder.InterceptedBy(attr.Interceptor);
+                            typeof(AsyncInterceptorAdapter<>).MakeGenericType(interceptor))
+                        : registrationBuilder.InterceptedBy(interceptor);
                 }
             }
 
@@ -157,23 +159,23 @@ public static class DependancyInjectionExtensions
 
                 switch (scope)
                 {
-                    case Lifetime.SingleInstance:
+                    case ServiceLifetime.SingleInstance:
                         registrationBuilder = registrationBuilder.SingleInstance();
                         break;
-                    case Lifetime.InstancePerRequest:
+                    case ServiceLifetime.InstancePerRequest:
                         registrationBuilder = registrationBuilder.InstancePerRequest();
                         break;
-                    case Lifetime.InstancePerLifetimeScope:
+                    case ServiceLifetime.InstancePerLifetimeScope:
                         registrationBuilder = registrationBuilder.InstancePerLifetimeScope();
                         break;
-                    case Lifetime.InstancePerDependency:
+                    case ServiceLifetime.InstancePerDependency:
                         registrationBuilder = registrationBuilder.InstancePerDependency();
                         break;
-                    case Lifetime.InstancePerMatchingLifetimeScope:
+                    case ServiceLifetime.InstancePerMatchingLifetimeScope:
                         registrationBuilder =
                             registrationBuilder.InstancePerMatchingLifetimeScope(lifeAttr?.Tags.ToArray() ?? throw new InvalidOperationException());
                         break;
-                    case Lifetime.InstancePerOwned:
+                    case ServiceLifetime.InstancePerOwned:
                         if (lifeAttr?.Owned is null) throw new InvalidOperationException("Owned type was null");
 
                         registrationBuilder = registrationBuilder.InstancePerOwned(lifeAttr.Owned);
@@ -186,18 +188,18 @@ public static class DependancyInjectionExtensions
                 if (intrAttr is null) 
                     continue;
 
-                if (intrAttr.Intercept is not (Intercept.Interface or Intercept.InterfaceAndClass))
+                if (intrAttr.InterceptionStrategy is not (InterceptionStrategy.Interface or InterceptionStrategy.InterfaceAndClass))
                     throw new NotSupportedException("Only interface interception is supported for command handlers");
                 
                 var intrAttrs = type.GetCustomAttributes<InterceptedByAttribute>(false);
 
-                foreach (var attr in intrAttrs)
+                foreach (var interceptor in intrAttrs.SelectMany(x => x.Interceptors))
                 {
                     registrationBuilder = registrationBuilder.EnableInterfaceInterceptors();
-                    registrationBuilder = attr.IsAsync
+                    registrationBuilder = IsInterceptorAsync(interceptor)
                         ? registrationBuilder.InterceptedBy(
-                            typeof(AsyncInterceptorAdapter<>).MakeGenericType(attr.Interceptor))
-                        : registrationBuilder.InterceptedBy(attr.Interceptor);
+                            typeof(AsyncInterceptorAdapter<>).MakeGenericType(interceptor))
+                        : registrationBuilder.InterceptedBy(interceptor);
                 }
             }
 
@@ -208,29 +210,29 @@ public static class DependancyInjectionExtensions
             {
                 switch (config.DefaultHandlerLifetime)
                 {
-                    case Lifetime.SingleInstance:
+                    case ServiceLifetime.SingleInstance:
                         builder.RegisterTypes(commandSet.ToArray())
                             .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<>)).AsImplementedInterfaces()
                             .SingleInstance();
                         break;
-                    case Lifetime.InstancePerRequest:
+                    case ServiceLifetime.InstancePerRequest:
                         builder.RegisterTypes(commandSet.ToArray())
                             .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<>)).AsImplementedInterfaces()
                             .InstancePerRequest();
                         break;
-                    case Lifetime.InstancePerLifetimeScope:
+                    case ServiceLifetime.InstancePerLifetimeScope:
                         builder.RegisterTypes(commandSet.ToArray())
                             .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<>)).AsImplementedInterfaces()
                             .InstancePerLifetimeScope();
                         break;
-                    case Lifetime.InstancePerMatchingLifetimeScope:
+                    case ServiceLifetime.InstancePerMatchingLifetimeScope:
                         throw new NotSupportedException();
-                    case Lifetime.InstancePerDependency:
+                    case ServiceLifetime.InstancePerDependency:
                         builder.RegisterTypes(commandSet.ToArray())
                             .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<>)).AsImplementedInterfaces()
                             .InstancePerDependency();
                         break;
-                    case Lifetime.InstancePerOwned:
+                    case ServiceLifetime.InstancePerOwned:
                         throw new NotSupportedException();
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -240,29 +242,29 @@ public static class DependancyInjectionExtensions
             {
                 switch (config.DefaultHandlerLifetime)
                 {
-                    case Lifetime.SingleInstance:
+                    case ServiceLifetime.SingleInstance:
                         builder.RegisterTypes(commandResultSet.ToArray())
                             .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<,>)).AsImplementedInterfaces()
                             .SingleInstance();
                         break;
-                    case Lifetime.InstancePerRequest:
+                    case ServiceLifetime.InstancePerRequest:
                         builder.RegisterTypes(commandResultSet.ToArray())
                             .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<,>)).AsImplementedInterfaces()
                             .InstancePerRequest();
                         break;
-                    case Lifetime.InstancePerLifetimeScope:
+                    case ServiceLifetime.InstancePerLifetimeScope:
                         builder.RegisterTypes(commandResultSet.ToArray())
                             .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<,>)).AsImplementedInterfaces()
                             .InstancePerLifetimeScope();
                         break;
-                    case Lifetime.InstancePerMatchingLifetimeScope:
+                    case ServiceLifetime.InstancePerMatchingLifetimeScope:
                         throw new NotSupportedException();
-                    case Lifetime.InstancePerDependency:
+                    case ServiceLifetime.InstancePerDependency:
                         builder.RegisterTypes(commandResultSet.ToArray())
                             .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<,>)).AsImplementedInterfaces()
                             .InstancePerDependency();
                         break;
-                    case Lifetime.InstancePerOwned:
+                    case ServiceLifetime.InstancePerOwned:
                         throw new NotSupportedException();
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -279,23 +281,23 @@ public static class DependancyInjectionExtensions
 
                 switch (scope)
                 {
-                    case Lifetime.SingleInstance:
+                    case ServiceLifetime.SingleInstance:
                         registrationBuilder = registrationBuilder.SingleInstance();
                         break;
-                    case Lifetime.InstancePerRequest:
+                    case ServiceLifetime.InstancePerRequest:
                         registrationBuilder = registrationBuilder.InstancePerRequest();
                         break;
-                    case Lifetime.InstancePerLifetimeScope:
+                    case ServiceLifetime.InstancePerLifetimeScope:
                         registrationBuilder = registrationBuilder.InstancePerLifetimeScope();
                         break;
-                    case Lifetime.InstancePerDependency:
+                    case ServiceLifetime.InstancePerDependency:
                         registrationBuilder = registrationBuilder.InstancePerDependency();
                         break;
-                    case Lifetime.InstancePerMatchingLifetimeScope:
+                    case ServiceLifetime.InstancePerMatchingLifetimeScope:
                         registrationBuilder =
                             registrationBuilder.InstancePerMatchingLifetimeScope(lifeAttr?.Tags.ToArray() ?? throw new InvalidOperationException());
                         break;
-                    case Lifetime.InstancePerOwned:
+                    case ServiceLifetime.InstancePerOwned:
                         if (lifeAttr?.Owned is null) throw new InvalidOperationException("Owned type was null");
 
                         registrationBuilder = registrationBuilder.InstancePerOwned(lifeAttr.Owned);
@@ -311,13 +313,13 @@ public static class DependancyInjectionExtensions
 
                 var intrAttrs = type.GetCustomAttributes<InterceptedByAttribute>(false);
 
-                foreach (var attr in intrAttrs)
+                foreach (var interceptor in intrAttrs.SelectMany(x => x.Interceptors))
                 {
                     registrationBuilder = registrationBuilder.EnableInterfaceInterceptors();
-                    registrationBuilder = attr.IsAsync
+                    registrationBuilder = IsInterceptorAsync(interceptor)
                         ? registrationBuilder.InterceptedBy(
-                            typeof(AsyncInterceptorAdapter<>).MakeGenericType(attr.Interceptor))
-                        : registrationBuilder.InterceptedBy(attr.Interceptor);
+                            typeof(AsyncInterceptorAdapter<>).MakeGenericType(interceptor))
+                        : registrationBuilder.InterceptedBy(interceptor);
                 }
             }
 
@@ -331,23 +333,23 @@ public static class DependancyInjectionExtensions
 
                 switch (scope)
                 {
-                    case Lifetime.SingleInstance:
+                    case ServiceLifetime.SingleInstance:
                         registrationBuilder = registrationBuilder.SingleInstance();
                         break;
-                    case Lifetime.InstancePerRequest:
+                    case ServiceLifetime.InstancePerRequest:
                         registrationBuilder = registrationBuilder.InstancePerRequest();
                         break;
-                    case Lifetime.InstancePerLifetimeScope:
+                    case ServiceLifetime.InstancePerLifetimeScope:
                         registrationBuilder = registrationBuilder.InstancePerLifetimeScope();
                         break;
-                    case Lifetime.InstancePerDependency:
+                    case ServiceLifetime.InstancePerDependency:
                         registrationBuilder = registrationBuilder.InstancePerDependency();
                         break;
-                    case Lifetime.InstancePerMatchingLifetimeScope:
+                    case ServiceLifetime.InstancePerMatchingLifetimeScope:
                         registrationBuilder =
                             registrationBuilder.InstancePerMatchingLifetimeScope(lifeAttr?.Tags.ToArray() ?? throw new InvalidOperationException());
                         break;
-                    case Lifetime.InstancePerOwned:
+                    case ServiceLifetime.InstancePerOwned:
                         if (lifeAttr?.Owned is null) throw new InvalidOperationException("Owned type was null");
 
                         registrationBuilder = registrationBuilder.InstancePerOwned(lifeAttr.Owned);
@@ -360,18 +362,18 @@ public static class DependancyInjectionExtensions
                 if (intrAttr is null) 
                     continue;
 
-                if (intrAttr.Intercept is not (Intercept.Interface or Intercept.InterfaceAndClass))
+                if (intrAttr.InterceptionStrategy is not (InterceptionStrategy.Interface or InterceptionStrategy.InterfaceAndClass))
                     throw new NotSupportedException("Only interface interception is supported for command handlers");
                 
                 var intrAttrs = type.GetCustomAttributes<InterceptedByAttribute>(false);
 
-                foreach (var attr in intrAttrs)
+                foreach (var interceptor in intrAttrs.SelectMany(x => x.Interceptors))
                 {
                     registrationBuilder = registrationBuilder.EnableInterfaceInterceptors();
-                    registrationBuilder = attr.IsAsync
+                    registrationBuilder = IsInterceptorAsync(interceptor)
                         ? registrationBuilder.InterceptedBy(
-                            typeof(AsyncInterceptorAdapter<>).MakeGenericType(attr.Interceptor))
-                        : registrationBuilder.InterceptedBy(attr.Interceptor);
+                            typeof(AsyncInterceptorAdapter<>).MakeGenericType(interceptor))
+                        : registrationBuilder.InterceptedBy(interceptor);
                 }
             }
 
@@ -382,29 +384,29 @@ public static class DependancyInjectionExtensions
             {
                 switch (config.DefaultHandlerLifetime)
                 {
-                    case Lifetime.SingleInstance:
+                    case ServiceLifetime.SingleInstance:
                         builder.RegisterTypes(syncCommandSet.ToArray())
                             .AsClosedInterfacesOf(typeof(ISyncCommandHandler<>)).AsImplementedInterfaces()
                             .SingleInstance();
                         break;
-                    case Lifetime.InstancePerRequest:
+                    case ServiceLifetime.InstancePerRequest:
                         builder.RegisterTypes(syncCommandSet.ToArray())
                             .AsClosedInterfacesOf(typeof(ISyncCommandHandler<>)).AsImplementedInterfaces()
                             .InstancePerRequest();
                         break;
-                    case Lifetime.InstancePerLifetimeScope:
+                    case ServiceLifetime.InstancePerLifetimeScope:
                         builder.RegisterTypes(syncCommandSet.ToArray())
                             .AsClosedInterfacesOf(typeof(ISyncCommandHandler<>)).AsImplementedInterfaces()
                             .InstancePerLifetimeScope();
                         break;
-                    case Lifetime.InstancePerMatchingLifetimeScope:
+                    case ServiceLifetime.InstancePerMatchingLifetimeScope:
                         throw new NotSupportedException();
-                    case Lifetime.InstancePerDependency:
+                    case ServiceLifetime.InstancePerDependency:
                         builder.RegisterTypes(syncCommandSet.ToArray())
                             .AsClosedInterfacesOf(typeof(ISyncCommandHandler<>)).AsImplementedInterfaces()
                             .InstancePerDependency();
                         break;
-                    case Lifetime.InstancePerOwned:
+                    case ServiceLifetime.InstancePerOwned:
                         throw new NotSupportedException();
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -414,29 +416,29 @@ public static class DependancyInjectionExtensions
             {
                 switch (config.DefaultHandlerLifetime)
                 {
-                    case Lifetime.SingleInstance:
+                    case ServiceLifetime.SingleInstance:
                         builder.RegisterTypes(syncCommandResultSet.ToArray())
                             .AsClosedInterfacesOf(typeof(ISyncCommandHandler<,>)).AsImplementedInterfaces()
                             .SingleInstance();
                         break;
-                    case Lifetime.InstancePerRequest:
+                    case ServiceLifetime.InstancePerRequest:
                         builder.RegisterTypes(syncCommandResultSet.ToArray())
                             .AsClosedInterfacesOf(typeof(ISyncCommandHandler<,>)).AsImplementedInterfaces()
                             .InstancePerRequest();
                         break;
-                    case Lifetime.InstancePerLifetimeScope:
+                    case ServiceLifetime.InstancePerLifetimeScope:
                         builder.RegisterTypes(syncCommandResultSet.ToArray())
                             .AsClosedInterfacesOf(typeof(ISyncCommandHandler<,>)).AsImplementedInterfaces()
                             .InstancePerLifetimeScope();
                         break;
-                    case Lifetime.InstancePerMatchingLifetimeScope:
+                    case ServiceLifetime.InstancePerMatchingLifetimeScope:
                         throw new NotSupportedException();
-                    case Lifetime.InstancePerDependency:
+                    case ServiceLifetime.InstancePerDependency:
                         builder.RegisterTypes(syncCommandResultSet.ToArray())
                             .AsClosedInterfacesOf(typeof(ISyncCommandHandler<,>)).AsImplementedInterfaces()
                             .InstancePerDependency();
                         break;
-                    case Lifetime.InstancePerOwned:
+                    case ServiceLifetime.InstancePerOwned:
                         throw new NotSupportedException();
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -446,21 +448,21 @@ public static class DependancyInjectionExtensions
         
         switch (config.DefaultHandlerFactoryLifetime)
         {
-            case Lifetime.SingleInstance:
+            case ServiceLifetime.SingleInstance:
                 builder.RegisterType<CommandHandlerFactory>().As<ICommandHandlerFactory>().SingleInstance();
                 break;
-            case Lifetime.InstancePerRequest:
+            case ServiceLifetime.InstancePerRequest:
                 builder.RegisterType<CommandHandlerFactory>().As<ICommandHandlerFactory>().InstancePerRequest();
                 break;
-            case Lifetime.InstancePerLifetimeScope:
+            case ServiceLifetime.InstancePerLifetimeScope:
                 builder.RegisterType<CommandHandlerFactory>().As<ICommandHandlerFactory>().InstancePerLifetimeScope();
                 break;
-            case Lifetime.InstancePerMatchingLifetimeScope:
+            case ServiceLifetime.InstancePerMatchingLifetimeScope:
                 throw new NotSupportedException();
-            case Lifetime.InstancePerDependency:
+            case ServiceLifetime.InstancePerDependency:
                 builder.RegisterType<CommandHandlerFactory>().As<ICommandHandlerFactory>().InstancePerDependency();
                 break;
-            case Lifetime.InstancePerOwned:
+            case ServiceLifetime.InstancePerOwned:
                 throw new NotSupportedException();
             default:
                 throw new ArgumentOutOfRangeException();
@@ -561,21 +563,21 @@ public static class DependancyInjectionExtensions
 
                 switch (scope)
                 {
-                    case Lifetime.SingleInstance:
+                    case ServiceLifetime.SingleInstance:
                         closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, type));
                         break;
-                    case Lifetime.InstancePerRequest:
+                    case ServiceLifetime.InstancePerRequest:
                         closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));
                         break;
-                    case Lifetime.InstancePerLifetimeScope:
+                    case ServiceLifetime.InstancePerLifetimeScope:
                         closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));;
                         break;
-                    case Lifetime.InstancePerDependency:
+                    case ServiceLifetime.InstancePerDependency:
                         closedGenericTypes.ForEach(x => serviceCollection.AddTransient(x, type));
                         break;
-                    case Lifetime.InstancePerMatchingLifetimeScope:
+                    case ServiceLifetime.InstancePerMatchingLifetimeScope:
                         throw new NotSupportedException("Supported only when using Autofac.");
-                    case Lifetime.InstancePerOwned:
+                    case ServiceLifetime.InstancePerOwned:
                         throw new NotSupportedException("Supported only when using Autofac.");
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -592,21 +594,21 @@ public static class DependancyInjectionExtensions
 
                 switch (scope)
                 {
-                    case Lifetime.SingleInstance:
+                    case ServiceLifetime.SingleInstance:
                         closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, type));
                         break;
-                    case Lifetime.InstancePerRequest:
+                    case ServiceLifetime.InstancePerRequest:
                         closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));
                         break;
-                    case Lifetime.InstancePerLifetimeScope:
+                    case ServiceLifetime.InstancePerLifetimeScope:
                         closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));
                         break;
-                    case Lifetime.InstancePerDependency:
+                    case ServiceLifetime.InstancePerDependency:
                         closedGenericTypes.ForEach(x => serviceCollection.AddTransient(x, type));
                         break;
-                    case Lifetime.InstancePerMatchingLifetimeScope:
+                    case ServiceLifetime.InstancePerMatchingLifetimeScope:
                         throw new NotSupportedException("Supported only when using Autofac.");
-                    case Lifetime.InstancePerOwned:
+                    case ServiceLifetime.InstancePerOwned:
                         throw new NotSupportedException("Supported only when using Autofac.");
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -624,20 +626,20 @@ public static class DependancyInjectionExtensions
 
                     switch (config.DefaultHandlerLifetime)
                     {
-                        case Lifetime.SingleInstance:
+                        case ServiceLifetime.SingleInstance:
                             closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, command));
                             break;
-                        case Lifetime.InstancePerRequest:
+                        case ServiceLifetime.InstancePerRequest:
                             closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, command));
                             break;
-                        case Lifetime.InstancePerLifetimeScope:
+                        case ServiceLifetime.InstancePerLifetimeScope:
                             closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, command));
                             break;
-                        case Lifetime.InstancePerMatchingLifetimeScope:
+                        case ServiceLifetime.InstancePerMatchingLifetimeScope:
                             throw new NotSupportedException("Supported only when using Autofac.");
-                        case Lifetime.InstancePerOwned:
+                        case ServiceLifetime.InstancePerOwned:
                             throw new NotSupportedException("Supported only when using Autofac.");
-                        case Lifetime.InstancePerDependency:
+                        case ServiceLifetime.InstancePerDependency:
                             closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, command));
                             break;
                         default:
@@ -654,20 +656,20 @@ public static class DependancyInjectionExtensions
 
                     switch (config.DefaultHandlerLifetime)
                     {
-                        case Lifetime.SingleInstance:
+                        case ServiceLifetime.SingleInstance:
                             closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, command));
                             break;
-                        case Lifetime.InstancePerRequest:
+                        case ServiceLifetime.InstancePerRequest:
                             closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, command));
                             break;
-                        case Lifetime.InstancePerLifetimeScope:
+                        case ServiceLifetime.InstancePerLifetimeScope:
                             closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, command));
                             break;
-                        case Lifetime.InstancePerMatchingLifetimeScope:
+                        case ServiceLifetime.InstancePerMatchingLifetimeScope:
                             throw new NotSupportedException("Supported only when using Autofac.");
-                        case Lifetime.InstancePerOwned:
+                        case ServiceLifetime.InstancePerOwned:
                             throw new NotSupportedException("Supported only when using Autofac.");
-                        case Lifetime.InstancePerDependency:
+                        case ServiceLifetime.InstancePerDependency:
                             closedGenericTypes.ForEach(x => serviceCollection.AddTransient(x, command));
                             break;
                         default:
@@ -686,21 +688,21 @@ public static class DependancyInjectionExtensions
 
                 switch (scope)
                 {
-                    case Lifetime.SingleInstance:
+                    case ServiceLifetime.SingleInstance:
                         closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, type));
                         break;
-                    case Lifetime.InstancePerRequest:
+                    case ServiceLifetime.InstancePerRequest:
                         closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));
                         break;
-                    case Lifetime.InstancePerLifetimeScope:
+                    case ServiceLifetime.InstancePerLifetimeScope:
                         closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));
                         break;
-                    case Lifetime.InstancePerDependency:
+                    case ServiceLifetime.InstancePerDependency:
                         closedGenericTypes.ForEach(x => serviceCollection.AddTransient(x, type));
                         break;
-                    case Lifetime.InstancePerMatchingLifetimeScope:
+                    case ServiceLifetime.InstancePerMatchingLifetimeScope:
                         throw new NotSupportedException("Supported only when using Autofac.");
-                    case Lifetime.InstancePerOwned:
+                    case ServiceLifetime.InstancePerOwned:
                         throw new NotSupportedException("Supported only when using Autofac.");
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -717,21 +719,21 @@ public static class DependancyInjectionExtensions
 
                 switch (scope)
                 {
-                    case Lifetime.SingleInstance:
+                    case ServiceLifetime.SingleInstance:
                         closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, type));
                         break;
-                    case Lifetime.InstancePerRequest:
+                    case ServiceLifetime.InstancePerRequest:
                         closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));
                         break;
-                    case Lifetime.InstancePerLifetimeScope:
+                    case ServiceLifetime.InstancePerLifetimeScope:
                         closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));
                         break;
-                    case Lifetime.InstancePerDependency:
+                    case ServiceLifetime.InstancePerDependency:
                         closedGenericTypes.ForEach(x => serviceCollection.AddTransient(x, type));
                         break;
-                    case Lifetime.InstancePerMatchingLifetimeScope:
+                    case ServiceLifetime.InstancePerMatchingLifetimeScope:
                         throw new NotSupportedException("Supported only when using Autofac.");
-                    case Lifetime.InstancePerOwned:
+                    case ServiceLifetime.InstancePerOwned:
                         throw new NotSupportedException("Supported only when using Autofac.");
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -749,20 +751,20 @@ public static class DependancyInjectionExtensions
 
                     switch (config.DefaultHandlerLifetime)
                     {
-                        case Lifetime.SingleInstance:
+                        case ServiceLifetime.SingleInstance:
                             closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, command));
                             break;
-                        case Lifetime.InstancePerRequest:
+                        case ServiceLifetime.InstancePerRequest:
                             closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, command));
                             break;
-                        case Lifetime.InstancePerLifetimeScope:
+                        case ServiceLifetime.InstancePerLifetimeScope:
                             closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, command));
                             break;
-                        case Lifetime.InstancePerMatchingLifetimeScope:
+                        case ServiceLifetime.InstancePerMatchingLifetimeScope:
                             throw new NotSupportedException("Supported only when using Autofac.");
-                        case Lifetime.InstancePerOwned:
+                        case ServiceLifetime.InstancePerOwned:
                             throw new NotSupportedException("Supported only when using Autofac.");
-                        case Lifetime.InstancePerDependency:
+                        case ServiceLifetime.InstancePerDependency:
                             closedGenericTypes.ForEach(x => serviceCollection.AddTransient(x, command));
                             break;
                         default:
@@ -779,20 +781,20 @@ public static class DependancyInjectionExtensions
 
                     switch (config.DefaultHandlerLifetime)
                     {
-                        case Lifetime.SingleInstance:
+                        case ServiceLifetime.SingleInstance:
                             closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, command));
                             break;
-                        case Lifetime.InstancePerRequest:
+                        case ServiceLifetime.InstancePerRequest:
                             closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, command));
                             break;
-                        case Lifetime.InstancePerLifetimeScope:
+                        case ServiceLifetime.InstancePerLifetimeScope:
                             closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, command));
                             break;
-                        case Lifetime.InstancePerMatchingLifetimeScope:
+                        case ServiceLifetime.InstancePerMatchingLifetimeScope:
                             throw new NotSupportedException("Supported only when using Autofac.");
-                        case Lifetime.InstancePerOwned:
+                        case ServiceLifetime.InstancePerOwned:
                             throw new NotSupportedException("Supported only when using Autofac.");
-                        case Lifetime.InstancePerDependency:
+                        case ServiceLifetime.InstancePerDependency:
                             closedGenericTypes.ForEach(x => serviceCollection.AddTransient(x, command));
                             break;
                         default:
@@ -804,4 +806,9 @@ public static class DependancyInjectionExtensions
         
         return serviceCollection;
     }
+    
+    /// <summary>
+    /// Whether given interceptor is an async interceptor.
+    /// </summary>
+    private static bool IsInterceptorAsync(Type interceptor) => interceptor.GetInterfaces().Any(x => x == typeof(IAsyncInterceptor));
 }

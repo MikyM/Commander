@@ -5,6 +5,6 @@
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
 [PublicAPI]
-public class SkipHandlerRegistrationAttribute : Attribute
+public sealed class SkipHandlerRegistrationAttribute : Attribute
 {
 }

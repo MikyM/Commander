@@ -1,8 +1,8 @@
-﻿using AttributeBasedRegistration;
-using Autofac;
+﻿using Autofac;
 using Autofac.Features.Decorators;
 using Microsoft.Extensions.DependencyInjection;
 using MikyM.Utilities.Extensions;
+using ServiceLifetime = AttributeBasedRegistration.ServiceLifetime;
 
 namespace ResultCommander;
 
@@ -30,11 +30,11 @@ public sealed class ResultCommanderConfiguration
     /// <summary>
     /// Gets or sets the default lifetime of command handlers.
     /// </summary>
-    public Lifetime DefaultHandlerLifetime { get; set; } = Lifetime.InstancePerLifetimeScope;
+    public ServiceLifetime DefaultHandlerLifetime { get; set; } = ServiceLifetime.InstancePerLifetimeScope;
     /// <summary>
     /// Gets or sets the default lifetime of <see cref="ICommandHandlerFactory"/>.
     /// </summary>
-    public Lifetime DefaultHandlerFactoryLifetime { get; set; } = Lifetime.InstancePerLifetimeScope;
+    public ServiceLifetime DefaultHandlerFactoryLifetime { get; set; } = ServiceLifetime.InstancePerLifetimeScope;
     
     /// <summary>
     /// Registers a decorator for command handlers with the <see cref="ContainerBuilder"/>.
