@@ -139,7 +139,7 @@ public static class DependancyInjectionExtensions
 
                 var intrAttrs = type.GetCustomAttributes<InterceptedByAttribute>(false);
 
-                foreach (var interceptor in intrAttrs.SelectMany(x => x.Interceptors))
+                foreach (var interceptor in intrAttrs.SelectMany(x => x.Interceptors).Concat(intrAttr.Interceptors ?? Type.EmptyTypes).Distinct())
                 {
                     registrationBuilder = registrationBuilder.EnableInterfaceInterceptors();
                     registrationBuilder = IsInterceptorAsync(interceptor)
@@ -193,7 +193,7 @@ public static class DependancyInjectionExtensions
                 
                 var intrAttrs = type.GetCustomAttributes<InterceptedByAttribute>(false);
 
-                foreach (var interceptor in intrAttrs.SelectMany(x => x.Interceptors))
+                foreach (var interceptor in intrAttrs.SelectMany(x => x.Interceptors).Concat(intrAttr.Interceptors ?? Type.EmptyTypes).Distinct())
                 {
                     registrationBuilder = registrationBuilder.EnableInterfaceInterceptors();
                     registrationBuilder = IsInterceptorAsync(interceptor)
@@ -313,7 +313,7 @@ public static class DependancyInjectionExtensions
 
                 var intrAttrs = type.GetCustomAttributes<InterceptedByAttribute>(false);
 
-                foreach (var interceptor in intrAttrs.SelectMany(x => x.Interceptors))
+                foreach (var interceptor in intrAttrs.SelectMany(x => x.Interceptors).Concat(intrAttr.Interceptors ?? Type.EmptyTypes).Distinct())
                 {
                     registrationBuilder = registrationBuilder.EnableInterfaceInterceptors();
                     registrationBuilder = IsInterceptorAsync(interceptor)
@@ -367,7 +367,7 @@ public static class DependancyInjectionExtensions
                 
                 var intrAttrs = type.GetCustomAttributes<InterceptedByAttribute>(false);
 
-                foreach (var interceptor in intrAttrs.SelectMany(x => x.Interceptors))
+                foreach (var interceptor in intrAttrs.SelectMany(x => x.Interceptors).Concat(intrAttr.Interceptors ?? Type.EmptyTypes).Distinct())
                 {
                     registrationBuilder = registrationBuilder.EnableInterfaceInterceptors();
                     registrationBuilder = IsInterceptorAsync(interceptor)
