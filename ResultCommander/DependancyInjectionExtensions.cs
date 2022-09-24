@@ -128,7 +128,7 @@ public static class DependancyInjectionExtensions
         {
             if (attribute.DecoratorType.IsGenericType && attribute.DecoratorType.IsGenericTypeDefinition)
             {
-                if (!serviceType.IsGenericType && serviceType!.IsGenericTypeDefinition)
+                if (!serviceType.IsGenericTypeDefinition)
                 {
                     genericDecorationConditions ??= new Dictionary<Type, Dictionary<Type, List<Type>>>();
                     
