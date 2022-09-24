@@ -333,6 +333,44 @@ public static class DependancyInjectionExtensions
     /// <returns>Current <see cref="ContainerBuilder"/> instance.</returns>
     public static ContainerBuilder AddResultCommander(this ContainerBuilder builder, IEnumerable<Type> assembliesContainingTypesToScan, Action<ResultCommanderConfiguration>? options = null)
         => AddResultCommander(builder, assembliesContainingTypesToScan.Select(x => x.Assembly).Distinct(), options);
+
+    /// <summary>
+    /// Registers command handlers with the <see cref="ContainerBuilder"/>.
+    /// </summary>
+    /// <param name="builder">Current instance of <see cref="ContainerBuilder"/>.</param>
+    /// <param name="assembliesContainingTypesToScan">Assemblies containing types to scan for handlers.</param>
+    /// <returns>Current <see cref="ContainerBuilder"/> instance.</returns>
+    public static ContainerBuilder AddResultCommander(this ContainerBuilder builder, params Type[] assembliesContainingTypesToScan)
+        => AddResultCommander(builder, assembliesContainingTypesToScan, null);
+    
+    /// <summary>
+    /// Registers command handlers with the <see cref="ContainerBuilder"/>.
+    /// </summary>
+    /// <param name="builder">Current instance of <see cref="ContainerBuilder"/>.</param>
+    /// <param name="assembliesToScan">Assemblies to scan for handlers.</param>
+    /// <returns>Current <see cref="ContainerBuilder"/> instance.</returns>
+    public static ContainerBuilder AddResultCommander(this ContainerBuilder builder, params Assembly[] assembliesToScan)
+        => AddResultCommander(builder, assembliesToScan, null);
+    
+    /// <summary>
+    /// Registers command handlers with the <see cref="ContainerBuilder"/>.
+    /// </summary>
+    /// <param name="builder">Current instance of <see cref="ContainerBuilder"/>.</param>
+    /// <param name="options">Configuration.</param>
+    /// <param name="assembliesContainingTypesToScan">Assemblies containing types to scan for services.</param>
+    /// <returns>Current <see cref="ContainerBuilder"/> instance.</returns>
+    public static ContainerBuilder AddResultCommander(this ContainerBuilder builder, Action<ResultCommanderConfiguration> options, params Type[] assembliesContainingTypesToScan)
+        => AddResultCommander(builder, assembliesContainingTypesToScan, options);
+    
+    /// <summary>
+    /// Registers command handlers with the <see cref="ContainerBuilder"/>.
+    /// </summary>
+    /// <param name="builder">Current instance of <see cref="ContainerBuilder"/>.</param>
+    /// <param name="options">Configuration.</param>
+    /// <param name="assembliesToScan">Assemblies to scan for services.</param>
+    /// <returns>Current <see cref="ContainerBuilder"/> instance.</returns>
+    public static ContainerBuilder AddResultCommander(this ContainerBuilder builder, Action<ResultCommanderConfiguration> options, params Assembly[] assembliesToScan)
+        => AddResultCommander(builder, assembliesToScan, options);
     
     /// <summary>
     /// Registers command handlers with the <see cref="ContainerBuilder"/>.
@@ -363,7 +401,7 @@ public static class DependancyInjectionExtensions
     }
 
     /// <summary>
-    /// Registers command handlers with the <see cref="ContainerBuilder"/>.
+    /// Registers command handlers with the <see cref="IServiceCollection"/>.
     /// </summary>
     /// <param name="serviceCollection">Current instance of <see cref="IServiceCollection"/>.</param>
     /// <param name="assembliesContainingTypesToScan">Assemblies containing types to scan for handlers.</param>
@@ -374,7 +412,45 @@ public static class DependancyInjectionExtensions
         => AddResultCommander(serviceCollection, assembliesContainingTypesToScan.Select(x => x.Assembly).Distinct(), options);
         
     /// <summary>
-    /// Registers command handlers with the <see cref="ContainerBuilder"/>.
+    /// Registers command handlers with the <see cref="IServiceCollection"/>.
+    /// </summary>
+    /// <param name="serviceCollection">Current instance of <see cref="ContainerBuilder"/>.</param>
+    /// <param name="assembliesContainingTypesToScan">Assemblies containing types to scan for handlers.</param>
+    /// <returns>Current <see cref="ContainerBuilder"/> instance.</returns>
+    public static IServiceCollection AddResultCommander(this IServiceCollection serviceCollection, params Type[] assembliesContainingTypesToScan)
+        => AddResultCommander(serviceCollection, assembliesContainingTypesToScan, null);
+    
+    /// <summary>
+    /// Registers command handlers with the <see cref="IServiceCollection"/>.
+    /// </summary>
+    /// <param name="serviceCollection">Current service collection instance.</param>
+    /// <param name="options">Configuration.</param>
+    /// <param name="assembliesContainingTypesToScan">Assemblies containing types to scan for services.</param>
+    /// <returns>Current <see cref="ContainerBuilder"/> instance.</returns>
+    public static IServiceCollection AddResultCommander(this IServiceCollection serviceCollection, Action<ResultCommanderConfiguration> options, params Type[] assembliesContainingTypesToScan)
+        => AddResultCommander(serviceCollection, assembliesContainingTypesToScan, options);
+    
+    /// <summary>
+    /// Registers command handlers with the <see cref="IServiceCollection"/>.
+    /// </summary>
+    /// <param name="serviceCollection">Current service collection instance.</param>
+    /// <param name="options">Configuration.</param>
+    /// <param name="assembliesToScan">Assemblies to scan for services.</param>
+    /// <returns>Current <see cref="ContainerBuilder"/> instance.</returns>
+    public static IServiceCollection AddResultCommander(this IServiceCollection serviceCollection, Action<ResultCommanderConfiguration> options, params Assembly[] assembliesToScan)
+        => AddResultCommander(serviceCollection, assembliesToScan, options);
+    
+    /// <summary>
+    /// Registers command handlers with the <see cref="IServiceCollection"/>.
+    /// </summary>
+    /// <param name="serviceCollection">Current instance of <see cref="IServiceCollection"/>.</param>
+    /// <param name="assembliesToScan">Assemblies to scan for handlers.</param>
+    /// <returns>Current <see cref="ContainerBuilder"/> instance.</returns>
+    public static IServiceCollection AddResultCommander(this IServiceCollection serviceCollection, params Assembly[] assembliesToScan)
+        => AddResultCommander(serviceCollection, assembliesToScan, null);
+    
+    /// <summary>
+    /// Registers command handlers with the <see cref="IServiceCollection"/>.
     /// </summary>
     /// <param name="serviceCollection">Current instance of <see cref="IServiceCollection"/>.</param>
     /// <param name="assembliesToScaAn">Assemblies to scan for handlers.</param>
