@@ -31,6 +31,9 @@ public static class DependancyInjectionExtensions
     private static bool ShouldIgnore(this Type type)
         => type.GetCustomAttribute<SkipHandlerRegistrationAttribute>(false) is not null;
     
+    private static bool IsAnyAsyncHandler(this Type type)
+            => (type.IsAsyncHandler() || type.IsAsyncResultHandler()) && !ShouldIgnore(type);
+    
     private static bool IsAsyncHandler(this Type type)
         => type.GetInterfaces().Any(y =>
                y.IsGenericType && y.GetGenericTypeDefinition() == _asyncHandlerType) &&
@@ -52,6 +55,9 @@ public static class DependancyInjectionExtensions
     
     private static bool IsAsyncNonCustomizedHandler(this Type type)
         => IsAsyncHandler(type) && !HasCustomAttributes(type);
+    
+    private static bool IsAnySyncHandler(this Type type)
+        => (type.IsSyncHandler() || type.IsSyncResultHandler()) && !ShouldIgnore(type);
     
     private static bool IsSyncHandler(this Type type)
         => type.GetInterfaces().Any(y =>
@@ -349,8 +355,8 @@ public static class DependancyInjectionExtensions
         foreach (var assembly in assembliesToScan)
         {
             var types = assembly.GetTypes();
-            builder.HandleAsynchronousHandlers(types.Where(IsAsyncHandler).ToList(), config);
-            builder.HandleSynchronousHandlers(types.Where(IsSyncHandler).ToList(), config);
+            builder.HandleAsynchronousHandlers(types.Where(IsAnyAsyncHandler).ToList(), config);
+            builder.HandleSynchronousHandlers(types.Where(IsAnySyncHandler).ToList(), config);
         }
 
         return builder;
