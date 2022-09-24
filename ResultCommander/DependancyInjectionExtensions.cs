@@ -113,8 +113,8 @@ public static class DependancyInjectionExtensions
     
     private static ContainerBuilder HandleDecoration(this ContainerBuilder builder, Type type)
     {
-        var decAttrs = type.GetCustomAttributes<DecoratedByAttribute>(false).ToList();
-        if (!decAttrs.Any())
+        var decoratorAttributes = type.GetCustomAttributes<DecoratedByAttribute>(false).ToList();
+        if (!decoratorAttributes.Any())
             return builder;
 
         var serviceType = type.GetInterfaces().FirstOrDefault(x => x.IsHandlerInterface());
@@ -122,14 +122,42 @@ public static class DependancyInjectionExtensions
         if (serviceType is null)
             throw new InvalidOperationException("Couldn't fine the proper service type for a handler");
 
-        foreach (var decAttr in decAttrs.OrderBy(x => x.RegistrationOrder))
+        Dictionary<Type,Dictionary<Type, List<Type>>>? genericDecorationConditions = null;
+
+        foreach (var attribute in decoratorAttributes.OrderBy(x => x.RegistrationOrder))
         {
-            if (serviceType.IsGenericType && serviceType.IsGenericTypeDefinition)
-                throw new InvalidOperationException(
-                    "Can't register an non-open generic type decorator for an open generic type service");
-                            
-            builder.RegisterDecorator(decAttr.DecoratorType, serviceType);
+            if (attribute.DecoratorType.IsGenericType && attribute.DecoratorType.IsGenericTypeDefinition)
+            {
+                if (!serviceType.IsGenericType && serviceType!.IsGenericTypeDefinition)
+                {
+                    genericDecorationConditions ??= new Dictionary<Type, Dictionary<Type, List<Type>>>();
+                    
+                    var typeDef = serviceType.GetGenericTypeDefinition();
+                    genericDecorationConditions.TryAdd(typeDef, new Dictionary<Type, List<Type>>());
+                    genericDecorationConditions[typeDef].TryAdd(attribute.DecoratorType, new List<Type>());
+                    genericDecorationConditions[typeDef][attribute.DecoratorType].Add(serviceType);
+                }
+                else
+                {
+                    builder.RegisterGenericDecorator(attribute.DecoratorType, serviceType);
+                }
+            }
+            else
+            {
+                if (serviceType.IsGenericType && serviceType.IsGenericTypeDefinition)
+                    throw new InvalidOperationException(
+                        "Can't register an non-open generic type decorator for an open generic type service");
+
+                builder.RegisterDecorator(attribute.DecoratorType, serviceType);
+            }
         }
+
+        if (genericDecorationConditions is null)
+            return builder;
+        
+        foreach (var (openGenericHandler, decoratorData) in genericDecorationConditions)
+        foreach (var (decorator, servicesTypes) in decoratorData)
+            builder.RegisterGenericDecorator(decorator, openGenericHandler, x => servicesTypes.Contains(x.ServiceType));
 
         return builder;
     }
