@@ -98,9 +98,10 @@ public static class DependancyInjectionExtensions
                 
         var intrAttrs = type.GetCustomAttributes<InterceptedByAttribute>(false);
 
+        builder = builder.EnableInterfaceInterceptors();
+        
         foreach (var interceptor in intrAttrs.OrderByDescending(x => x.RegistrationOrder).Select(x => x.Interceptor).Distinct())
         {
-            builder = builder.EnableInterfaceInterceptors();
             builder = interceptor.IsAsyncInterceptor()
                 ? builder.InterceptedBy(
                     typeof(AsyncInterceptorAdapter<>).MakeGenericType(interceptor))
