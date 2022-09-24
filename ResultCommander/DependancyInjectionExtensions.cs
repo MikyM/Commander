@@ -126,6 +126,9 @@ public static class DependancyInjectionExtensions
 
         foreach (var attribute in decoratorAttributes.OrderBy(x => x.RegistrationOrder))
         {
+            if (attribute.DecoratorType.GetCustomAttribute<SkipDecoratorRegistrationAttribute>() is not null)
+                continue;
+            
             if (attribute.DecoratorType.IsGenericType && attribute.DecoratorType.IsGenericTypeDefinition)
             {
                 if (!serviceType.IsGenericTypeDefinition)
@@ -154,10 +157,13 @@ public static class DependancyInjectionExtensions
 
         if (genericDecorationConditions is null)
             return builder;
-        
+
         foreach (var (openGenericHandler, decoratorData) in genericDecorationConditions)
         foreach (var (decorator, servicesTypes) in decoratorData)
-            builder.RegisterGenericDecorator(decorator, openGenericHandler, x => servicesTypes.Contains(x.ServiceType));
+            builder.RegisterGenericDecorator(decorator, openGenericHandler,
+                x => servicesTypes.Contains(ProxyUtil.IsProxyType(x.ServiceType) && x.ServiceType.IsClass
+                    ? x.ServiceType.BaseType!
+                    : x.ServiceType));
 
         return builder;
     }
