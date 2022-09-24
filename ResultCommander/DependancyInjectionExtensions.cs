@@ -2,7 +2,9 @@
 using AttributeBasedRegistration;
 using AttributeBasedRegistration.Attributes;
 using Autofac;
+using Autofac.Builder;
 using Autofac.Extras.DynamicProxy;
+using Autofac.Features.Scanning;
 using Castle.DynamicProxy;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -16,6 +18,306 @@ namespace ResultCommander;
 [PublicAPI]
 public static class DependancyInjectionExtensions
 {
+    private static Type _asyncResultHandlerType = typeof(IAsyncCommandHandler<,>);
+    private static Type _asyncHandlerType = typeof(IAsyncCommandHandler<>);
+    private static Type _syncResultHandlerType = typeof(ISyncCommandHandler<,>);
+    private static Type _syncHandlerType = typeof(ISyncCommandHandler<>);
+    
+    private static bool HasCustomAttributes(this Type type)
+        => type.GetCustomAttribute<LifetimeAttribute>(false) is not null ||
+           type.GetCustomAttributes<DecoratedByAttribute>(false).Any() ||
+           type.GetCustomAttributes<InterceptedByAttribute>(false).Any();
+
+    private static bool ShouldIgnore(this Type type)
+        => type.GetCustomAttribute<SkipHandlerRegistrationAttribute>(false) is not null;
+    
+    private static bool IsAsyncHandler(this Type type)
+        => type.GetInterfaces().Any(y =>
+               y.IsGenericType && y.GetGenericTypeDefinition() == _asyncHandlerType) &&
+           type.IsClass && !type.IsAbstract && !ShouldIgnore(type);
+    
+    private static bool IsAsyncResultHandler(this Type type)
+        => type.GetInterfaces().Any(y =>
+               y.IsGenericType && y.GetGenericTypeDefinition() == _asyncResultHandlerType) &&
+           type.IsClass && !type.IsAbstract && !ShouldIgnore(type);
+
+    private static bool IsAsyncResultCustomizedHandler(this Type type)
+        => IsAsyncResultHandler(type) && HasCustomAttributes(type);
+    
+    private static bool IsAsyncCustomizedHandler(this Type type)
+        => IsAsyncHandler(type) && HasCustomAttributes(type);
+    
+    private static bool IsAsyncResultNonCustomizedHandler(this Type type)
+        => IsAsyncResultHandler(type) && !HasCustomAttributes(type);
+    
+    private static bool IsAsyncNonCustomizedHandler(this Type type)
+        => IsAsyncHandler(type) && !HasCustomAttributes(type);
+    
+    private static bool IsSyncHandler(this Type type)
+        => type.GetInterfaces().Any(y =>
+               y.IsGenericType && y.GetGenericTypeDefinition() == _syncHandlerType) &&
+           type.IsClass && !type.IsAbstract && !ShouldIgnore(type);
+    
+    private static bool IsSyncResultHandler(this Type type)
+        => type.GetInterfaces().Any(y =>
+               y.IsGenericType && y.GetGenericTypeDefinition() == _syncResultHandlerType) &&
+           type.IsClass && !type.IsAbstract && !ShouldIgnore(type);
+
+    private static bool IsSyncResultCustomizedHandler(this Type type)
+        => IsSyncResultHandler(type) && HasCustomAttributes(type);
+    
+    private static bool IsSyncCustomizedHandler(this Type type)
+        => IsSyncHandler(type) && HasCustomAttributes(type);
+    
+    private static bool IsSyncResultNonCustomizedHandler(this Type type)
+        => IsSyncResultHandler(type) && !HasCustomAttributes(type);
+    
+    private static bool IsSyncNonCustomizedHandler(this Type type)
+        => IsSyncHandler(type) && !HasCustomAttributes(type);
+
+    private static bool IsHandlerInterface(this Type type)
+        => type.IsInterface && type.IsGenericType && (type.GetGenericTypeDefinition() == _syncHandlerType ||
+                                  type.GetGenericTypeDefinition() == _syncResultHandlerType ||
+                                  type.GetGenericTypeDefinition() == _asyncHandlerType ||
+                                  type.GetGenericTypeDefinition() == _asyncResultHandlerType);
+
+    private static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> HandleInterception(this IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> builder, Type type)
+    {
+        var intrAttr = type.GetCustomAttribute<EnableInterceptionAttribute>(false);
+        if (intrAttr is null)
+            return builder;
+
+        if (intrAttr.InterceptionStrategy is not (InterceptionStrategy.Interface))
+            throw new NotSupportedException("Only interface interception is supported for command handlers");
+                
+        var intrAttrs = type.GetCustomAttributes<InterceptedByAttribute>(false);
+
+        foreach (var interceptor in intrAttrs.OrderByDescending(x => x.RegistrationOrder).Select(x => x.Interceptor).Distinct())
+        {
+            builder = builder.EnableInterfaceInterceptors();
+            builder = interceptor.IsAsyncInterceptor()
+                ? builder.InterceptedBy(
+                    typeof(AsyncInterceptorAdapter<>).MakeGenericType(interceptor))
+                : builder.InterceptedBy(interceptor);
+        }
+
+        return builder;
+    }
+    
+    private static ContainerBuilder HandleDecoration(this ContainerBuilder builder, Type type)
+    {
+        var decAttrs = type.GetCustomAttributes<DecoratedByAttribute>(false).ToList();
+        if (!decAttrs.Any())
+            return builder;
+
+        var serviceType = type.GetInterfaces().FirstOrDefault(x => x.IsHandlerInterface());
+
+        if (serviceType is null)
+            throw new InvalidOperationException("Couldn't fine the proper service type for a handler");
+
+        foreach (var decAttr in decAttrs.OrderBy(x => x.RegistrationOrder))
+        {
+            if (serviceType.IsGenericType && serviceType.IsGenericTypeDefinition)
+                throw new InvalidOperationException(
+                    "Can't register an non-open generic type decorator for an open generic type service");
+                            
+            builder.RegisterDecorator(decAttr.DecoratorType, serviceType);
+        }
+
+        return builder;
+    }
+    
+    private static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> HandleLifetime(this IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> builder, ServiceLifetime lifetime, LifetimeAttribute? attribute)
+    {
+        switch (lifetime)
+        {
+            case ServiceLifetime.SingleInstance:
+                builder = builder.SingleInstance();
+                break;
+            case ServiceLifetime.InstancePerRequest:
+                builder = builder.InstancePerRequest();
+                break;
+            case ServiceLifetime.InstancePerLifetimeScope:
+                builder = builder.InstancePerLifetimeScope();
+                break;
+            case ServiceLifetime.InstancePerDependency:
+                builder = builder.InstancePerDependency();
+                break;
+            case ServiceLifetime.InstancePerMatchingLifetimeScope:
+                builder =
+                    builder.InstancePerMatchingLifetimeScope(attribute?.Tags?.ToArray() ?? throw new InvalidOperationException());
+                break;
+            case ServiceLifetime.InstancePerOwned:
+                if (attribute?.Owned is null) throw new InvalidOperationException("Owned type was null");
+
+                builder = builder.InstancePerOwned(attribute.Owned);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }   
+        
+        return builder;
+    }
+
+    private static ContainerBuilder HandleNonCustomizedRegistration(this ContainerBuilder builder,
+        List<Type> types, Type handlerServiceType, ResultCommanderConfiguration config)
+    {
+        if (!types.Any())
+            return builder;
+        
+        switch (config.DefaultHandlerLifetime)
+        {
+            case ServiceLifetime.SingleInstance:
+                builder.RegisterTypes(types.ToArray())
+                    .AsClosedInterfacesOf(handlerServiceType).SingleInstance();
+                break;
+            case ServiceLifetime.InstancePerRequest:
+                builder.RegisterTypes(types.ToArray())
+                    .AsClosedInterfacesOf(handlerServiceType).InstancePerRequest();
+                break;
+            case ServiceLifetime.InstancePerLifetimeScope:
+                builder.RegisterTypes(types.ToArray())
+                    .AsClosedInterfacesOf(handlerServiceType).InstancePerLifetimeScope();
+                break;
+            case ServiceLifetime.InstancePerMatchingLifetimeScope:
+                throw new NotSupportedException();
+            case ServiceLifetime.InstancePerDependency:
+                builder.RegisterTypes(types.ToArray())
+                    .AsClosedInterfacesOf(handlerServiceType).InstancePerDependency();
+                break;
+            case ServiceLifetime.InstancePerOwned:
+                throw new NotSupportedException();
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+        
+        return builder;
+    }
+    
+    private static ContainerBuilder HandleCustomizedRegistration(this ContainerBuilder builder, IEnumerable<Type> types, Type handlerServiceType, ResultCommanderConfiguration config)
+    {
+        foreach (var type in types)
+        {
+            var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
+
+            var registrationBuilder = builder.RegisterTypes(type).AsClosedInterfacesOf(handlerServiceType);
+
+            var lifetime = lifeAttr?.ServiceLifetime ?? config.DefaultHandlerLifetime;
+
+            registrationBuilder.HandleLifetime(lifetime, lifeAttr);
+
+            registrationBuilder.HandleInterception(type);
+            
+            builder.HandleDecoration(type);
+        }
+
+        return builder;
+    }
+    
+    private static IServiceCollection HandleNonCustomizedRegistration(this IServiceCollection serviceCollection, IEnumerable<Type> types, Type handlerServiceType, ResultCommanderConfiguration config)
+    {
+        foreach (var type in types)
+        {
+            var closedGenericTypes = type.GetInterfaces().Where(IsHandlerInterface).ToList();
+
+            switch (config.DefaultHandlerLifetime)
+            {
+                case ServiceLifetime.SingleInstance:
+                    closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, type));
+                    break;
+                case ServiceLifetime.InstancePerRequest:
+                    closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));
+                    break;
+                case ServiceLifetime.InstancePerLifetimeScope:
+                    closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));
+                    break;
+                case ServiceLifetime.InstancePerMatchingLifetimeScope:
+                    throw new NotSupportedException("Supported only when using Autofac.");
+                case ServiceLifetime.InstancePerOwned:
+                    throw new NotSupportedException("Supported only when using Autofac.");
+                case ServiceLifetime.InstancePerDependency:
+                    closedGenericTypes.ForEach(x => serviceCollection.AddTransient(x, type));
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        return serviceCollection;
+    }
+    
+    private static IServiceCollection HandleCustomizedRegistration(this IServiceCollection serviceCollection, IEnumerable<Type> types, Type handlerServiceType, ResultCommanderConfiguration config)
+    {
+        foreach (var type in types)
+        {
+            var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
+
+            var closedGenericTypes = type.GetInterfaces().Where(IsHandlerInterface).ToList();
+
+            var lifetime = lifeAttr?.ServiceLifetime ?? config.DefaultHandlerLifetime;
+
+            switch (lifetime)
+            {
+                case ServiceLifetime.SingleInstance:
+                    closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, type));
+                    break;
+                case ServiceLifetime.InstancePerRequest:
+                    closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));
+                    break;
+                case ServiceLifetime.InstancePerLifetimeScope:
+                    closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));;
+                    break;
+                case ServiceLifetime.InstancePerDependency:
+                    closedGenericTypes.ForEach(x => serviceCollection.AddTransient(x, type));
+                    break;
+                case ServiceLifetime.InstancePerMatchingLifetimeScope:
+                    throw new NotSupportedException("Supported only when using Autofac.");
+                case ServiceLifetime.InstancePerOwned:
+                    throw new NotSupportedException("Supported only when using Autofac.");
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        return serviceCollection;
+    }
+
+    private static ContainerBuilder HandleAsynchronousHandlers(this ContainerBuilder builder,
+        List<Type> types, ResultCommanderConfiguration config)
+        => builder.HandleNonCustomizedRegistration(types.Where(IsAsyncNonCustomizedHandler).ToList(), _asyncHandlerType,
+                config)
+            .HandleNonCustomizedRegistration(types.Where(IsAsyncResultNonCustomizedHandler).ToList(),
+                _asyncResultHandlerType, config)
+            .HandleCustomizedRegistration(types.Where(IsAsyncCustomizedHandler), _asyncHandlerType, config)
+            .HandleCustomizedRegistration(types.Where(IsAsyncResultCustomizedHandler), _asyncResultHandlerType, config);
+
+    private static ContainerBuilder HandleSynchronousHandlers(this ContainerBuilder builder,
+        List<Type> types, ResultCommanderConfiguration config)
+        => builder.HandleNonCustomizedRegistration(types.Where(IsSyncNonCustomizedHandler).ToList(), _syncHandlerType,
+                config)
+            .HandleNonCustomizedRegistration(types.Where(IsSyncResultNonCustomizedHandler).ToList(),
+                _syncResultHandlerType, config)
+            .HandleCustomizedRegistration(types.Where(IsSyncCustomizedHandler), _syncHandlerType, config)
+            .HandleCustomizedRegistration(types.Where(IsSyncResultCustomizedHandler), _syncResultHandlerType, config);
+
+    private static IServiceCollection HandleAsynchronousHandlers(this IServiceCollection collection,
+        List<Type> types, ResultCommanderConfiguration config)
+        => collection.HandleNonCustomizedRegistration(types.Where(IsAsyncNonCustomizedHandler).ToList(),
+                _asyncHandlerType, config)
+            .HandleNonCustomizedRegistration(types.Where(IsAsyncResultNonCustomizedHandler).ToList(),
+                _asyncResultHandlerType, config)
+            .HandleCustomizedRegistration(types.Where(IsAsyncCustomizedHandler).ToList(), _asyncHandlerType, config)
+            .HandleCustomizedRegistration(types.Where(IsAsyncResultCustomizedHandler).ToList(), _asyncResultHandlerType,
+                config);
+
+    private static IServiceCollection HandleSynchronousHandlers(this IServiceCollection collection,
+        List<Type> types, ResultCommanderConfiguration config)
+        => collection.HandleNonCustomizedRegistration(types.Where(IsSyncNonCustomizedHandler).ToList(), _syncHandlerType, config)
+            .HandleNonCustomizedRegistration(types.Where(IsSyncResultNonCustomizedHandler).ToList(), _syncResultHandlerType, config)
+            .HandleCustomizedRegistration(types.Where(IsSyncCustomizedHandler).ToList(), _syncHandlerType, config)
+            .HandleCustomizedRegistration(types.Where(IsSyncResultCustomizedHandler).ToList(), _syncResultHandlerType,
+                config);
+
     /// <summary>
     /// Registers command handlers with the <see cref="ContainerBuilder"/>.
     /// </summary>
@@ -41,431 +343,14 @@ public static class DependancyInjectionExtensions
         var iopt = Options.Create(config);
 
         builder.RegisterInstance(iopt).As<IOptions<ResultCommanderConfiguration>>().SingleInstance();
-        builder.Register(x => x.Resolve<IOptions<ResultCommanderConfiguration>>().Value).As<ResultCommanderConfiguration>().SingleInstance();
+        builder.Register(x => x.Resolve<IOptions<ResultCommanderConfiguration>>().Value)
+            .As<ResultCommanderConfiguration>().SingleInstance();
 
         foreach (var assembly in assembliesToScan)
         {
-            var commandSet = assembly.GetTypes()
-                .Where(x =>
-                    x.GetInterfaces().Any(y =>
-                        y.IsGenericType && y.GetGenericTypeDefinition() == typeof(IAsyncCommandHandler<>)) &&
-                    x.IsClass && !x.IsAbstract && x.GetCustomAttribute<SkipHandlerRegistrationAttribute>() is null)
-                .ToList();
-
-            var commandResultSet = assembly.GetTypes()
-                .Where(x =>
-                    x.GetInterfaces().Any(y =>
-                        y.IsGenericType && y.GetGenericTypeDefinition() == typeof(IAsyncCommandHandler<,>)) &&
-                    x.IsClass && !x.IsAbstract && x.GetCustomAttribute<SkipHandlerRegistrationAttribute>() is null)
-                .ToList();
-
-            var commandSubSet = commandSet
-                .Where(x => (x.GetCustomAttribute<LifetimeAttribute>(false) is not null ||
-                             x.GetCustomAttributes<InterceptedByAttribute>(false).Any()) && x.IsClass &&
-                            !x.IsAbstract && x.GetCustomAttribute<SkipHandlerRegistrationAttribute>() is null)
-                .ToList();
-
-            var commandResultSubSet = commandResultSet
-                .Where(x => (x.GetCustomAttribute<LifetimeAttribute>(false) is not null ||
-                             x.GetCustomAttributes<InterceptedByAttribute>(false).Any()) && x.IsClass &&
-                            !x.IsAbstract && x.GetCustomAttribute<SkipHandlerRegistrationAttribute>() is null)
-                .ToList();
-
-            var syncCommandSet = assembly.GetTypes()
-                .Where(x =>
-                    x.GetInterfaces().Any(y =>
-                        y.IsGenericType && y.GetGenericTypeDefinition() == typeof(ISyncCommandHandler<>)) &&
-                    x.IsClass && !x.IsAbstract && x.GetCustomAttribute<SkipHandlerRegistrationAttribute>() is null)
-                .ToList();
-
-            var syncCommandResultSet = assembly.GetTypes()
-                .Where(x =>
-                    x.GetInterfaces().Any(y =>
-                        y.IsGenericType && y.GetGenericTypeDefinition() == typeof(ISyncCommandHandler<,>)) &&
-                    x.IsClass && !x.IsAbstract && x.GetCustomAttribute<SkipHandlerRegistrationAttribute>() is null)
-                .ToList();
-
-            var syncCommandSubSet = commandSet
-                .Where(x => (x.GetCustomAttribute<LifetimeAttribute>(false) is not null ||
-                             x.GetCustomAttributes<InterceptedByAttribute>(false).Any()) && x.IsClass &&
-                            !x.IsAbstract && x.GetCustomAttribute<SkipHandlerRegistrationAttribute>() is null)
-                .ToList();
-
-            var syncCommandResultSubSet = commandResultSet
-                .Where(x => (x.GetCustomAttribute<LifetimeAttribute>(false) is not null ||
-                             x.GetCustomAttributes<InterceptedByAttribute>(false).Any()) && x.IsClass &&
-                            !x.IsAbstract && x.GetCustomAttribute<SkipHandlerRegistrationAttribute>() is null)
-                .ToList();
-
-            foreach (var type in commandSubSet)
-            {
-                var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
-
-                var registrationBuilder = builder.RegisterTypes(type).AsClosedInterfacesOf(typeof(IAsyncCommandHandler<>)).AsImplementedInterfaces();
-
-                var scope = lifeAttr?.ServiceLifetime ?? config.DefaultHandlerLifetime;
-
-                switch (scope)
-                {
-                    case ServiceLifetime.SingleInstance:
-                        registrationBuilder = registrationBuilder.SingleInstance();
-                        break;
-                    case ServiceLifetime.InstancePerRequest:
-                        registrationBuilder = registrationBuilder.InstancePerRequest();
-                        break;
-                    case ServiceLifetime.InstancePerLifetimeScope:
-                        registrationBuilder = registrationBuilder.InstancePerLifetimeScope();
-                        break;
-                    case ServiceLifetime.InstancePerDependency:
-                        registrationBuilder = registrationBuilder.InstancePerDependency();
-                        break;
-                    case ServiceLifetime.InstancePerMatchingLifetimeScope:
-                        registrationBuilder =
-                            registrationBuilder.InstancePerMatchingLifetimeScope(lifeAttr?.Tags?.ToArray() ?? throw new InvalidOperationException());
-                        break;
-                    case ServiceLifetime.InstancePerOwned:
-                        if (lifeAttr?.Owned is null) throw new InvalidOperationException("Owned type was null");
-
-                        registrationBuilder = registrationBuilder.InstancePerOwned(lifeAttr.Owned);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-
-
-                var intrAttr = type.GetCustomAttribute<EnableInterceptionAttribute>(false);
-                if (intrAttr is null) 
-                    continue;
-
-                var intrAttrs = type.GetCustomAttributes<InterceptedByAttribute>(false);
-
-                foreach (var interceptor in intrAttrs.SelectMany(x => x.Interceptors).Concat(intrAttr.Interceptors ?? Type.EmptyTypes).Distinct())
-                {
-                    registrationBuilder = registrationBuilder.EnableInterfaceInterceptors();
-                    registrationBuilder = IsInterceptorAsync(interceptor)
-                        ? registrationBuilder.InterceptedBy(
-                            typeof(AsyncInterceptorAdapter<>).MakeGenericType(interceptor))
-                        : registrationBuilder.InterceptedBy(interceptor);
-                }
-            }
-
-            foreach (var type in commandResultSubSet)
-            {
-                var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
-
-                var registrationBuilder = builder.RegisterTypes(type).AsClosedInterfacesOf(typeof(IAsyncCommandHandler<,>)).AsImplementedInterfaces();
-
-                var scope = lifeAttr?.ServiceLifetime ?? config.DefaultHandlerLifetime;
-
-                switch (scope)
-                {
-                    case ServiceLifetime.SingleInstance:
-                        registrationBuilder = registrationBuilder.SingleInstance();
-                        break;
-                    case ServiceLifetime.InstancePerRequest:
-                        registrationBuilder = registrationBuilder.InstancePerRequest();
-                        break;
-                    case ServiceLifetime.InstancePerLifetimeScope:
-                        registrationBuilder = registrationBuilder.InstancePerLifetimeScope();
-                        break;
-                    case ServiceLifetime.InstancePerDependency:
-                        registrationBuilder = registrationBuilder.InstancePerDependency();
-                        break;
-                    case ServiceLifetime.InstancePerMatchingLifetimeScope:
-                        registrationBuilder =
-                            registrationBuilder.InstancePerMatchingLifetimeScope(lifeAttr?.Tags?.ToArray() ?? throw new InvalidOperationException());
-                        break;
-                    case ServiceLifetime.InstancePerOwned:
-                        if (lifeAttr?.Owned is null) throw new InvalidOperationException("Owned type was null");
-
-                        registrationBuilder = registrationBuilder.InstancePerOwned(lifeAttr.Owned);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-
-                var intrAttr = type.GetCustomAttribute<EnableInterceptionAttribute>(false);
-                if (intrAttr is null) 
-                    continue;
-
-                if (intrAttr.InterceptionStrategy is not (InterceptionStrategy.Interface or InterceptionStrategy.InterfaceAndClass))
-                    throw new NotSupportedException("Only interface interception is supported for command handlers");
-                
-                var intrAttrs = type.GetCustomAttributes<InterceptedByAttribute>(false);
-
-                foreach (var interceptor in intrAttrs.SelectMany(x => x.Interceptors).Concat(intrAttr.Interceptors ?? Type.EmptyTypes).Distinct())
-                {
-                    registrationBuilder = registrationBuilder.EnableInterfaceInterceptors();
-                    registrationBuilder = IsInterceptorAsync(interceptor)
-                        ? registrationBuilder.InterceptedBy(
-                            typeof(AsyncInterceptorAdapter<>).MakeGenericType(interceptor))
-                        : registrationBuilder.InterceptedBy(interceptor);
-                }
-            }
-
-            commandSet.RemoveAll(x => commandSubSet.Any(y => y == x));
-            commandResultSet.RemoveAll(x => commandResultSubSet.Any(y => y == x));
-
-            if (commandSet.Any())
-            {
-                switch (config.DefaultHandlerLifetime)
-                {
-                    case ServiceLifetime.SingleInstance:
-                        builder.RegisterTypes(commandSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<>)).AsImplementedInterfaces()
-                            .SingleInstance();
-                        break;
-                    case ServiceLifetime.InstancePerRequest:
-                        builder.RegisterTypes(commandSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<>)).AsImplementedInterfaces()
-                            .InstancePerRequest();
-                        break;
-                    case ServiceLifetime.InstancePerLifetimeScope:
-                        builder.RegisterTypes(commandSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<>)).AsImplementedInterfaces()
-                            .InstancePerLifetimeScope();
-                        break;
-                    case ServiceLifetime.InstancePerMatchingLifetimeScope:
-                        throw new NotSupportedException();
-                    case ServiceLifetime.InstancePerDependency:
-                        builder.RegisterTypes(commandSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<>)).AsImplementedInterfaces()
-                            .InstancePerDependency();
-                        break;
-                    case ServiceLifetime.InstancePerOwned:
-                        throw new NotSupportedException();
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-            if (commandResultSet.Any())
-            {
-                switch (config.DefaultHandlerLifetime)
-                {
-                    case ServiceLifetime.SingleInstance:
-                        builder.RegisterTypes(commandResultSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<,>)).AsImplementedInterfaces()
-                            .SingleInstance();
-                        break;
-                    case ServiceLifetime.InstancePerRequest:
-                        builder.RegisterTypes(commandResultSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<,>)).AsImplementedInterfaces()
-                            .InstancePerRequest();
-                        break;
-                    case ServiceLifetime.InstancePerLifetimeScope:
-                        builder.RegisterTypes(commandResultSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<,>)).AsImplementedInterfaces()
-                            .InstancePerLifetimeScope();
-                        break;
-                    case ServiceLifetime.InstancePerMatchingLifetimeScope:
-                        throw new NotSupportedException();
-                    case ServiceLifetime.InstancePerDependency:
-                        builder.RegisterTypes(commandResultSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(IAsyncCommandHandler<,>)).AsImplementedInterfaces()
-                            .InstancePerDependency();
-                        break;
-                    case ServiceLifetime.InstancePerOwned:
-                        throw new NotSupportedException();
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-            
-            foreach (var type in syncCommandSubSet)
-            {
-                var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
-
-                var registrationBuilder = builder.RegisterTypes(type).AsClosedInterfacesOf(typeof(ISyncCommandHandler<>)).AsImplementedInterfaces();
-
-                var scope = lifeAttr?.ServiceLifetime ?? config.DefaultHandlerLifetime;
-
-                switch (scope)
-                {
-                    case ServiceLifetime.SingleInstance:
-                        registrationBuilder = registrationBuilder.SingleInstance();
-                        break;
-                    case ServiceLifetime.InstancePerRequest:
-                        registrationBuilder = registrationBuilder.InstancePerRequest();
-                        break;
-                    case ServiceLifetime.InstancePerLifetimeScope:
-                        registrationBuilder = registrationBuilder.InstancePerLifetimeScope();
-                        break;
-                    case ServiceLifetime.InstancePerDependency:
-                        registrationBuilder = registrationBuilder.InstancePerDependency();
-                        break;
-                    case ServiceLifetime.InstancePerMatchingLifetimeScope:
-                        registrationBuilder =
-                            registrationBuilder.InstancePerMatchingLifetimeScope(lifeAttr?.Tags?.ToArray() ?? throw new InvalidOperationException());
-                        break;
-                    case ServiceLifetime.InstancePerOwned:
-                        if (lifeAttr?.Owned is null) throw new InvalidOperationException("Owned type was null");
-
-                        registrationBuilder = registrationBuilder.InstancePerOwned(lifeAttr.Owned);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-
-
-                var intrAttr = type.GetCustomAttribute<EnableInterceptionAttribute>(false);
-                if (intrAttr is null) 
-                    continue;
-
-                var intrAttrs = type.GetCustomAttributes<InterceptedByAttribute>(false);
-
-                foreach (var interceptor in intrAttrs.SelectMany(x => x.Interceptors).Concat(intrAttr.Interceptors ?? Type.EmptyTypes).Distinct())
-                {
-                    registrationBuilder = registrationBuilder.EnableInterfaceInterceptors();
-                    registrationBuilder = IsInterceptorAsync(interceptor)
-                        ? registrationBuilder.InterceptedBy(
-                            typeof(AsyncInterceptorAdapter<>).MakeGenericType(interceptor))
-                        : registrationBuilder.InterceptedBy(interceptor);
-                }
-            }
-
-            foreach (var type in syncCommandResultSubSet)
-            {
-                var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
-
-                var registrationBuilder = builder.RegisterTypes(type).AsClosedInterfacesOf(typeof(ISyncCommandHandler<,>)).AsImplementedInterfaces();
-
-                var scope = lifeAttr?.ServiceLifetime ?? config.DefaultHandlerLifetime;
-
-                switch (scope)
-                {
-                    case ServiceLifetime.SingleInstance:
-                        registrationBuilder = registrationBuilder.SingleInstance();
-                        break;
-                    case ServiceLifetime.InstancePerRequest:
-                        registrationBuilder = registrationBuilder.InstancePerRequest();
-                        break;
-                    case ServiceLifetime.InstancePerLifetimeScope:
-                        registrationBuilder = registrationBuilder.InstancePerLifetimeScope();
-                        break;
-                    case ServiceLifetime.InstancePerDependency:
-                        registrationBuilder = registrationBuilder.InstancePerDependency();
-                        break;
-                    case ServiceLifetime.InstancePerMatchingLifetimeScope:
-                        registrationBuilder =
-                            registrationBuilder.InstancePerMatchingLifetimeScope(lifeAttr?.Tags?.ToArray() ?? throw new InvalidOperationException());
-                        break;
-                    case ServiceLifetime.InstancePerOwned:
-                        if (lifeAttr?.Owned is null) throw new InvalidOperationException("Owned type was null");
-
-                        registrationBuilder = registrationBuilder.InstancePerOwned(lifeAttr.Owned);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-
-                var intrAttr = type.GetCustomAttribute<EnableInterceptionAttribute>(false);
-                if (intrAttr is null) 
-                    continue;
-
-                if (intrAttr.InterceptionStrategy is not (InterceptionStrategy.Interface or InterceptionStrategy.InterfaceAndClass))
-                    throw new NotSupportedException("Only interface interception is supported for command handlers");
-                
-                var intrAttrs = type.GetCustomAttributes<InterceptedByAttribute>(false);
-
-                foreach (var interceptor in intrAttrs.SelectMany(x => x.Interceptors).Concat(intrAttr.Interceptors ?? Type.EmptyTypes).Distinct())
-                {
-                    registrationBuilder = registrationBuilder.EnableInterfaceInterceptors();
-                    registrationBuilder = IsInterceptorAsync(interceptor)
-                        ? registrationBuilder.InterceptedBy(
-                            typeof(AsyncInterceptorAdapter<>).MakeGenericType(interceptor))
-                        : registrationBuilder.InterceptedBy(interceptor);
-                }
-            }
-
-            syncCommandSet.RemoveAll(x => syncCommandSubSet.Any(y => y == x));
-            syncCommandResultSet.RemoveAll(x => syncCommandResultSubSet.Any(y => y == x));
-
-            if (syncCommandSet.Any())
-            {
-                switch (config.DefaultHandlerLifetime)
-                {
-                    case ServiceLifetime.SingleInstance:
-                        builder.RegisterTypes(syncCommandSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(ISyncCommandHandler<>)).AsImplementedInterfaces()
-                            .SingleInstance();
-                        break;
-                    case ServiceLifetime.InstancePerRequest:
-                        builder.RegisterTypes(syncCommandSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(ISyncCommandHandler<>)).AsImplementedInterfaces()
-                            .InstancePerRequest();
-                        break;
-                    case ServiceLifetime.InstancePerLifetimeScope:
-                        builder.RegisterTypes(syncCommandSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(ISyncCommandHandler<>)).AsImplementedInterfaces()
-                            .InstancePerLifetimeScope();
-                        break;
-                    case ServiceLifetime.InstancePerMatchingLifetimeScope:
-                        throw new NotSupportedException();
-                    case ServiceLifetime.InstancePerDependency:
-                        builder.RegisterTypes(syncCommandSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(ISyncCommandHandler<>)).AsImplementedInterfaces()
-                            .InstancePerDependency();
-                        break;
-                    case ServiceLifetime.InstancePerOwned:
-                        throw new NotSupportedException();
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-            if (syncCommandResultSet.Any())
-            {
-                switch (config.DefaultHandlerLifetime)
-                {
-                    case ServiceLifetime.SingleInstance:
-                        builder.RegisterTypes(syncCommandResultSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(ISyncCommandHandler<,>)).AsImplementedInterfaces()
-                            .SingleInstance();
-                        break;
-                    case ServiceLifetime.InstancePerRequest:
-                        builder.RegisterTypes(syncCommandResultSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(ISyncCommandHandler<,>)).AsImplementedInterfaces()
-                            .InstancePerRequest();
-                        break;
-                    case ServiceLifetime.InstancePerLifetimeScope:
-                        builder.RegisterTypes(syncCommandResultSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(ISyncCommandHandler<,>)).AsImplementedInterfaces()
-                            .InstancePerLifetimeScope();
-                        break;
-                    case ServiceLifetime.InstancePerMatchingLifetimeScope:
-                        throw new NotSupportedException();
-                    case ServiceLifetime.InstancePerDependency:
-                        builder.RegisterTypes(syncCommandResultSet.ToArray())
-                            .AsClosedInterfacesOf(typeof(ISyncCommandHandler<,>)).AsImplementedInterfaces()
-                            .InstancePerDependency();
-                        break;
-                    case ServiceLifetime.InstancePerOwned:
-                        throw new NotSupportedException();
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-        }
-        
-        switch (config.DefaultHandlerFactoryLifetime)
-        {
-            case ServiceLifetime.SingleInstance:
-                builder.RegisterType<CommandHandlerFactory>().As<ICommandHandlerFactory>().SingleInstance();
-                break;
-            case ServiceLifetime.InstancePerRequest:
-                builder.RegisterType<CommandHandlerFactory>().As<ICommandHandlerFactory>().InstancePerRequest();
-                break;
-            case ServiceLifetime.InstancePerLifetimeScope:
-                builder.RegisterType<CommandHandlerFactory>().As<ICommandHandlerFactory>().InstancePerLifetimeScope();
-                break;
-            case ServiceLifetime.InstancePerMatchingLifetimeScope:
-                throw new NotSupportedException();
-            case ServiceLifetime.InstancePerDependency:
-                builder.RegisterType<CommandHandlerFactory>().As<ICommandHandlerFactory>().InstancePerDependency();
-                break;
-            case ServiceLifetime.InstancePerOwned:
-                throw new NotSupportedException();
-            default:
-                throw new ArgumentOutOfRangeException();
+            var types = assembly.GetTypes();
+            builder.HandleAsynchronousHandlers(types.Where(IsAsyncHandler).ToList(), config);
+            builder.HandleSynchronousHandlers(types.Where(IsSyncHandler).ToList(), config);
         }
 
         return builder;
@@ -501,307 +386,9 @@ public static class DependancyInjectionExtensions
 
         foreach (var assembly in assembliesToScaAn)
         {
-            var commandSet = assembly.GetTypes()
-                .Where(x => x.GetInterfaces().Any(y =>
-                                y.IsGenericType && y.GetGenericTypeDefinition() == typeof(IAsyncCommandHandler<>)) &&
-                            x.IsClass &&
-                            !x.IsAbstract && x.GetCustomAttribute<SkipHandlerRegistrationAttribute>() is null)
-                .ToList();
-
-            var commandResultSet = assembly.GetTypes()
-                .Where(x => x.GetInterfaces().Any(y =>
-                                y.IsGenericType && y.GetGenericTypeDefinition() == typeof(IAsyncCommandHandler<,>)) &&
-                            x.IsClass &&
-                            !x.IsAbstract && x.GetCustomAttribute<SkipHandlerRegistrationAttribute>() is null)
-                .ToList();
-
-            var commandSubSet = commandSet
-                .Where(x => (x.GetCustomAttribute<LifetimeAttribute>(false) is not null ||
-                             x.GetCustomAttributes<InterceptedByAttribute>(false).Any()) && x.IsClass &&
-                            !x.IsAbstract && x.GetCustomAttribute<SkipHandlerRegistrationAttribute>() is null)
-                .ToList();
-
-            var commandResultSubSet = commandResultSet
-                .Where(x => (x.GetCustomAttribute<LifetimeAttribute>(false) is not null ||
-                             x.GetCustomAttributes<InterceptedByAttribute>(false).Any()) && x.IsClass &&
-                            !x.IsAbstract && x.GetCustomAttribute<SkipHandlerRegistrationAttribute>() is null)
-                .ToList();
-
-            var syncCommandSet = assembly.GetTypes()
-                .Where(x => x.GetInterfaces().Any(y =>
-                                y.IsGenericType && y.GetGenericTypeDefinition() == typeof(ISyncCommandHandler<>)) &&
-                            x.IsClass &&
-                            !x.IsAbstract && x.GetCustomAttribute<SkipHandlerRegistrationAttribute>() is null)
-                .ToList();
-
-            var syncCommandResultSet = assembly.GetTypes()
-                .Where(x => x.GetInterfaces().Any(y =>
-                                y.IsGenericType && y.GetGenericTypeDefinition() == typeof(ISyncCommandHandler<,>)) &&
-                            x.IsClass &&
-                            !x.IsAbstract && x.GetCustomAttribute<SkipHandlerRegistrationAttribute>() is null)
-                .ToList();
-
-            var syncCommandSubSet = commandSet
-                .Where(x => (x.GetCustomAttribute<LifetimeAttribute>(false) is not null ||
-                             x.GetCustomAttributes<InterceptedByAttribute>(false).Any()) && x.IsClass &&
-                            !x.IsAbstract && x.GetCustomAttribute<SkipHandlerRegistrationAttribute>() is null)
-                .ToList();
-
-            var syncCommandResultSubSet = commandResultSet
-                .Where(x => (x.GetCustomAttribute<LifetimeAttribute>(false) is not null ||
-                             x.GetCustomAttributes<InterceptedByAttribute>(false).Any()) && x.IsClass &&
-                            !x.IsAbstract && x.GetCustomAttribute<SkipHandlerRegistrationAttribute>() is null)
-                .ToList();
-
-            foreach (var type in commandSubSet)
-            {
-                var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
-
-                var closedGenericTypes = type.GetInterfaces().ToList();
-
-                var scope = lifeAttr?.ServiceLifetime ?? config.DefaultHandlerLifetime;
-
-                switch (scope)
-                {
-                    case ServiceLifetime.SingleInstance:
-                        closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, type));
-                        break;
-                    case ServiceLifetime.InstancePerRequest:
-                        closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));
-                        break;
-                    case ServiceLifetime.InstancePerLifetimeScope:
-                        closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));;
-                        break;
-                    case ServiceLifetime.InstancePerDependency:
-                        closedGenericTypes.ForEach(x => serviceCollection.AddTransient(x, type));
-                        break;
-                    case ServiceLifetime.InstancePerMatchingLifetimeScope:
-                        throw new NotSupportedException("Supported only when using Autofac.");
-                    case ServiceLifetime.InstancePerOwned:
-                        throw new NotSupportedException("Supported only when using Autofac.");
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-
-            foreach (var type in commandResultSubSet)
-            {
-                var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
-
-                var scope = lifeAttr?.ServiceLifetime ?? config.DefaultHandlerLifetime;
-
-                var closedGenericTypes = type.GetInterfaces().ToList();
-
-                switch (scope)
-                {
-                    case ServiceLifetime.SingleInstance:
-                        closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, type));
-                        break;
-                    case ServiceLifetime.InstancePerRequest:
-                        closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));
-                        break;
-                    case ServiceLifetime.InstancePerLifetimeScope:
-                        closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));
-                        break;
-                    case ServiceLifetime.InstancePerDependency:
-                        closedGenericTypes.ForEach(x => serviceCollection.AddTransient(x, type));
-                        break;
-                    case ServiceLifetime.InstancePerMatchingLifetimeScope:
-                        throw new NotSupportedException("Supported only when using Autofac.");
-                    case ServiceLifetime.InstancePerOwned:
-                        throw new NotSupportedException("Supported only when using Autofac.");
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-
-            commandSet.RemoveAll(x => commandSubSet.Any(y => y == x));
-            commandResultSet.RemoveAll(x => commandResultSubSet.Any(y => y == x));
-
-            if (commandSet.Any())
-            {
-                foreach (var command in commandSet)
-                {
-                    var closedGenericTypes = command.GetInterfaces().ToList();
-
-                    switch (config.DefaultHandlerLifetime)
-                    {
-                        case ServiceLifetime.SingleInstance:
-                            closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, command));
-                            break;
-                        case ServiceLifetime.InstancePerRequest:
-                            closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, command));
-                            break;
-                        case ServiceLifetime.InstancePerLifetimeScope:
-                            closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, command));
-                            break;
-                        case ServiceLifetime.InstancePerMatchingLifetimeScope:
-                            throw new NotSupportedException("Supported only when using Autofac.");
-                        case ServiceLifetime.InstancePerOwned:
-                            throw new NotSupportedException("Supported only when using Autofac.");
-                        case ServiceLifetime.InstancePerDependency:
-                            closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, command));
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                }
-            }
-
-            if (commandResultSet.Any())
-            {
-                foreach (var command in commandResultSet)
-                {
-                    var closedGenericTypes = command.GetInterfaces().ToList();
-
-                    switch (config.DefaultHandlerLifetime)
-                    {
-                        case ServiceLifetime.SingleInstance:
-                            closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, command));
-                            break;
-                        case ServiceLifetime.InstancePerRequest:
-                            closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, command));
-                            break;
-                        case ServiceLifetime.InstancePerLifetimeScope:
-                            closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, command));
-                            break;
-                        case ServiceLifetime.InstancePerMatchingLifetimeScope:
-                            throw new NotSupportedException("Supported only when using Autofac.");
-                        case ServiceLifetime.InstancePerOwned:
-                            throw new NotSupportedException("Supported only when using Autofac.");
-                        case ServiceLifetime.InstancePerDependency:
-                            closedGenericTypes.ForEach(x => serviceCollection.AddTransient(x, command));
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                }
-            }
-
-            foreach (var type in syncCommandSubSet)
-            {
-                var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
-
-                var closedGenericTypes = type.GetInterfaces().ToList();
-
-                var scope = lifeAttr?.ServiceLifetime ?? config.DefaultHandlerLifetime;
-
-                switch (scope)
-                {
-                    case ServiceLifetime.SingleInstance:
-                        closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, type));
-                        break;
-                    case ServiceLifetime.InstancePerRequest:
-                        closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));
-                        break;
-                    case ServiceLifetime.InstancePerLifetimeScope:
-                        closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));
-                        break;
-                    case ServiceLifetime.InstancePerDependency:
-                        closedGenericTypes.ForEach(x => serviceCollection.AddTransient(x, type));
-                        break;
-                    case ServiceLifetime.InstancePerMatchingLifetimeScope:
-                        throw new NotSupportedException("Supported only when using Autofac.");
-                    case ServiceLifetime.InstancePerOwned:
-                        throw new NotSupportedException("Supported only when using Autofac.");
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-
-            foreach (var type in syncCommandResultSubSet)
-            {
-                var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
-
-                var scope = lifeAttr?.ServiceLifetime ?? config.DefaultHandlerLifetime;
-
-                var closedGenericTypes = type.GetInterfaces().ToList();
-
-                switch (scope)
-                {
-                    case ServiceLifetime.SingleInstance:
-                        closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, type));
-                        break;
-                    case ServiceLifetime.InstancePerRequest:
-                        closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));
-                        break;
-                    case ServiceLifetime.InstancePerLifetimeScope:
-                        closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, type));
-                        break;
-                    case ServiceLifetime.InstancePerDependency:
-                        closedGenericTypes.ForEach(x => serviceCollection.AddTransient(x, type));
-                        break;
-                    case ServiceLifetime.InstancePerMatchingLifetimeScope:
-                        throw new NotSupportedException("Supported only when using Autofac.");
-                    case ServiceLifetime.InstancePerOwned:
-                        throw new NotSupportedException("Supported only when using Autofac.");
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-
-            commandSet.RemoveAll(x => commandSubSet.Any(y => y == x));
-            commandResultSet.RemoveAll(x => commandResultSubSet.Any(y => y == x));
-
-            if (syncCommandSet.Any())
-            {
-                foreach (var command in syncCommandSet)
-                {
-                    var closedGenericTypes = command.GetInterfaces().ToList();
-
-                    switch (config.DefaultHandlerLifetime)
-                    {
-                        case ServiceLifetime.SingleInstance:
-                            closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, command));
-                            break;
-                        case ServiceLifetime.InstancePerRequest:
-                            closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, command));
-                            break;
-                        case ServiceLifetime.InstancePerLifetimeScope:
-                            closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, command));
-                            break;
-                        case ServiceLifetime.InstancePerMatchingLifetimeScope:
-                            throw new NotSupportedException("Supported only when using Autofac.");
-                        case ServiceLifetime.InstancePerOwned:
-                            throw new NotSupportedException("Supported only when using Autofac.");
-                        case ServiceLifetime.InstancePerDependency:
-                            closedGenericTypes.ForEach(x => serviceCollection.AddTransient(x, command));
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                }
-            }
-
-            if (syncCommandResultSet.Any())
-            {
-                foreach (var command in syncCommandResultSet)
-                {
-                    var closedGenericTypes = command.GetInterfaces().ToList();
-
-                    switch (config.DefaultHandlerLifetime)
-                    {
-                        case ServiceLifetime.SingleInstance:
-                            closedGenericTypes.ForEach(x => serviceCollection.AddSingleton(x, command));
-                            break;
-                        case ServiceLifetime.InstancePerRequest:
-                            closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, command));
-                            break;
-                        case ServiceLifetime.InstancePerLifetimeScope:
-                            closedGenericTypes.ForEach(x => serviceCollection.AddScoped(x, command));
-                            break;
-                        case ServiceLifetime.InstancePerMatchingLifetimeScope:
-                            throw new NotSupportedException("Supported only when using Autofac.");
-                        case ServiceLifetime.InstancePerOwned:
-                            throw new NotSupportedException("Supported only when using Autofac.");
-                        case ServiceLifetime.InstancePerDependency:
-                            closedGenericTypes.ForEach(x => serviceCollection.AddTransient(x, command));
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
-                }
-            }
+            var types = assembly.GetTypes();
+            serviceCollection.HandleAsynchronousHandlers(types.Where(IsAsyncHandler).ToList(), config);
+            serviceCollection.HandleSynchronousHandlers(types.Where(IsSyncHandler).ToList(), config);
         }
         
         return serviceCollection;
@@ -810,5 +397,5 @@ public static class DependancyInjectionExtensions
     /// <summary>
     /// Whether given interceptor is an async interceptor.
     /// </summary>
-    private static bool IsInterceptorAsync(Type interceptor) => interceptor.GetInterfaces().Any(x => x == typeof(IAsyncInterceptor));
+    private static bool IsAsyncInterceptor(this Type interceptorCandidate) => interceptorCandidate.GetInterfaces().Any(x => x == typeof(IAsyncInterceptor));
 }
