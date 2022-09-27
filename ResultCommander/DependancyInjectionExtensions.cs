@@ -3,6 +3,7 @@ using AttributeBasedRegistration;
 using AttributeBasedRegistration.Attributes;
 using Autofac;
 using Autofac.Builder;
+using Autofac.Extensions.DependencyInjection;
 using Autofac.Extras.DynamicProxy;
 using Autofac.Features.Scanning;
 using Castle.DynamicProxy;
@@ -399,32 +400,41 @@ public static class DependancyInjectionExtensions
             builder.HandleAsynchronousHandlers(types.Where(IsAnyAsyncHandler).ToList(), config);
             builder.HandleSynchronousHandlers(types.Where(IsAnySyncHandler).ToList(), config);
         }
+        
+        builder.RegisterHelperByLifetime(typeof(ICommandHandlerResolver), typeof(CommandHandlerResolver),
+            config.DefaultHandlerResolverLifetime);
 
-        switch (config.DefaultHandlerFactoryLifetime)
+        return builder;
+    }
+
+    private static ContainerBuilder RegisterHelperByLifetime(this ContainerBuilder containerBuilder, Type serviceType,
+        Type implementationType, ServiceLifetime serviceLifetime)
+    {
+        switch (serviceLifetime)
         {
             case ServiceLifetime.SingleInstance:
-                builder.RegisterType<CommandHandlerFactory>().As<ICommandHandlerFactory>().SingleInstance();
+                containerBuilder.RegisterType(implementationType).As(serviceType).SingleInstance();
                 break;
             case ServiceLifetime.InstancePerRequest:
-                builder.RegisterType<CommandHandlerFactory>().As<ICommandHandlerFactory>().InstancePerRequest();
+                containerBuilder.RegisterType(implementationType).As(serviceType).InstancePerRequest();
                 break;
             case ServiceLifetime.InstancePerLifetimeScope:
-                builder.RegisterType<CommandHandlerFactory>().As<ICommandHandlerFactory>().InstancePerLifetimeScope();
+                containerBuilder.RegisterType(implementationType).As(serviceType).InstancePerLifetimeScope();
                 break;
             case ServiceLifetime.InstancePerMatchingLifetimeScope:
                 throw new NotSupportedException(
-                    "Can't register command handler factory as InstancePerMatchingLifetimeScope");
+                    "Can't register command handler factory or resolver as InstancePerMatchingLifetimeScope");
             case ServiceLifetime.InstancePerDependency:
-                builder.RegisterType<CommandHandlerFactory>().As<ICommandHandlerFactory>().InstancePerDependency();
+                containerBuilder.RegisterType(implementationType).As(serviceType).InstancePerDependency();
                 break;
             case ServiceLifetime.InstancePerOwned:
                 throw new NotSupportedException(
-                    "Can't register command handler factory as InstancePerOwned");
+                    "Can't register command handler factory or resolver as InstancePerOwned");
             default:
                 throw new ArgumentOutOfRangeException();
         }
 
-        return builder;
+        return containerBuilder;
     }
 
     /// <summary>
@@ -500,30 +510,38 @@ public static class DependancyInjectionExtensions
             serviceCollection.HandleSynchronousHandlers(types.Where(IsSyncHandler).ToList(), config);
         }
         
-        switch (config.DefaultHandlerFactoryLifetime)
+        serviceCollection.RegisterByLifetime(typeof(ICommandHandlerResolver), typeof(CommandHandlerResolver), config.DefaultHandlerResolverLifetime);
+        
+        return serviceCollection;
+    }
+
+    private static IServiceCollection RegisterByLifetime(this IServiceCollection serviceCollection, Type serviceType, Type implementationType,
+        ServiceLifetime serviceLifetime)
+    {
+        switch (serviceLifetime)
         {
             case ServiceLifetime.SingleInstance:
-                serviceCollection.AddSingleton<ICommandHandlerFactory, CommandHandlerFactory>();
+                serviceCollection.AddSingleton(serviceType, implementationType);
                 break;
             case ServiceLifetime.InstancePerRequest:
-                serviceCollection.AddScoped<ICommandHandlerFactory, CommandHandlerFactory>();
+                serviceCollection.AddScoped(serviceType, implementationType);
                 break;
             case ServiceLifetime.InstancePerLifetimeScope:
-                serviceCollection.AddScoped<ICommandHandlerFactory, CommandHandlerFactory>();
+                serviceCollection.AddScoped(serviceType, implementationType);
                 break;
             case ServiceLifetime.InstancePerMatchingLifetimeScope:
                 throw new NotSupportedException(
-                    "Can't register command handler factory as InstancePerMatchingLifetimeScope");
+                    "Not supported without Autofac");
             case ServiceLifetime.InstancePerDependency:
-                serviceCollection.AddTransient<ICommandHandlerFactory, CommandHandlerFactory>();
+                serviceCollection.AddTransient(serviceType, implementationType);
                 break;
             case ServiceLifetime.InstancePerOwned:
                 throw new NotSupportedException(
-                    "Can't register command handler factory as InstancePerOwned");
+                    "Not supported without Autofac");
             default:
                 throw new ArgumentOutOfRangeException();
         }
-        
+
         return serviceCollection;
     }
     
