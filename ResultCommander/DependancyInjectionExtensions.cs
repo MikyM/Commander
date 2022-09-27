@@ -400,6 +400,30 @@ public static class DependancyInjectionExtensions
             builder.HandleSynchronousHandlers(types.Where(IsAnySyncHandler).ToList(), config);
         }
 
+        switch (config.DefaultHandlerFactoryLifetime)
+        {
+            case ServiceLifetime.SingleInstance:
+                builder.RegisterType<CommandHandlerFactory>().As<ICommandHandlerFactory>().SingleInstance();
+                break;
+            case ServiceLifetime.InstancePerRequest:
+                builder.RegisterType<CommandHandlerFactory>().As<ICommandHandlerFactory>().InstancePerRequest();
+                break;
+            case ServiceLifetime.InstancePerLifetimeScope:
+                builder.RegisterType<CommandHandlerFactory>().As<ICommandHandlerFactory>().InstancePerLifetimeScope();
+                break;
+            case ServiceLifetime.InstancePerMatchingLifetimeScope:
+                throw new NotSupportedException(
+                    "Can't register command handler factory as InstancePerMatchingLifetimeScope");
+            case ServiceLifetime.InstancePerDependency:
+                builder.RegisterType<CommandHandlerFactory>().As<ICommandHandlerFactory>().InstancePerDependency();
+                break;
+            case ServiceLifetime.InstancePerOwned:
+                throw new NotSupportedException(
+                    "Can't register command handler factory as InstancePerOwned");
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
         return builder;
     }
 
@@ -474,6 +498,30 @@ public static class DependancyInjectionExtensions
             var types = assembly.GetTypes();
             serviceCollection.HandleAsynchronousHandlers(types.Where(IsAsyncHandler).ToList(), config);
             serviceCollection.HandleSynchronousHandlers(types.Where(IsSyncHandler).ToList(), config);
+        }
+        
+        switch (config.DefaultHandlerFactoryLifetime)
+        {
+            case ServiceLifetime.SingleInstance:
+                serviceCollection.AddSingleton<ICommandHandlerFactory, CommandHandlerFactory>();
+                break;
+            case ServiceLifetime.InstancePerRequest:
+                serviceCollection.AddScoped<ICommandHandlerFactory, CommandHandlerFactory>();
+                break;
+            case ServiceLifetime.InstancePerLifetimeScope:
+                serviceCollection.AddScoped<ICommandHandlerFactory, CommandHandlerFactory>();
+                break;
+            case ServiceLifetime.InstancePerMatchingLifetimeScope:
+                throw new NotSupportedException(
+                    "Can't register command handler factory as InstancePerMatchingLifetimeScope");
+            case ServiceLifetime.InstancePerDependency:
+                serviceCollection.AddTransient<ICommandHandlerFactory, CommandHandlerFactory>();
+                break;
+            case ServiceLifetime.InstancePerOwned:
+                throw new NotSupportedException(
+                    "Can't register command handler factory as InstancePerOwned");
+            default:
+                throw new ArgumentOutOfRangeException();
         }
         
         return serviceCollection;
