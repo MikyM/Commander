@@ -92,7 +92,7 @@ public static class DependancyInjectionExtensions
     private static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> HandleInterception(this IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> builder, Type type)
     {
         var intrAttr = type.GetRegistrationAttributesOfType<IEnableInterceptionAttribute>().ToArray();
-        if (intrAttr.Any())
+        if (!intrAttr.Any())
             return builder;
         if (intrAttr.Length > 1)
             throw new InvalidOperationException($"Only a single enable interception attribute is allowed on type, type: {type.Name}");
