@@ -1,9 +1,10 @@
 ﻿using System.Reflection;
 using AttributeBasedRegistration;
 using AttributeBasedRegistration.Attributes;
+using AttributeBasedRegistration.Attributes.Abstractions;
+using AttributeBasedRegistration.Extensions;
 using Autofac;
 using Autofac.Builder;
-using Autofac.Extensions.DependencyInjection;
 using Autofac.Extras.DynamicProxy;
 using Autofac.Features.Scanning;
 using Castle.DynamicProxy;
@@ -25,9 +26,9 @@ public static class DependancyInjectionExtensions
     private static Type _syncHandlerType = typeof(ISyncCommandHandler<>);
     
     private static bool HasCustomAttributes(this Type type)
-        => type.GetCustomAttribute<LifetimeAttribute>(false) is not null ||
-           type.GetCustomAttributes<DecoratedByAttribute>(false).Any() ||
-           type.GetCustomAttributes<InterceptedByAttribute>(false).Any();
+        => type.GetRegistrationAttributesOfType<ILifetimeAttribute>().Any() ||
+           type.GetRegistrationAttributesOfType<IDecoratedByAttribute>().Any() ||
+           type.GetRegistrationAttributesOfType<IInterceptedByAttribute>().Any();
 
     private static bool ShouldIgnore(this Type type)
         => type.GetCustomAttribute<SkipHandlerRegistrationAttribute>(false) is not null;
@@ -90,14 +91,25 @@ public static class DependancyInjectionExtensions
 
     private static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> HandleInterception(this IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> builder, Type type)
     {
-        var intrAttr = type.GetCustomAttribute<EnableInterceptionAttribute>(false);
-        if (intrAttr is null)
+        var intrAttr = type.GetRegistrationAttributesOfType<IEnableInterceptionAttribute>().ToArray();
+        if (intrAttr.Any())
             return builder;
-
-        if (intrAttr.InterceptionStrategy is not (InterceptionStrategy.Interface))
+        if (intrAttr.Length > 1)
+            throw new InvalidOperationException($"Only a single enable interception attribute is allowed on type, type: {type.Name}");
+        
+        if (intrAttr.First().InterceptionStrategy is not InterceptionStrategy.Interface)
             throw new NotSupportedException("Only interface interception is supported for command handlers");
                 
-        var intrAttrs = type.GetCustomAttributes<InterceptedByAttribute>(false);
+        var intrAttrs = type.GetRegistrationAttributesOfType<IInterceptedByAttribute>().ToArray();
+        if (!intrAttrs.Any())
+            return builder;
+        
+        if (intrAttrs.GroupBy(x => x.RegistrationOrder).FirstOrDefault(x => x.Count() > 1) is not null)
+            throw new InvalidOperationException($"Duplicated interceptor registration order on type {type.Name}");
+
+        if (intrAttrs.GroupBy(x => x.Interceptor)
+                .FirstOrDefault(x => x.Count() > 1) is not null)
+            throw new InvalidOperationException($"Duplicated interceptor type on type {type.Name}");
 
         builder = builder.EnableInterfaceInterceptors();
         
@@ -114,24 +126,30 @@ public static class DependancyInjectionExtensions
     
     private static ContainerBuilder HandleDecoration(this ContainerBuilder builder, Type type)
     {
-        var decoratorAttributes = type.GetCustomAttributes<DecoratedByAttribute>(false).ToList();
+        var decoratorAttributes = type.GetRegistrationAttributesOfType<IDecoratedByAttribute>().ToArray();
         if (!decoratorAttributes.Any())
             return builder;
 
         var serviceType = type.GetInterfaces().FirstOrDefault(x => x.IsHandlerInterface());
-
         if (serviceType is null)
             throw new InvalidOperationException("Couldn't fine the proper service type for a handler");
         
+        if (decoratorAttributes.GroupBy(x => x.RegistrationOrder).FirstOrDefault(x => x.Count() > 1) is not null)
+            throw new InvalidOperationException($"Duplicated decorator registration order on type {type.Name}");
+
+        if (decoratorAttributes.GroupBy(x => x.Decorator)
+                .FirstOrDefault(x => x.Count() > 1) is not null)
+            throw new InvalidOperationException($"Duplicated decorator type on type {type.Name}");
+            
         foreach (var attribute in decoratorAttributes.OrderBy(x => x.RegistrationOrder))
         {
-            if (attribute.DecoratorType.GetCustomAttribute<SkipDecoratorRegistrationAttribute>() is not null)
+            if (attribute.Decorator.ShouldSkipRegistration())
                 continue;
             
-            if (attribute.DecoratorType.IsGenericType && attribute.DecoratorType.IsGenericTypeDefinition)
-                builder.RegisterGenericDecorator(attribute.DecoratorType, serviceType);
+            if (attribute.Decorator.IsGenericType && attribute.Decorator.IsGenericTypeDefinition)
+                builder.RegisterGenericDecorator(attribute.Decorator, serviceType);
             else
-                builder.RegisterDecorator(attribute.DecoratorType, serviceType);
+                builder.RegisterDecorator(attribute.Decorator, serviceType);
         }
 
         return builder;
