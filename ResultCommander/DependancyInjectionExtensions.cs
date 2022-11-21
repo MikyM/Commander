@@ -30,21 +30,21 @@ public static class DependancyInjectionExtensions
            type.GetRegistrationAttributesOfType<IDecoratedByAttribute>().Any() ||
            type.GetRegistrationAttributesOfType<IInterceptedByAttribute>().Any();
 
-    private static bool ShouldIgnore(this Type type)
-        => type.GetCustomAttribute<SkipHandlerRegistrationAttribute>(false) is not null;
+    private static bool ShouldSkip(this Type type)
+        => type.GetCustomAttributes(false).Any(x => x is ISkipHandlerRegistrationAttribute);
     
     private static bool IsAnyAsyncHandler(this Type type)
-            => (type.IsAsyncHandler() || type.IsAsyncResultHandler()) && !ShouldIgnore(type);
+            => (type.IsAsyncHandler() || type.IsAsyncResultHandler()) && !ShouldSkip(type);
     
     private static bool IsAsyncHandler(this Type type)
         => type.GetInterfaces().Any(y =>
                y.IsGenericType && y.GetGenericTypeDefinition() == _asyncHandlerType) &&
-           type.IsClass && !type.IsAbstract && !ShouldIgnore(type);
+           type.IsClass && !type.IsAbstract && !ShouldSkip(type);
     
     private static bool IsAsyncResultHandler(this Type type)
         => type.GetInterfaces().Any(y =>
                y.IsGenericType && y.GetGenericTypeDefinition() == _asyncResultHandlerType) &&
-           type.IsClass && !type.IsAbstract && !ShouldIgnore(type);
+           type.IsClass && !type.IsAbstract && !ShouldSkip(type);
 
     private static bool IsAsyncResultCustomizedHandler(this Type type)
         => IsAsyncResultHandler(type) && HasCustomAttributes(type);
@@ -59,17 +59,17 @@ public static class DependancyInjectionExtensions
         => IsAsyncHandler(type) && !HasCustomAttributes(type);
     
     private static bool IsAnySyncHandler(this Type type)
-        => (type.IsSyncHandler() || type.IsSyncResultHandler()) && !ShouldIgnore(type);
+        => (type.IsSyncHandler() || type.IsSyncResultHandler()) && !ShouldSkip(type);
     
     private static bool IsSyncHandler(this Type type)
         => type.GetInterfaces().Any(y =>
                y.IsGenericType && y.GetGenericTypeDefinition() == _syncHandlerType) &&
-           type.IsClass && !type.IsAbstract && !ShouldIgnore(type);
+           type.IsClass && !type.IsAbstract && !ShouldSkip(type);
     
     private static bool IsSyncResultHandler(this Type type)
         => type.GetInterfaces().Any(y =>
                y.IsGenericType && y.GetGenericTypeDefinition() == _syncResultHandlerType) &&
-           type.IsClass && !type.IsAbstract && !ShouldIgnore(type);
+           type.IsClass && !type.IsAbstract && !ShouldSkip(type);
 
     private static bool IsSyncResultCustomizedHandler(this Type type)
         => IsSyncResultHandler(type) && HasCustomAttributes(type);
@@ -143,7 +143,7 @@ public static class DependancyInjectionExtensions
             
         foreach (var attribute in decoratorAttributes.OrderBy(x => x.RegistrationOrder))
         {
-            if (attribute.Decorator.ShouldSkipRegistration())
+            if (attribute.Decorator.ShouldSkipRegistration<ISkipHandlerRegistrationAttribute>())
                 continue;
             
             if (attribute.Decorator.IsGenericType && attribute.Decorator.IsGenericTypeDefinition)
