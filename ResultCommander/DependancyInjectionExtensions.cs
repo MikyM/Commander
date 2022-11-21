@@ -143,7 +143,7 @@ public static class DependancyInjectionExtensions
             
         foreach (var attribute in decoratorAttributes.OrderBy(x => x.RegistrationOrder))
         {
-            if (attribute.Decorator.ShouldSkipRegistration<ISkipHandlerRegistrationAttribute>())
+            if (attribute.Decorator.ShouldSkipRegistration<ISkipDecoratorRegistrationAttribute>())
                 continue;
             
             if (attribute.Decorator.IsGenericType && attribute.Decorator.IsGenericTypeDefinition)
