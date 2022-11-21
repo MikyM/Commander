@@ -28,7 +28,8 @@ public static class DependancyInjectionExtensions
     private static bool HasCustomAttributes(this Type type)
         => type.GetRegistrationAttributesOfType<ILifetimeAttribute>().Any() ||
            type.GetRegistrationAttributesOfType<IDecoratedByAttribute>().Any() ||
-           type.GetRegistrationAttributesOfType<IInterceptedByAttribute>().Any();
+           type.GetRegistrationAttributesOfType<IInterceptedByAttribute>().Any() ||
+           type.GetRegistrationAttributesOfType<IEnableInterceptionAttribute>().Any();
 
     private static bool ShouldSkip(this Type type)
         => type.GetCustomAttributes(false).Any(x => x is ISkipHandlerRegistrationAttribute);
@@ -155,7 +156,7 @@ public static class DependancyInjectionExtensions
         return builder;
     }
     
-    private static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> HandleLifetime(this IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> builder, ServiceLifetime lifetime, LifetimeAttribute? attribute)
+    private static IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> HandleLifetime(this IRegistrationBuilder<object, ScanningActivatorData, DynamicRegistrationStyle> builder, ServiceLifetime lifetime, ILifetimeAttribute? attribute)
     {
         switch (lifetime)
         {
@@ -226,7 +227,12 @@ public static class DependancyInjectionExtensions
     {
         foreach (var type in types)
         {
-            var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
+            var lifeAttrs = type.GetRegistrationAttributesOfType<ILifetimeAttribute>().ToArray();
+            if (lifeAttrs.Length > 1)
+                throw new InvalidOperationException(
+                    $"Only a single lifetime attribute is allowed on a type, {type.Name}");
+
+            var lifeAttr = lifeAttrs.FirstOrDefault();
 
             var registrationBuilder = builder.RegisterTypes(type).AsClosedInterfacesOf(handlerServiceType);
 
@@ -278,7 +284,12 @@ public static class DependancyInjectionExtensions
     {
         foreach (var type in types)
         {
-            var lifeAttr = type.GetCustomAttribute<LifetimeAttribute>(false);
+            var lifeAttrs = type.GetRegistrationAttributesOfType<ILifetimeAttribute>().ToArray();
+            if (lifeAttrs.Length > 1)
+                throw new InvalidOperationException(
+                    $"Only a single lifetime attribute is allowed on a type, {type.Name}");
+
+            var lifeAttr = lifeAttrs.FirstOrDefault();
 
             var closedGenericTypes = type.GetInterfaces().Where(IsHandlerInterface).ToList();
 
