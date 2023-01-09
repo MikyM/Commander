@@ -2,6 +2,7 @@
 using AttributeBasedRegistration;
 using AttributeBasedRegistration.Attributes;
 using AttributeBasedRegistration.Attributes.Abstractions;
+using AttributeBasedRegistration.Autofac;
 using AttributeBasedRegistration.Extensions;
 using Autofac;
 using Autofac.Builder;
