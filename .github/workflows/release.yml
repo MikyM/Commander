@@ -29,7 +29,7 @@ jobs:
       run: dotnet restore
     - name: Build solution and generate NuGet package
       run: |  
-        cd ResultCommander
+        cd src/ResultCommander
         dotnet pack -c Release -o out 
 
     - name: Set up QEMU
