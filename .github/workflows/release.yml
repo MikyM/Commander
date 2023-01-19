@@ -30,7 +30,7 @@ jobs:
         cd src/ResultCommander
         dotnet pack -c Release -o out 
     - name: Build Docs
-      run: dotnet tool restore && cd ./docs && dotnet docfx docfx.json -f
+      run: dotnet tool restore && cd .. && cd ./docs && dotnet docfx docfx.json -f
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1
     - name: Set up Docker Buildx
