@@ -29,10 +29,10 @@ jobs:
       run: cd src && dotnet restore
     - name: Build solution and generate NuGet package
       run: |  
-        cd ResultCommander
+        cd src/ResultCommander
         dotnet pack -c Release -o out 
     - name: Build Docs
-      run: cd .. && cd .. && dotnet tool restore && cd ./docs && dotnet docfx docfx.json -f
+      run: dotnet tool restore && cd ./docs && dotnet docfx docfx.json -f
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1
     - name: Set up Docker Buildx
