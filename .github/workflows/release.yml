@@ -23,6 +23,8 @@ jobs:
       uses: actions/setup-dotnet@v2
       with:
         dotnet-version: 6.0.x
+    - name: Check out Code 
+      uses: actions/checkout@v2
     - name: Restore dependencies
       run: cd src && dotnet restore
     - name: Build solution and generate NuGet package
@@ -30,7 +32,7 @@ jobs:
         cd ResultCommander
         dotnet pack -c Release -o out 
     - name: Build Docs
-      run: dotnet tool restore && cd .. && cd .. && cd ./docs && dotnet docfx docfx.json -f
+      run: cd .. && cd .. && dotnet tool restore && cd ./docs && dotnet docfx docfx.json -f
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1
     - name: Set up Docker Buildx
