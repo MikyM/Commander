@@ -10,6 +10,7 @@ src/ResultCommander.user
 src/.idea
 src/.vs
 /docs/_site
-/docs/api
+/docs/api/*.yml
+/docs/api/.manifest
 /docs/obj
 *.html
