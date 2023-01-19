@@ -30,7 +30,9 @@ jobs:
     - name: Build solution and generate NuGet package
       run: |  
         cd src/ResultCommander
-        dotnet pack -c Release -o out 
+        dotnet pack -c Release -o out
+    - name: Push generated package to NuGet registry
+      run: dotnet nuget push ./src/ResultCommander/out/*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
     - name: Build Docs
       run: dotnet tool restore && cd ./docs && dotnet docfx docfx.json -f
     - name: Set up QEMU
