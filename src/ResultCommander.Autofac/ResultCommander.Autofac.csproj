@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <PackageId>ResultCommander.Autofac</PackageId>
+        <Version>2.1.1</Version>
+        <Authors>Krzysztof Kupisz</Authors>
+        <PackageDescription>Library featuring a command handler pattern.</PackageDescription>
+        <RepositoryUrl>https://github.com/MikyM/ResultCommander</RepositoryUrl>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <GenerateDocumentationFile>True</GenerateDocumentationFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ResultCommander\ResultCommander.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="../../README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AttributeBasedRegistration.Autofac" Version="2.1.1" />
+    </ItemGroup>
+
+</Project>

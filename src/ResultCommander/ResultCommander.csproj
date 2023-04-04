@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageId>ResultCommander</PackageId>
-    <Version>2.1.0</Version>
+    <Version>2.1.1</Version>
     <Authors>Krzysztof Kupisz</Authors>
     <PackageDescription>Library featuring a command handler pattern.</PackageDescription>
     <RepositoryUrl>https://github.com/MikyM/ResultCommander</RepositoryUrl>
@@ -17,11 +17,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>ResultCommander.Autofac</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+    
+  <ItemGroup>
     <None Include="../../README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
+  
   <ItemGroup>
-    <PackageReference Include="AttributeBasedRegistration" Version="2.1.0" />
-    <PackageReference Include="AttributeBasedRegistration.Autofac" Version="2.1.0" />
+    <PackageReference Include="AttributeBasedRegistration" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
     <PackageReference Include="Remora.Results" Version="7.2.3" />
     <PackageReference Include="Remora.Results.Analyzers" Version="1.0.0" />
