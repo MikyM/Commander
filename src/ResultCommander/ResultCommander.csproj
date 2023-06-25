@@ -30,7 +30,6 @@
     <PackageReference Include="AttributeBasedRegistration" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
     <PackageReference Include="Remora.Results" Version="7.2.3" />
-    <PackageReference Include="Remora.Results.Analyzers" Version="1.0.0" />
   </ItemGroup>
 
 </Project>
