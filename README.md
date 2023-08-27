@@ -39,7 +39,7 @@ You can register multiple decorators and they'll be applied in the order that yo
 
 ## Documentation
 
-Documentation available at https://docs.result-commander.mikym.me/.
+Documentation available at https://result-commander.mikym.me/.
 
 ## Example usage
 
