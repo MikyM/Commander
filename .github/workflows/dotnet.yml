@@ -1,0 +1,122 @@
+name: deploy
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  GITHUB_USER: MikyM
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    if: "!contains(format('{0} {1}', github.event.head_commit.message, github.event.pull_request.title), '[ci-skip]')"
+    steps:
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: | 
+          6.0.x
+          7.0.x
+          8.0.x
+    - name: Install and cache PowerShell modules
+      uses: potatoqualitee/psmodulecache@v5.2
+      with:
+        modules-to-cache: powershell-yaml
+
+    - name: Check out Code 
+      uses: actions/checkout@v3
+
+    - name: Restore dotnet tools
+      run: dotnet tool restore
+
+    - name: Build
+      run: |
+        cd src
+        dotnet restore
+        dotnet build -c Release --no-restore
+
+    - name: Run tests
+      run: |
+        cd src
+        dotnet test -c Release --no-restore --no-build --verbosity minimal
+
+    - name: Pack ResultCommander
+      if: github.event_name == 'push'
+      run: |  
+        cd src/ResultCommander
+        dotnet pack -c Release -o out 
+
+    - name: Push ResultCommander NuGet registry
+      if: github.event_name == 'push'
+      run: dotnet nuget push ./src/ResultCommander/out/*.nupkg --skip-duplicate -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
+
+    - name: Pack ResultCommander.Autofac
+      if: github.event_name == 'push'
+      run: | 
+        cd src/ResultCommander.Autofac
+        dotnet pack -c Release -o out 
+
+    - name: Push ResultCommander.Autofac NuGet registry
+      if: github.event_name == 'push'
+      run: dotnet nuget push ./src/ResultCommander.Autofac/out/*.nupkg --skip-duplicate -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
+      
+    - name: Build docs - copy readme and docfx metadata
+      if: github.event_name == 'push' && !contains(format('{0} {1}', github.event.head_commit.message, github.event.pull_request.title), '[doc-skip]')
+      run: cd ./docs && cp ../README.md index.md && dotnet docfx metadata
+
+    - name: Build docs - fix namespaces
+      if: github.event_name == 'push' && !contains(format('{0} {1}', github.event.head_commit.message, github.event.pull_request.title), '[doc-skip]')
+      shell: pwsh
+      run: cd ./docs && ./fix-nmsp.ps1 api\toc.yml
+
+    - name: Build docs - docfx build
+      if: github.event_name == 'push' && !contains(format('{0} {1}', github.event.head_commit.message, github.event.pull_request.title), '[doc-skip]')
+      run: cd ./docs && dotnet docfx build -f
+      
+    - name: Upload docs
+      if: github.event_name == 'push' && !contains(format('{0} {1}', github.event.head_commit.message, github.event.pull_request.title), '[doc-skip]')
+      uses: actions/upload-artifact@v3
+      with:
+        name: docfx-site
+        path: docs/_site/
+
+  publish_docs:
+    name: Publish Documentation
+    needs: build
+    if: github.event_name == 'push' && !contains(format('{0} {1}', github.event.head_commit.message, github.event.pull_request.title), '[doc-skip]') && !contains(format('{0} {1}', github.event.head_commit.message, github.event.pull_request.title), '[ci-skip]')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout triggering branch
+        uses: actions/checkout@v3
+        with:
+          path: base
+      
+      - name: Checkout gh-pages
+        uses: actions/checkout@v3
+        with:
+          ref: gh-pages
+          path: site
+      
+      - name: Prepare
+        run: bash base/docs/scripts/prepare.sh
+      
+      - name: Download documentation artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: docfx-site
+          path: site
+      
+      - name: Build
+        run: bash base/docs/scripts/build.sh
+      
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site

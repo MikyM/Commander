@@ -1,6 +1,6 @@
 # ResultCommander
 
-[![Build Status](https://github.com/MikyM/ResultCommander/actions/workflows/release.yml/badge.svg)](https://github.com/MikyM/ResultCommander/actions)
+[![Build Status](https://github.com/MikyM/ResultCommander/actions/workflows/dotnet.yml/badge.svg)](https://github.com/MikyM/ResultCommander/actions)
 
 Library featuring a command handler pattern for both synchronous and asynchronous operations.
 
@@ -39,7 +39,7 @@ You can register multiple decorators and they'll be applied in the order that yo
 
 ## Documentation
 
-Documentation available at https://result-commander.mikym.me/.
+Documentation available at https://mikym.github.io/ResultCommander/.
 
 ## Example usage
 
