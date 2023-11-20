@@ -1,0 +1,714 @@
+### YamlMime:XRefMap
+sorted: true
+references:
+- uid: ResultCommander
+  name: ResultCommander
+  href: api/ResultCommander.html
+  commentId: N:ResultCommander
+  fullName: ResultCommander
+  nameWithType: ResultCommander
+- uid: ResultCommander.Autofac
+  name: ResultCommander.Autofac
+  href: api/ResultCommander.Autofac.html
+  commentId: N:ResultCommander.Autofac
+  fullName: ResultCommander.Autofac
+  nameWithType: ResultCommander.Autofac
+- uid: ResultCommander.Autofac.ContainerBuilderExtensions
+  name: ContainerBuilderExtensions
+  href: api/ResultCommander.Autofac.ContainerBuilderExtensions.html
+  commentId: T:ResultCommander.Autofac.ContainerBuilderExtensions
+  fullName: ResultCommander.Autofac.ContainerBuilderExtensions
+  nameWithType: ContainerBuilderExtensions
+- uid: ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander(Autofac.ContainerBuilder,System.Action{ResultCommander.ResultCommanderConfiguration},System.Reflection.Assembly[])
+  name: AddResultCommander(ContainerBuilder, Action<ResultCommanderConfiguration>, Assembly[])
+  href: api/ResultCommander.Autofac.ContainerBuilderExtensions.html#ResultCommander_Autofac_ContainerBuilderExtensions_AddResultCommander_Autofac_ContainerBuilder_System_Action_ResultCommander_ResultCommanderConfiguration__System_Reflection_Assembly___
+  commentId: M:ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander(Autofac.ContainerBuilder,System.Action{ResultCommander.ResultCommanderConfiguration},System.Reflection.Assembly[])
+  name.vb: AddResultCommander(ContainerBuilder, Action(Of ResultCommanderConfiguration), Assembly())
+  fullName: ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander(Autofac.ContainerBuilder, System.Action<ResultCommander.ResultCommanderConfiguration>, System.Reflection.Assembly[])
+  fullName.vb: ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander(Autofac.ContainerBuilder, System.Action(Of ResultCommander.ResultCommanderConfiguration), System.Reflection.Assembly())
+  nameWithType: ContainerBuilderExtensions.AddResultCommander(ContainerBuilder, Action<ResultCommanderConfiguration>, Assembly[])
+  nameWithType.vb: ContainerBuilderExtensions.AddResultCommander(ContainerBuilder, Action(Of ResultCommanderConfiguration), Assembly())
+- uid: ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander(Autofac.ContainerBuilder,System.Action{ResultCommander.ResultCommanderConfiguration},System.Type[])
+  name: AddResultCommander(ContainerBuilder, Action<ResultCommanderConfiguration>, Type[])
+  href: api/ResultCommander.Autofac.ContainerBuilderExtensions.html#ResultCommander_Autofac_ContainerBuilderExtensions_AddResultCommander_Autofac_ContainerBuilder_System_Action_ResultCommander_ResultCommanderConfiguration__System_Type___
+  commentId: M:ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander(Autofac.ContainerBuilder,System.Action{ResultCommander.ResultCommanderConfiguration},System.Type[])
+  name.vb: AddResultCommander(ContainerBuilder, Action(Of ResultCommanderConfiguration), Type())
+  fullName: ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander(Autofac.ContainerBuilder, System.Action<ResultCommander.ResultCommanderConfiguration>, System.Type[])
+  fullName.vb: ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander(Autofac.ContainerBuilder, System.Action(Of ResultCommander.ResultCommanderConfiguration), System.Type())
+  nameWithType: ContainerBuilderExtensions.AddResultCommander(ContainerBuilder, Action<ResultCommanderConfiguration>, Type[])
+  nameWithType.vb: ContainerBuilderExtensions.AddResultCommander(ContainerBuilder, Action(Of ResultCommanderConfiguration), Type())
+- uid: ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander(Autofac.ContainerBuilder,System.Collections.Generic.IEnumerable{System.Reflection.Assembly},System.Action{ResultCommander.ResultCommanderConfiguration})
+  name: AddResultCommander(ContainerBuilder, IEnumerable<Assembly>, Action<ResultCommanderConfiguration>)
+  href: api/ResultCommander.Autofac.ContainerBuilderExtensions.html#ResultCommander_Autofac_ContainerBuilderExtensions_AddResultCommander_Autofac_ContainerBuilder_System_Collections_Generic_IEnumerable_System_Reflection_Assembly__System_Action_ResultCommander_ResultCommanderConfiguration__
+  commentId: M:ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander(Autofac.ContainerBuilder,System.Collections.Generic.IEnumerable{System.Reflection.Assembly},System.Action{ResultCommander.ResultCommanderConfiguration})
+  name.vb: AddResultCommander(ContainerBuilder, IEnumerable(Of Assembly), Action(Of ResultCommanderConfiguration))
+  fullName: ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander(Autofac.ContainerBuilder, System.Collections.Generic.IEnumerable<System.Reflection.Assembly>, System.Action<ResultCommander.ResultCommanderConfiguration>)
+  fullName.vb: ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander(Autofac.ContainerBuilder, System.Collections.Generic.IEnumerable(Of System.Reflection.Assembly), System.Action(Of ResultCommander.ResultCommanderConfiguration))
+  nameWithType: ContainerBuilderExtensions.AddResultCommander(ContainerBuilder, IEnumerable<Assembly>, Action<ResultCommanderConfiguration>)
+  nameWithType.vb: ContainerBuilderExtensions.AddResultCommander(ContainerBuilder, IEnumerable(Of Assembly), Action(Of ResultCommanderConfiguration))
+- uid: ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander(Autofac.ContainerBuilder,System.Collections.Generic.IEnumerable{System.Type},System.Action{ResultCommander.ResultCommanderConfiguration})
+  name: AddResultCommander(ContainerBuilder, IEnumerable<Type>, Action<ResultCommanderConfiguration>)
+  href: api/ResultCommander.Autofac.ContainerBuilderExtensions.html#ResultCommander_Autofac_ContainerBuilderExtensions_AddResultCommander_Autofac_ContainerBuilder_System_Collections_Generic_IEnumerable_System_Type__System_Action_ResultCommander_ResultCommanderConfiguration__
+  commentId: M:ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander(Autofac.ContainerBuilder,System.Collections.Generic.IEnumerable{System.Type},System.Action{ResultCommander.ResultCommanderConfiguration})
+  name.vb: AddResultCommander(ContainerBuilder, IEnumerable(Of Type), Action(Of ResultCommanderConfiguration))
+  fullName: ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander(Autofac.ContainerBuilder, System.Collections.Generic.IEnumerable<System.Type>, System.Action<ResultCommander.ResultCommanderConfiguration>)
+  fullName.vb: ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander(Autofac.ContainerBuilder, System.Collections.Generic.IEnumerable(Of System.Type), System.Action(Of ResultCommander.ResultCommanderConfiguration))
+  nameWithType: ContainerBuilderExtensions.AddResultCommander(ContainerBuilder, IEnumerable<Type>, Action<ResultCommanderConfiguration>)
+  nameWithType.vb: ContainerBuilderExtensions.AddResultCommander(ContainerBuilder, IEnumerable(Of Type), Action(Of ResultCommanderConfiguration))
+- uid: ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander(Autofac.ContainerBuilder,System.Reflection.Assembly[])
+  name: AddResultCommander(ContainerBuilder, Assembly[])
+  href: api/ResultCommander.Autofac.ContainerBuilderExtensions.html#ResultCommander_Autofac_ContainerBuilderExtensions_AddResultCommander_Autofac_ContainerBuilder_System_Reflection_Assembly___
+  commentId: M:ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander(Autofac.ContainerBuilder,System.Reflection.Assembly[])
+  name.vb: AddResultCommander(ContainerBuilder, Assembly())
+  fullName: ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander(Autofac.ContainerBuilder, System.Reflection.Assembly[])
+  fullName.vb: ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander(Autofac.ContainerBuilder, System.Reflection.Assembly())
+  nameWithType: ContainerBuilderExtensions.AddResultCommander(ContainerBuilder, Assembly[])
+  nameWithType.vb: ContainerBuilderExtensions.AddResultCommander(ContainerBuilder, Assembly())
+- uid: ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander(Autofac.ContainerBuilder,System.Type[])
+  name: AddResultCommander(ContainerBuilder, Type[])
+  href: api/ResultCommander.Autofac.ContainerBuilderExtensions.html#ResultCommander_Autofac_ContainerBuilderExtensions_AddResultCommander_Autofac_ContainerBuilder_System_Type___
+  commentId: M:ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander(Autofac.ContainerBuilder,System.Type[])
+  name.vb: AddResultCommander(ContainerBuilder, Type())
+  fullName: ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander(Autofac.ContainerBuilder, System.Type[])
+  fullName.vb: ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander(Autofac.ContainerBuilder, System.Type())
+  nameWithType: ContainerBuilderExtensions.AddResultCommander(ContainerBuilder, Type[])
+  nameWithType.vb: ContainerBuilderExtensions.AddResultCommander(ContainerBuilder, Type())
+- uid: ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander*
+  name: AddResultCommander
+  href: api/ResultCommander.Autofac.ContainerBuilderExtensions.html#ResultCommander_Autofac_ContainerBuilderExtensions_AddResultCommander_
+  commentId: Overload:ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander
+  isSpec: "True"
+  fullName: ResultCommander.Autofac.ContainerBuilderExtensions.AddResultCommander
+  nameWithType: ContainerBuilderExtensions.AddResultCommander
+- uid: ResultCommander.Command
+  name: Command
+  href: api/ResultCommander.Command.html
+  commentId: T:ResultCommander.Command
+  fullName: ResultCommander.Command
+  nameWithType: Command
+- uid: ResultCommander.Command.ToString
+  name: ToString()
+  href: api/ResultCommander.Command.html#ResultCommander_Command_ToString
+  commentId: M:ResultCommander.Command.ToString
+  fullName: ResultCommander.Command.ToString()
+  nameWithType: Command.ToString()
+- uid: ResultCommander.Command.ToString*
+  name: ToString
+  href: api/ResultCommander.Command.html#ResultCommander_Command_ToString_
+  commentId: Overload:ResultCommander.Command.ToString
+  isSpec: "True"
+  fullName: ResultCommander.Command.ToString
+  nameWithType: Command.ToString
+- uid: ResultCommander.Command`1
+  name: Command<TResult>
+  href: api/ResultCommander.Command-1.html
+  commentId: T:ResultCommander.Command`1
+  name.vb: Command(Of TResult)
+  fullName: ResultCommander.Command<TResult>
+  fullName.vb: ResultCommander.Command(Of TResult)
+  nameWithType: Command<TResult>
+  nameWithType.vb: Command(Of TResult)
+- uid: ResultCommander.Command`1.ToString
+  name: ToString()
+  href: api/ResultCommander.Command-1.html#ResultCommander_Command_1_ToString
+  commentId: M:ResultCommander.Command`1.ToString
+  fullName: ResultCommander.Command<TResult>.ToString()
+  fullName.vb: ResultCommander.Command(Of TResult).ToString()
+  nameWithType: Command<TResult>.ToString()
+  nameWithType.vb: Command(Of TResult).ToString()
+- uid: ResultCommander.Command`1.ToString*
+  name: ToString
+  href: api/ResultCommander.Command-1.html#ResultCommander_Command_1_ToString_
+  commentId: Overload:ResultCommander.Command`1.ToString
+  isSpec: "True"
+  fullName: ResultCommander.Command<TResult>.ToString
+  fullName.vb: ResultCommander.Command(Of TResult).ToString
+  nameWithType: Command<TResult>.ToString
+  nameWithType.vb: Command(Of TResult).ToString
+- uid: ResultCommander.CommandHandlerResolver
+  name: CommandHandlerResolver
+  href: api/ResultCommander.CommandHandlerResolver.html
+  commentId: T:ResultCommander.CommandHandlerResolver
+  fullName: ResultCommander.CommandHandlerResolver
+  nameWithType: CommandHandlerResolver
+- uid: ResultCommander.CommandHandlerResolver.#ctor(System.IServiceProvider)
+  name: CommandHandlerResolver(IServiceProvider)
+  href: api/ResultCommander.CommandHandlerResolver.html#ResultCommander_CommandHandlerResolver__ctor_System_IServiceProvider_
+  commentId: M:ResultCommander.CommandHandlerResolver.#ctor(System.IServiceProvider)
+  fullName: ResultCommander.CommandHandlerResolver.CommandHandlerResolver(System.IServiceProvider)
+  nameWithType: CommandHandlerResolver.CommandHandlerResolver(IServiceProvider)
+- uid: ResultCommander.CommandHandlerResolver.#ctor*
+  name: CommandHandlerResolver
+  href: api/ResultCommander.CommandHandlerResolver.html#ResultCommander_CommandHandlerResolver__ctor_
+  commentId: Overload:ResultCommander.CommandHandlerResolver.#ctor
+  isSpec: "True"
+  fullName: ResultCommander.CommandHandlerResolver.CommandHandlerResolver
+  nameWithType: CommandHandlerResolver.CommandHandlerResolver
+- uid: ResultCommander.CommandHandlerResolver.GetAsyncHandlerFor*
+  name: GetAsyncHandlerFor
+  href: api/ResultCommander.CommandHandlerResolver.html#ResultCommander_CommandHandlerResolver_GetAsyncHandlerFor_
+  commentId: Overload:ResultCommander.CommandHandlerResolver.GetAsyncHandlerFor
+  isSpec: "True"
+  fullName: ResultCommander.CommandHandlerResolver.GetAsyncHandlerFor
+  nameWithType: CommandHandlerResolver.GetAsyncHandlerFor
+- uid: ResultCommander.CommandHandlerResolver.GetAsyncHandlerFor``1
+  name: GetAsyncHandlerFor<TCommand>()
+  href: api/ResultCommander.CommandHandlerResolver.html#ResultCommander_CommandHandlerResolver_GetAsyncHandlerFor__1
+  commentId: M:ResultCommander.CommandHandlerResolver.GetAsyncHandlerFor``1
+  name.vb: GetAsyncHandlerFor(Of TCommand)()
+  fullName: ResultCommander.CommandHandlerResolver.GetAsyncHandlerFor<TCommand>()
+  fullName.vb: ResultCommander.CommandHandlerResolver.GetAsyncHandlerFor(Of TCommand)()
+  nameWithType: CommandHandlerResolver.GetAsyncHandlerFor<TCommand>()
+  nameWithType.vb: CommandHandlerResolver.GetAsyncHandlerFor(Of TCommand)()
+- uid: ResultCommander.CommandHandlerResolver.GetAsyncHandlerFor``2
+  name: GetAsyncHandlerFor<TCommand, TResult>()
+  href: api/ResultCommander.CommandHandlerResolver.html#ResultCommander_CommandHandlerResolver_GetAsyncHandlerFor__2
+  commentId: M:ResultCommander.CommandHandlerResolver.GetAsyncHandlerFor``2
+  name.vb: GetAsyncHandlerFor(Of TCommand, TResult)()
+  fullName: ResultCommander.CommandHandlerResolver.GetAsyncHandlerFor<TCommand, TResult>()
+  fullName.vb: ResultCommander.CommandHandlerResolver.GetAsyncHandlerFor(Of TCommand, TResult)()
+  nameWithType: CommandHandlerResolver.GetAsyncHandlerFor<TCommand, TResult>()
+  nameWithType.vb: CommandHandlerResolver.GetAsyncHandlerFor(Of TCommand, TResult)()
+- uid: ResultCommander.CommandHandlerResolver.GetHandler*
+  name: GetHandler
+  href: api/ResultCommander.CommandHandlerResolver.html#ResultCommander_CommandHandlerResolver_GetHandler_
+  commentId: Overload:ResultCommander.CommandHandlerResolver.GetHandler
+  isSpec: "True"
+  fullName: ResultCommander.CommandHandlerResolver.GetHandler
+  nameWithType: CommandHandlerResolver.GetHandler
+- uid: ResultCommander.CommandHandlerResolver.GetHandler``1
+  name: GetHandler<TCommandHandler>()
+  href: api/ResultCommander.CommandHandlerResolver.html#ResultCommander_CommandHandlerResolver_GetHandler__1
+  commentId: M:ResultCommander.CommandHandlerResolver.GetHandler``1
+  name.vb: GetHandler(Of TCommandHandler)()
+  fullName: ResultCommander.CommandHandlerResolver.GetHandler<TCommandHandler>()
+  fullName.vb: ResultCommander.CommandHandlerResolver.GetHandler(Of TCommandHandler)()
+  nameWithType: CommandHandlerResolver.GetHandler<TCommandHandler>()
+  nameWithType.vb: CommandHandlerResolver.GetHandler(Of TCommandHandler)()
+- uid: ResultCommander.CommandHandlerResolver.GetSyncHandlerFor*
+  name: GetSyncHandlerFor
+  href: api/ResultCommander.CommandHandlerResolver.html#ResultCommander_CommandHandlerResolver_GetSyncHandlerFor_
+  commentId: Overload:ResultCommander.CommandHandlerResolver.GetSyncHandlerFor
+  isSpec: "True"
+  fullName: ResultCommander.CommandHandlerResolver.GetSyncHandlerFor
+  nameWithType: CommandHandlerResolver.GetSyncHandlerFor
+- uid: ResultCommander.CommandHandlerResolver.GetSyncHandlerFor``1
+  name: GetSyncHandlerFor<TCommand>()
+  href: api/ResultCommander.CommandHandlerResolver.html#ResultCommander_CommandHandlerResolver_GetSyncHandlerFor__1
+  commentId: M:ResultCommander.CommandHandlerResolver.GetSyncHandlerFor``1
+  name.vb: GetSyncHandlerFor(Of TCommand)()
+  fullName: ResultCommander.CommandHandlerResolver.GetSyncHandlerFor<TCommand>()
+  fullName.vb: ResultCommander.CommandHandlerResolver.GetSyncHandlerFor(Of TCommand)()
+  nameWithType: CommandHandlerResolver.GetSyncHandlerFor<TCommand>()
+  nameWithType.vb: CommandHandlerResolver.GetSyncHandlerFor(Of TCommand)()
+- uid: ResultCommander.CommandHandlerResolver.GetSyncHandlerFor``2
+  name: GetSyncHandlerFor<TCommand, TResult>()
+  href: api/ResultCommander.CommandHandlerResolver.html#ResultCommander_CommandHandlerResolver_GetSyncHandlerFor__2
+  commentId: M:ResultCommander.CommandHandlerResolver.GetSyncHandlerFor``2
+  name.vb: GetSyncHandlerFor(Of TCommand, TResult)()
+  fullName: ResultCommander.CommandHandlerResolver.GetSyncHandlerFor<TCommand, TResult>()
+  fullName.vb: ResultCommander.CommandHandlerResolver.GetSyncHandlerFor(Of TCommand, TResult)()
+  nameWithType: CommandHandlerResolver.GetSyncHandlerFor<TCommand, TResult>()
+  nameWithType.vb: CommandHandlerResolver.GetSyncHandlerFor(Of TCommand, TResult)()
+- uid: ResultCommander.ExceptionAsyncHandlerDecorator`1
+  name: ExceptionAsyncHandlerDecorator<TCommand>
+  href: api/ResultCommander.ExceptionAsyncHandlerDecorator-1.html
+  commentId: T:ResultCommander.ExceptionAsyncHandlerDecorator`1
+  name.vb: ExceptionAsyncHandlerDecorator(Of TCommand)
+  fullName: ResultCommander.ExceptionAsyncHandlerDecorator<TCommand>
+  fullName.vb: ResultCommander.ExceptionAsyncHandlerDecorator(Of TCommand)
+  nameWithType: ExceptionAsyncHandlerDecorator<TCommand>
+  nameWithType.vb: ExceptionAsyncHandlerDecorator(Of TCommand)
+- uid: ResultCommander.ExceptionAsyncHandlerDecorator`1.#ctor(ResultCommander.IAsyncCommandHandler{`0},Microsoft.Extensions.Logging.ILogger{ResultCommander.ExceptionAsyncHandlerDecorator{`0}})
+  name: ExceptionAsyncHandlerDecorator(IAsyncCommandHandler<TCommand>, ILogger<ExceptionAsyncHandlerDecorator<TCommand>>)
+  href: api/ResultCommander.ExceptionAsyncHandlerDecorator-1.html#ResultCommander_ExceptionAsyncHandlerDecorator_1__ctor_ResultCommander_IAsyncCommandHandler__0__Microsoft_Extensions_Logging_ILogger_ResultCommander_ExceptionAsyncHandlerDecorator__0___
+  commentId: M:ResultCommander.ExceptionAsyncHandlerDecorator`1.#ctor(ResultCommander.IAsyncCommandHandler{`0},Microsoft.Extensions.Logging.ILogger{ResultCommander.ExceptionAsyncHandlerDecorator{`0}})
+  name.vb: ExceptionAsyncHandlerDecorator(IAsyncCommandHandler(Of TCommand), ILogger(Of ExceptionAsyncHandlerDecorator(Of TCommand)))
+  fullName: ResultCommander.ExceptionAsyncHandlerDecorator<TCommand>.ExceptionAsyncHandlerDecorator(ResultCommander.IAsyncCommandHandler<TCommand>, Microsoft.Extensions.Logging.ILogger<ResultCommander.ExceptionAsyncHandlerDecorator<TCommand>>)
+  fullName.vb: ResultCommander.ExceptionAsyncHandlerDecorator(Of TCommand).ExceptionAsyncHandlerDecorator(ResultCommander.IAsyncCommandHandler(Of TCommand), Microsoft.Extensions.Logging.ILogger(Of ResultCommander.ExceptionAsyncHandlerDecorator(Of TCommand)))
+  nameWithType: ExceptionAsyncHandlerDecorator<TCommand>.ExceptionAsyncHandlerDecorator(IAsyncCommandHandler<TCommand>, ILogger<ExceptionAsyncHandlerDecorator<TCommand>>)
+  nameWithType.vb: ExceptionAsyncHandlerDecorator(Of TCommand).ExceptionAsyncHandlerDecorator(IAsyncCommandHandler(Of TCommand), ILogger(Of ExceptionAsyncHandlerDecorator(Of TCommand)))
+- uid: ResultCommander.ExceptionAsyncHandlerDecorator`1.#ctor*
+  name: ExceptionAsyncHandlerDecorator
+  href: api/ResultCommander.ExceptionAsyncHandlerDecorator-1.html#ResultCommander_ExceptionAsyncHandlerDecorator_1__ctor_
+  commentId: Overload:ResultCommander.ExceptionAsyncHandlerDecorator`1.#ctor
+  isSpec: "True"
+  fullName: ResultCommander.ExceptionAsyncHandlerDecorator<TCommand>.ExceptionAsyncHandlerDecorator
+  fullName.vb: ResultCommander.ExceptionAsyncHandlerDecorator(Of TCommand).ExceptionAsyncHandlerDecorator
+  nameWithType: ExceptionAsyncHandlerDecorator<TCommand>.ExceptionAsyncHandlerDecorator
+  nameWithType.vb: ExceptionAsyncHandlerDecorator(Of TCommand).ExceptionAsyncHandlerDecorator
+- uid: ResultCommander.ExceptionAsyncHandlerDecorator`1.HandleAsync(`0,System.Threading.CancellationToken)
+  name: HandleAsync(TCommand, CancellationToken)
+  href: api/ResultCommander.ExceptionAsyncHandlerDecorator-1.html#ResultCommander_ExceptionAsyncHandlerDecorator_1_HandleAsync__0_System_Threading_CancellationToken_
+  commentId: M:ResultCommander.ExceptionAsyncHandlerDecorator`1.HandleAsync(`0,System.Threading.CancellationToken)
+  fullName: ResultCommander.ExceptionAsyncHandlerDecorator<TCommand>.HandleAsync(TCommand, System.Threading.CancellationToken)
+  fullName.vb: ResultCommander.ExceptionAsyncHandlerDecorator(Of TCommand).HandleAsync(TCommand, System.Threading.CancellationToken)
+  nameWithType: ExceptionAsyncHandlerDecorator<TCommand>.HandleAsync(TCommand, CancellationToken)
+  nameWithType.vb: ExceptionAsyncHandlerDecorator(Of TCommand).HandleAsync(TCommand, CancellationToken)
+- uid: ResultCommander.ExceptionAsyncHandlerDecorator`1.HandleAsync*
+  name: HandleAsync
+  href: api/ResultCommander.ExceptionAsyncHandlerDecorator-1.html#ResultCommander_ExceptionAsyncHandlerDecorator_1_HandleAsync_
+  commentId: Overload:ResultCommander.ExceptionAsyncHandlerDecorator`1.HandleAsync
+  isSpec: "True"
+  fullName: ResultCommander.ExceptionAsyncHandlerDecorator<TCommand>.HandleAsync
+  fullName.vb: ResultCommander.ExceptionAsyncHandlerDecorator(Of TCommand).HandleAsync
+  nameWithType: ExceptionAsyncHandlerDecorator<TCommand>.HandleAsync
+  nameWithType.vb: ExceptionAsyncHandlerDecorator(Of TCommand).HandleAsync
+- uid: ResultCommander.ExceptionAsyncHandlerDecorator`2
+  name: ExceptionAsyncHandlerDecorator<TCommand, TResult>
+  href: api/ResultCommander.ExceptionAsyncHandlerDecorator-2.html
+  commentId: T:ResultCommander.ExceptionAsyncHandlerDecorator`2
+  name.vb: ExceptionAsyncHandlerDecorator(Of TCommand, TResult)
+  fullName: ResultCommander.ExceptionAsyncHandlerDecorator<TCommand, TResult>
+  fullName.vb: ResultCommander.ExceptionAsyncHandlerDecorator(Of TCommand, TResult)
+  nameWithType: ExceptionAsyncHandlerDecorator<TCommand, TResult>
+  nameWithType.vb: ExceptionAsyncHandlerDecorator(Of TCommand, TResult)
+- uid: ResultCommander.ExceptionAsyncHandlerDecorator`2.#ctor(ResultCommander.IAsyncCommandHandler{`0,`1},Microsoft.Extensions.Logging.ILogger{ResultCommander.ExceptionAsyncHandlerDecorator{`0,`1}})
+  name: ExceptionAsyncHandlerDecorator(IAsyncCommandHandler<TCommand, TResult>, ILogger<ExceptionAsyncHandlerDecorator<TCommand, TResult>>)
+  href: api/ResultCommander.ExceptionAsyncHandlerDecorator-2.html#ResultCommander_ExceptionAsyncHandlerDecorator_2__ctor_ResultCommander_IAsyncCommandHandler__0__1__Microsoft_Extensions_Logging_ILogger_ResultCommander_ExceptionAsyncHandlerDecorator__0__1___
+  commentId: M:ResultCommander.ExceptionAsyncHandlerDecorator`2.#ctor(ResultCommander.IAsyncCommandHandler{`0,`1},Microsoft.Extensions.Logging.ILogger{ResultCommander.ExceptionAsyncHandlerDecorator{`0,`1}})
+  name.vb: ExceptionAsyncHandlerDecorator(IAsyncCommandHandler(Of TCommand, TResult), ILogger(Of ExceptionAsyncHandlerDecorator(Of TCommand, TResult)))
+  fullName: ResultCommander.ExceptionAsyncHandlerDecorator<TCommand, TResult>.ExceptionAsyncHandlerDecorator(ResultCommander.IAsyncCommandHandler<TCommand, TResult>, Microsoft.Extensions.Logging.ILogger<ResultCommander.ExceptionAsyncHandlerDecorator<TCommand, TResult>>)
+  fullName.vb: ResultCommander.ExceptionAsyncHandlerDecorator(Of TCommand, TResult).ExceptionAsyncHandlerDecorator(ResultCommander.IAsyncCommandHandler(Of TCommand, TResult), Microsoft.Extensions.Logging.ILogger(Of ResultCommander.ExceptionAsyncHandlerDecorator(Of TCommand, TResult)))
+  nameWithType: ExceptionAsyncHandlerDecorator<TCommand, TResult>.ExceptionAsyncHandlerDecorator(IAsyncCommandHandler<TCommand, TResult>, ILogger<ExceptionAsyncHandlerDecorator<TCommand, TResult>>)
+  nameWithType.vb: ExceptionAsyncHandlerDecorator(Of TCommand, TResult).ExceptionAsyncHandlerDecorator(IAsyncCommandHandler(Of TCommand, TResult), ILogger(Of ExceptionAsyncHandlerDecorator(Of TCommand, TResult)))
+- uid: ResultCommander.ExceptionAsyncHandlerDecorator`2.#ctor*
+  name: ExceptionAsyncHandlerDecorator
+  href: api/ResultCommander.ExceptionAsyncHandlerDecorator-2.html#ResultCommander_ExceptionAsyncHandlerDecorator_2__ctor_
+  commentId: Overload:ResultCommander.ExceptionAsyncHandlerDecorator`2.#ctor
+  isSpec: "True"
+  fullName: ResultCommander.ExceptionAsyncHandlerDecorator<TCommand, TResult>.ExceptionAsyncHandlerDecorator
+  fullName.vb: ResultCommander.ExceptionAsyncHandlerDecorator(Of TCommand, TResult).ExceptionAsyncHandlerDecorator
+  nameWithType: ExceptionAsyncHandlerDecorator<TCommand, TResult>.ExceptionAsyncHandlerDecorator
+  nameWithType.vb: ExceptionAsyncHandlerDecorator(Of TCommand, TResult).ExceptionAsyncHandlerDecorator
+- uid: ResultCommander.ExceptionAsyncHandlerDecorator`2.HandleAsync(`0,System.Threading.CancellationToken)
+  name: HandleAsync(TCommand, CancellationToken)
+  href: api/ResultCommander.ExceptionAsyncHandlerDecorator-2.html#ResultCommander_ExceptionAsyncHandlerDecorator_2_HandleAsync__0_System_Threading_CancellationToken_
+  commentId: M:ResultCommander.ExceptionAsyncHandlerDecorator`2.HandleAsync(`0,System.Threading.CancellationToken)
+  fullName: ResultCommander.ExceptionAsyncHandlerDecorator<TCommand, TResult>.HandleAsync(TCommand, System.Threading.CancellationToken)
+  fullName.vb: ResultCommander.ExceptionAsyncHandlerDecorator(Of TCommand, TResult).HandleAsync(TCommand, System.Threading.CancellationToken)
+  nameWithType: ExceptionAsyncHandlerDecorator<TCommand, TResult>.HandleAsync(TCommand, CancellationToken)
+  nameWithType.vb: ExceptionAsyncHandlerDecorator(Of TCommand, TResult).HandleAsync(TCommand, CancellationToken)
+- uid: ResultCommander.ExceptionAsyncHandlerDecorator`2.HandleAsync*
+  name: HandleAsync
+  href: api/ResultCommander.ExceptionAsyncHandlerDecorator-2.html#ResultCommander_ExceptionAsyncHandlerDecorator_2_HandleAsync_
+  commentId: Overload:ResultCommander.ExceptionAsyncHandlerDecorator`2.HandleAsync
+  isSpec: "True"
+  fullName: ResultCommander.ExceptionAsyncHandlerDecorator<TCommand, TResult>.HandleAsync
+  fullName.vb: ResultCommander.ExceptionAsyncHandlerDecorator(Of TCommand, TResult).HandleAsync
+  nameWithType: ExceptionAsyncHandlerDecorator<TCommand, TResult>.HandleAsync
+  nameWithType.vb: ExceptionAsyncHandlerDecorator(Of TCommand, TResult).HandleAsync
+- uid: ResultCommander.ExceptionSyncHandlerDecorator`1
+  name: ExceptionSyncHandlerDecorator<TCommand>
+  href: api/ResultCommander.ExceptionSyncHandlerDecorator-1.html
+  commentId: T:ResultCommander.ExceptionSyncHandlerDecorator`1
+  name.vb: ExceptionSyncHandlerDecorator(Of TCommand)
+  fullName: ResultCommander.ExceptionSyncHandlerDecorator<TCommand>
+  fullName.vb: ResultCommander.ExceptionSyncHandlerDecorator(Of TCommand)
+  nameWithType: ExceptionSyncHandlerDecorator<TCommand>
+  nameWithType.vb: ExceptionSyncHandlerDecorator(Of TCommand)
+- uid: ResultCommander.ExceptionSyncHandlerDecorator`1.#ctor(ResultCommander.ISyncCommandHandler{`0},Microsoft.Extensions.Logging.ILogger{ResultCommander.ExceptionSyncHandlerDecorator{`0}})
+  name: ExceptionSyncHandlerDecorator(ISyncCommandHandler<TCommand>, ILogger<ExceptionSyncHandlerDecorator<TCommand>>)
+  href: api/ResultCommander.ExceptionSyncHandlerDecorator-1.html#ResultCommander_ExceptionSyncHandlerDecorator_1__ctor_ResultCommander_ISyncCommandHandler__0__Microsoft_Extensions_Logging_ILogger_ResultCommander_ExceptionSyncHandlerDecorator__0___
+  commentId: M:ResultCommander.ExceptionSyncHandlerDecorator`1.#ctor(ResultCommander.ISyncCommandHandler{`0},Microsoft.Extensions.Logging.ILogger{ResultCommander.ExceptionSyncHandlerDecorator{`0}})
+  name.vb: ExceptionSyncHandlerDecorator(ISyncCommandHandler(Of TCommand), ILogger(Of ExceptionSyncHandlerDecorator(Of TCommand)))
+  fullName: ResultCommander.ExceptionSyncHandlerDecorator<TCommand>.ExceptionSyncHandlerDecorator(ResultCommander.ISyncCommandHandler<TCommand>, Microsoft.Extensions.Logging.ILogger<ResultCommander.ExceptionSyncHandlerDecorator<TCommand>>)
+  fullName.vb: ResultCommander.ExceptionSyncHandlerDecorator(Of TCommand).ExceptionSyncHandlerDecorator(ResultCommander.ISyncCommandHandler(Of TCommand), Microsoft.Extensions.Logging.ILogger(Of ResultCommander.ExceptionSyncHandlerDecorator(Of TCommand)))
+  nameWithType: ExceptionSyncHandlerDecorator<TCommand>.ExceptionSyncHandlerDecorator(ISyncCommandHandler<TCommand>, ILogger<ExceptionSyncHandlerDecorator<TCommand>>)
+  nameWithType.vb: ExceptionSyncHandlerDecorator(Of TCommand).ExceptionSyncHandlerDecorator(ISyncCommandHandler(Of TCommand), ILogger(Of ExceptionSyncHandlerDecorator(Of TCommand)))
+- uid: ResultCommander.ExceptionSyncHandlerDecorator`1.#ctor*
+  name: ExceptionSyncHandlerDecorator
+  href: api/ResultCommander.ExceptionSyncHandlerDecorator-1.html#ResultCommander_ExceptionSyncHandlerDecorator_1__ctor_
+  commentId: Overload:ResultCommander.ExceptionSyncHandlerDecorator`1.#ctor
+  isSpec: "True"
+  fullName: ResultCommander.ExceptionSyncHandlerDecorator<TCommand>.ExceptionSyncHandlerDecorator
+  fullName.vb: ResultCommander.ExceptionSyncHandlerDecorator(Of TCommand).ExceptionSyncHandlerDecorator
+  nameWithType: ExceptionSyncHandlerDecorator<TCommand>.ExceptionSyncHandlerDecorator
+  nameWithType.vb: ExceptionSyncHandlerDecorator(Of TCommand).ExceptionSyncHandlerDecorator
+- uid: ResultCommander.ExceptionSyncHandlerDecorator`1.Handle(`0)
+  name: Handle(TCommand)
+  href: api/ResultCommander.ExceptionSyncHandlerDecorator-1.html#ResultCommander_ExceptionSyncHandlerDecorator_1_Handle__0_
+  commentId: M:ResultCommander.ExceptionSyncHandlerDecorator`1.Handle(`0)
+  fullName: ResultCommander.ExceptionSyncHandlerDecorator<TCommand>.Handle(TCommand)
+  fullName.vb: ResultCommander.ExceptionSyncHandlerDecorator(Of TCommand).Handle(TCommand)
+  nameWithType: ExceptionSyncHandlerDecorator<TCommand>.Handle(TCommand)
+  nameWithType.vb: ExceptionSyncHandlerDecorator(Of TCommand).Handle(TCommand)
+- uid: ResultCommander.ExceptionSyncHandlerDecorator`1.Handle*
+  name: Handle
+  href: api/ResultCommander.ExceptionSyncHandlerDecorator-1.html#ResultCommander_ExceptionSyncHandlerDecorator_1_Handle_
+  commentId: Overload:ResultCommander.ExceptionSyncHandlerDecorator`1.Handle
+  isSpec: "True"
+  fullName: ResultCommander.ExceptionSyncHandlerDecorator<TCommand>.Handle
+  fullName.vb: ResultCommander.ExceptionSyncHandlerDecorator(Of TCommand).Handle
+  nameWithType: ExceptionSyncHandlerDecorator<TCommand>.Handle
+  nameWithType.vb: ExceptionSyncHandlerDecorator(Of TCommand).Handle
+- uid: ResultCommander.ExceptionSyncHandlerDecorator`2
+  name: ExceptionSyncHandlerDecorator<TCommand, TResult>
+  href: api/ResultCommander.ExceptionSyncHandlerDecorator-2.html
+  commentId: T:ResultCommander.ExceptionSyncHandlerDecorator`2
+  name.vb: ExceptionSyncHandlerDecorator(Of TCommand, TResult)
+  fullName: ResultCommander.ExceptionSyncHandlerDecorator<TCommand, TResult>
+  fullName.vb: ResultCommander.ExceptionSyncHandlerDecorator(Of TCommand, TResult)
+  nameWithType: ExceptionSyncHandlerDecorator<TCommand, TResult>
+  nameWithType.vb: ExceptionSyncHandlerDecorator(Of TCommand, TResult)
+- uid: ResultCommander.ExceptionSyncHandlerDecorator`2.#ctor(ResultCommander.ISyncCommandHandler{`0,`1},Microsoft.Extensions.Logging.ILogger{ResultCommander.ExceptionSyncHandlerDecorator{`0,`1}})
+  name: ExceptionSyncHandlerDecorator(ISyncCommandHandler<TCommand, TResult>, ILogger<ExceptionSyncHandlerDecorator<TCommand, TResult>>)
+  href: api/ResultCommander.ExceptionSyncHandlerDecorator-2.html#ResultCommander_ExceptionSyncHandlerDecorator_2__ctor_ResultCommander_ISyncCommandHandler__0__1__Microsoft_Extensions_Logging_ILogger_ResultCommander_ExceptionSyncHandlerDecorator__0__1___
+  commentId: M:ResultCommander.ExceptionSyncHandlerDecorator`2.#ctor(ResultCommander.ISyncCommandHandler{`0,`1},Microsoft.Extensions.Logging.ILogger{ResultCommander.ExceptionSyncHandlerDecorator{`0,`1}})
+  name.vb: ExceptionSyncHandlerDecorator(ISyncCommandHandler(Of TCommand, TResult), ILogger(Of ExceptionSyncHandlerDecorator(Of TCommand, TResult)))
+  fullName: ResultCommander.ExceptionSyncHandlerDecorator<TCommand, TResult>.ExceptionSyncHandlerDecorator(ResultCommander.ISyncCommandHandler<TCommand, TResult>, Microsoft.Extensions.Logging.ILogger<ResultCommander.ExceptionSyncHandlerDecorator<TCommand, TResult>>)
+  fullName.vb: ResultCommander.ExceptionSyncHandlerDecorator(Of TCommand, TResult).ExceptionSyncHandlerDecorator(ResultCommander.ISyncCommandHandler(Of TCommand, TResult), Microsoft.Extensions.Logging.ILogger(Of ResultCommander.ExceptionSyncHandlerDecorator(Of TCommand, TResult)))
+  nameWithType: ExceptionSyncHandlerDecorator<TCommand, TResult>.ExceptionSyncHandlerDecorator(ISyncCommandHandler<TCommand, TResult>, ILogger<ExceptionSyncHandlerDecorator<TCommand, TResult>>)
+  nameWithType.vb: ExceptionSyncHandlerDecorator(Of TCommand, TResult).ExceptionSyncHandlerDecorator(ISyncCommandHandler(Of TCommand, TResult), ILogger(Of ExceptionSyncHandlerDecorator(Of TCommand, TResult)))
+- uid: ResultCommander.ExceptionSyncHandlerDecorator`2.#ctor*
+  name: ExceptionSyncHandlerDecorator
+  href: api/ResultCommander.ExceptionSyncHandlerDecorator-2.html#ResultCommander_ExceptionSyncHandlerDecorator_2__ctor_
+  commentId: Overload:ResultCommander.ExceptionSyncHandlerDecorator`2.#ctor
+  isSpec: "True"
+  fullName: ResultCommander.ExceptionSyncHandlerDecorator<TCommand, TResult>.ExceptionSyncHandlerDecorator
+  fullName.vb: ResultCommander.ExceptionSyncHandlerDecorator(Of TCommand, TResult).ExceptionSyncHandlerDecorator
+  nameWithType: ExceptionSyncHandlerDecorator<TCommand, TResult>.ExceptionSyncHandlerDecorator
+  nameWithType.vb: ExceptionSyncHandlerDecorator(Of TCommand, TResult).ExceptionSyncHandlerDecorator
+- uid: ResultCommander.ExceptionSyncHandlerDecorator`2.Handle(`0)
+  name: Handle(TCommand)
+  href: api/ResultCommander.ExceptionSyncHandlerDecorator-2.html#ResultCommander_ExceptionSyncHandlerDecorator_2_Handle__0_
+  commentId: M:ResultCommander.ExceptionSyncHandlerDecorator`2.Handle(`0)
+  fullName: ResultCommander.ExceptionSyncHandlerDecorator<TCommand, TResult>.Handle(TCommand)
+  fullName.vb: ResultCommander.ExceptionSyncHandlerDecorator(Of TCommand, TResult).Handle(TCommand)
+  nameWithType: ExceptionSyncHandlerDecorator<TCommand, TResult>.Handle(TCommand)
+  nameWithType.vb: ExceptionSyncHandlerDecorator(Of TCommand, TResult).Handle(TCommand)
+- uid: ResultCommander.ExceptionSyncHandlerDecorator`2.Handle*
+  name: Handle
+  href: api/ResultCommander.ExceptionSyncHandlerDecorator-2.html#ResultCommander_ExceptionSyncHandlerDecorator_2_Handle_
+  commentId: Overload:ResultCommander.ExceptionSyncHandlerDecorator`2.Handle
+  isSpec: "True"
+  fullName: ResultCommander.ExceptionSyncHandlerDecorator<TCommand, TResult>.Handle
+  fullName.vb: ResultCommander.ExceptionSyncHandlerDecorator(Of TCommand, TResult).Handle
+  nameWithType: ExceptionSyncHandlerDecorator<TCommand, TResult>.Handle
+  nameWithType.vb: ExceptionSyncHandlerDecorator(Of TCommand, TResult).Handle
+- uid: ResultCommander.IAsyncCommandHandler`1
+  name: IAsyncCommandHandler<TCommand>
+  href: api/ResultCommander.IAsyncCommandHandler-1.html
+  commentId: T:ResultCommander.IAsyncCommandHandler`1
+  name.vb: IAsyncCommandHandler(Of TCommand)
+  fullName: ResultCommander.IAsyncCommandHandler<TCommand>
+  fullName.vb: ResultCommander.IAsyncCommandHandler(Of TCommand)
+  nameWithType: IAsyncCommandHandler<TCommand>
+  nameWithType.vb: IAsyncCommandHandler(Of TCommand)
+- uid: ResultCommander.IAsyncCommandHandler`1.HandleAsync(`0,System.Threading.CancellationToken)
+  name: HandleAsync(TCommand, CancellationToken)
+  href: api/ResultCommander.IAsyncCommandHandler-1.html#ResultCommander_IAsyncCommandHandler_1_HandleAsync__0_System_Threading_CancellationToken_
+  commentId: M:ResultCommander.IAsyncCommandHandler`1.HandleAsync(`0,System.Threading.CancellationToken)
+  fullName: ResultCommander.IAsyncCommandHandler<TCommand>.HandleAsync(TCommand, System.Threading.CancellationToken)
+  fullName.vb: ResultCommander.IAsyncCommandHandler(Of TCommand).HandleAsync(TCommand, System.Threading.CancellationToken)
+  nameWithType: IAsyncCommandHandler<TCommand>.HandleAsync(TCommand, CancellationToken)
+  nameWithType.vb: IAsyncCommandHandler(Of TCommand).HandleAsync(TCommand, CancellationToken)
+- uid: ResultCommander.IAsyncCommandHandler`1.HandleAsync*
+  name: HandleAsync
+  href: api/ResultCommander.IAsyncCommandHandler-1.html#ResultCommander_IAsyncCommandHandler_1_HandleAsync_
+  commentId: Overload:ResultCommander.IAsyncCommandHandler`1.HandleAsync
+  isSpec: "True"
+  fullName: ResultCommander.IAsyncCommandHandler<TCommand>.HandleAsync
+  fullName.vb: ResultCommander.IAsyncCommandHandler(Of TCommand).HandleAsync
+  nameWithType: IAsyncCommandHandler<TCommand>.HandleAsync
+  nameWithType.vb: IAsyncCommandHandler(Of TCommand).HandleAsync
+- uid: ResultCommander.IAsyncCommandHandler`2
+  name: IAsyncCommandHandler<TCommand, TResult>
+  href: api/ResultCommander.IAsyncCommandHandler-2.html
+  commentId: T:ResultCommander.IAsyncCommandHandler`2
+  name.vb: IAsyncCommandHandler(Of TCommand, TResult)
+  fullName: ResultCommander.IAsyncCommandHandler<TCommand, TResult>
+  fullName.vb: ResultCommander.IAsyncCommandHandler(Of TCommand, TResult)
+  nameWithType: IAsyncCommandHandler<TCommand, TResult>
+  nameWithType.vb: IAsyncCommandHandler(Of TCommand, TResult)
+- uid: ResultCommander.IAsyncCommandHandler`2.HandleAsync(`0,System.Threading.CancellationToken)
+  name: HandleAsync(TCommand, CancellationToken)
+  href: api/ResultCommander.IAsyncCommandHandler-2.html#ResultCommander_IAsyncCommandHandler_2_HandleAsync__0_System_Threading_CancellationToken_
+  commentId: M:ResultCommander.IAsyncCommandHandler`2.HandleAsync(`0,System.Threading.CancellationToken)
+  fullName: ResultCommander.IAsyncCommandHandler<TCommand, TResult>.HandleAsync(TCommand, System.Threading.CancellationToken)
+  fullName.vb: ResultCommander.IAsyncCommandHandler(Of TCommand, TResult).HandleAsync(TCommand, System.Threading.CancellationToken)
+  nameWithType: IAsyncCommandHandler<TCommand, TResult>.HandleAsync(TCommand, CancellationToken)
+  nameWithType.vb: IAsyncCommandHandler(Of TCommand, TResult).HandleAsync(TCommand, CancellationToken)
+- uid: ResultCommander.IAsyncCommandHandler`2.HandleAsync*
+  name: HandleAsync
+  href: api/ResultCommander.IAsyncCommandHandler-2.html#ResultCommander_IAsyncCommandHandler_2_HandleAsync_
+  commentId: Overload:ResultCommander.IAsyncCommandHandler`2.HandleAsync
+  isSpec: "True"
+  fullName: ResultCommander.IAsyncCommandHandler<TCommand, TResult>.HandleAsync
+  fullName.vb: ResultCommander.IAsyncCommandHandler(Of TCommand, TResult).HandleAsync
+  nameWithType: IAsyncCommandHandler<TCommand, TResult>.HandleAsync
+  nameWithType.vb: IAsyncCommandHandler(Of TCommand, TResult).HandleAsync
+- uid: ResultCommander.IAsyncCommandHandlerBase
+  name: IAsyncCommandHandlerBase
+  href: api/ResultCommander.IAsyncCommandHandlerBase.html
+  commentId: T:ResultCommander.IAsyncCommandHandlerBase
+  fullName: ResultCommander.IAsyncCommandHandlerBase
+  nameWithType: IAsyncCommandHandlerBase
+- uid: ResultCommander.ICommand
+  name: ICommand
+  href: api/ResultCommander.ICommand.html
+  commentId: T:ResultCommander.ICommand
+  fullName: ResultCommander.ICommand
+  nameWithType: ICommand
+- uid: ResultCommander.ICommand`1
+  name: ICommand<TResult>
+  href: api/ResultCommander.ICommand-1.html
+  commentId: T:ResultCommander.ICommand`1
+  name.vb: ICommand(Of TResult)
+  fullName: ResultCommander.ICommand<TResult>
+  fullName.vb: ResultCommander.ICommand(Of TResult)
+  nameWithType: ICommand<TResult>
+  nameWithType.vb: ICommand(Of TResult)
+- uid: ResultCommander.ICommandBase
+  name: ICommandBase
+  href: api/ResultCommander.ICommandBase.html
+  commentId: T:ResultCommander.ICommandBase
+  fullName: ResultCommander.ICommandBase
+  nameWithType: ICommandBase
+- uid: ResultCommander.ICommandHandlerBase
+  name: ICommandHandlerBase
+  href: api/ResultCommander.ICommandHandlerBase.html
+  commentId: T:ResultCommander.ICommandHandlerBase
+  fullName: ResultCommander.ICommandHandlerBase
+  nameWithType: ICommandHandlerBase
+- uid: ResultCommander.ICommandHandlerResolver
+  name: ICommandHandlerResolver
+  href: api/ResultCommander.ICommandHandlerResolver.html
+  commentId: T:ResultCommander.ICommandHandlerResolver
+  fullName: ResultCommander.ICommandHandlerResolver
+  nameWithType: ICommandHandlerResolver
+- uid: ResultCommander.ICommandHandlerResolver.GetAsyncHandlerFor*
+  name: GetAsyncHandlerFor
+  href: api/ResultCommander.ICommandHandlerResolver.html#ResultCommander_ICommandHandlerResolver_GetAsyncHandlerFor_
+  commentId: Overload:ResultCommander.ICommandHandlerResolver.GetAsyncHandlerFor
+  isSpec: "True"
+  fullName: ResultCommander.ICommandHandlerResolver.GetAsyncHandlerFor
+  nameWithType: ICommandHandlerResolver.GetAsyncHandlerFor
+- uid: ResultCommander.ICommandHandlerResolver.GetAsyncHandlerFor``1
+  name: GetAsyncHandlerFor<TCommand>()
+  href: api/ResultCommander.ICommandHandlerResolver.html#ResultCommander_ICommandHandlerResolver_GetAsyncHandlerFor__1
+  commentId: M:ResultCommander.ICommandHandlerResolver.GetAsyncHandlerFor``1
+  name.vb: GetAsyncHandlerFor(Of TCommand)()
+  fullName: ResultCommander.ICommandHandlerResolver.GetAsyncHandlerFor<TCommand>()
+  fullName.vb: ResultCommander.ICommandHandlerResolver.GetAsyncHandlerFor(Of TCommand)()
+  nameWithType: ICommandHandlerResolver.GetAsyncHandlerFor<TCommand>()
+  nameWithType.vb: ICommandHandlerResolver.GetAsyncHandlerFor(Of TCommand)()
+- uid: ResultCommander.ICommandHandlerResolver.GetAsyncHandlerFor``2
+  name: GetAsyncHandlerFor<TCommand, TResult>()
+  href: api/ResultCommander.ICommandHandlerResolver.html#ResultCommander_ICommandHandlerResolver_GetAsyncHandlerFor__2
+  commentId: M:ResultCommander.ICommandHandlerResolver.GetAsyncHandlerFor``2
+  name.vb: GetAsyncHandlerFor(Of TCommand, TResult)()
+  fullName: ResultCommander.ICommandHandlerResolver.GetAsyncHandlerFor<TCommand, TResult>()
+  fullName.vb: ResultCommander.ICommandHandlerResolver.GetAsyncHandlerFor(Of TCommand, TResult)()
+  nameWithType: ICommandHandlerResolver.GetAsyncHandlerFor<TCommand, TResult>()
+  nameWithType.vb: ICommandHandlerResolver.GetAsyncHandlerFor(Of TCommand, TResult)()
+- uid: ResultCommander.ICommandHandlerResolver.GetHandler*
+  name: GetHandler
+  href: api/ResultCommander.ICommandHandlerResolver.html#ResultCommander_ICommandHandlerResolver_GetHandler_
+  commentId: Overload:ResultCommander.ICommandHandlerResolver.GetHandler
+  isSpec: "True"
+  fullName: ResultCommander.ICommandHandlerResolver.GetHandler
+  nameWithType: ICommandHandlerResolver.GetHandler
+- uid: ResultCommander.ICommandHandlerResolver.GetHandler``1
+  name: GetHandler<TCommandHandler>()
+  href: api/ResultCommander.ICommandHandlerResolver.html#ResultCommander_ICommandHandlerResolver_GetHandler__1
+  commentId: M:ResultCommander.ICommandHandlerResolver.GetHandler``1
+  name.vb: GetHandler(Of TCommandHandler)()
+  fullName: ResultCommander.ICommandHandlerResolver.GetHandler<TCommandHandler>()
+  fullName.vb: ResultCommander.ICommandHandlerResolver.GetHandler(Of TCommandHandler)()
+  nameWithType: ICommandHandlerResolver.GetHandler<TCommandHandler>()
+  nameWithType.vb: ICommandHandlerResolver.GetHandler(Of TCommandHandler)()
+- uid: ResultCommander.ICommandHandlerResolver.GetSyncHandlerFor*
+  name: GetSyncHandlerFor
+  href: api/ResultCommander.ICommandHandlerResolver.html#ResultCommander_ICommandHandlerResolver_GetSyncHandlerFor_
+  commentId: Overload:ResultCommander.ICommandHandlerResolver.GetSyncHandlerFor
+  isSpec: "True"
+  fullName: ResultCommander.ICommandHandlerResolver.GetSyncHandlerFor
+  nameWithType: ICommandHandlerResolver.GetSyncHandlerFor
+- uid: ResultCommander.ICommandHandlerResolver.GetSyncHandlerFor``1
+  name: GetSyncHandlerFor<TCommand>()
+  href: api/ResultCommander.ICommandHandlerResolver.html#ResultCommander_ICommandHandlerResolver_GetSyncHandlerFor__1
+  commentId: M:ResultCommander.ICommandHandlerResolver.GetSyncHandlerFor``1
+  name.vb: GetSyncHandlerFor(Of TCommand)()
+  fullName: ResultCommander.ICommandHandlerResolver.GetSyncHandlerFor<TCommand>()
+  fullName.vb: ResultCommander.ICommandHandlerResolver.GetSyncHandlerFor(Of TCommand)()
+  nameWithType: ICommandHandlerResolver.GetSyncHandlerFor<TCommand>()
+  nameWithType.vb: ICommandHandlerResolver.GetSyncHandlerFor(Of TCommand)()
+- uid: ResultCommander.ICommandHandlerResolver.GetSyncHandlerFor``2
+  name: GetSyncHandlerFor<TCommand, TResult>()
+  href: api/ResultCommander.ICommandHandlerResolver.html#ResultCommander_ICommandHandlerResolver_GetSyncHandlerFor__2
+  commentId: M:ResultCommander.ICommandHandlerResolver.GetSyncHandlerFor``2
+  name.vb: GetSyncHandlerFor(Of TCommand, TResult)()
+  fullName: ResultCommander.ICommandHandlerResolver.GetSyncHandlerFor<TCommand, TResult>()
+  fullName.vb: ResultCommander.ICommandHandlerResolver.GetSyncHandlerFor(Of TCommand, TResult)()
+  nameWithType: ICommandHandlerResolver.GetSyncHandlerFor<TCommand, TResult>()
+  nameWithType.vb: ICommandHandlerResolver.GetSyncHandlerFor(Of TCommand, TResult)()
+- uid: ResultCommander.ISkipHandlerRegistrationAttribute
+  name: ISkipHandlerRegistrationAttribute
+  href: api/ResultCommander.ISkipHandlerRegistrationAttribute.html
+  commentId: T:ResultCommander.ISkipHandlerRegistrationAttribute
+  fullName: ResultCommander.ISkipHandlerRegistrationAttribute
+  nameWithType: ISkipHandlerRegistrationAttribute
+- uid: ResultCommander.ISyncCommandHandler`1
+  name: ISyncCommandHandler<TCommand>
+  href: api/ResultCommander.ISyncCommandHandler-1.html
+  commentId: T:ResultCommander.ISyncCommandHandler`1
+  name.vb: ISyncCommandHandler(Of TCommand)
+  fullName: ResultCommander.ISyncCommandHandler<TCommand>
+  fullName.vb: ResultCommander.ISyncCommandHandler(Of TCommand)
+  nameWithType: ISyncCommandHandler<TCommand>
+  nameWithType.vb: ISyncCommandHandler(Of TCommand)
+- uid: ResultCommander.ISyncCommandHandler`1.Handle(`0)
+  name: Handle(TCommand)
+  href: api/ResultCommander.ISyncCommandHandler-1.html#ResultCommander_ISyncCommandHandler_1_Handle__0_
+  commentId: M:ResultCommander.ISyncCommandHandler`1.Handle(`0)
+  fullName: ResultCommander.ISyncCommandHandler<TCommand>.Handle(TCommand)
+  fullName.vb: ResultCommander.ISyncCommandHandler(Of TCommand).Handle(TCommand)
+  nameWithType: ISyncCommandHandler<TCommand>.Handle(TCommand)
+  nameWithType.vb: ISyncCommandHandler(Of TCommand).Handle(TCommand)
+- uid: ResultCommander.ISyncCommandHandler`1.Handle*
+  name: Handle
+  href: api/ResultCommander.ISyncCommandHandler-1.html#ResultCommander_ISyncCommandHandler_1_Handle_
+  commentId: Overload:ResultCommander.ISyncCommandHandler`1.Handle
+  isSpec: "True"
+  fullName: ResultCommander.ISyncCommandHandler<TCommand>.Handle
+  fullName.vb: ResultCommander.ISyncCommandHandler(Of TCommand).Handle
+  nameWithType: ISyncCommandHandler<TCommand>.Handle
+  nameWithType.vb: ISyncCommandHandler(Of TCommand).Handle
+- uid: ResultCommander.ISyncCommandHandler`2
+  name: ISyncCommandHandler<TCommand, TResult>
+  href: api/ResultCommander.ISyncCommandHandler-2.html
+  commentId: T:ResultCommander.ISyncCommandHandler`2
+  name.vb: ISyncCommandHandler(Of TCommand, TResult)
+  fullName: ResultCommander.ISyncCommandHandler<TCommand, TResult>
+  fullName.vb: ResultCommander.ISyncCommandHandler(Of TCommand, TResult)
+  nameWithType: ISyncCommandHandler<TCommand, TResult>
+  nameWithType.vb: ISyncCommandHandler(Of TCommand, TResult)
+- uid: ResultCommander.ISyncCommandHandler`2.Handle(`0)
+  name: Handle(TCommand)
+  href: api/ResultCommander.ISyncCommandHandler-2.html#ResultCommander_ISyncCommandHandler_2_Handle__0_
+  commentId: M:ResultCommander.ISyncCommandHandler`2.Handle(`0)
+  fullName: ResultCommander.ISyncCommandHandler<TCommand, TResult>.Handle(TCommand)
+  fullName.vb: ResultCommander.ISyncCommandHandler(Of TCommand, TResult).Handle(TCommand)
+  nameWithType: ISyncCommandHandler<TCommand, TResult>.Handle(TCommand)
+  nameWithType.vb: ISyncCommandHandler(Of TCommand, TResult).Handle(TCommand)
+- uid: ResultCommander.ISyncCommandHandler`2.Handle*
+  name: Handle
+  href: api/ResultCommander.ISyncCommandHandler-2.html#ResultCommander_ISyncCommandHandler_2_Handle_
+  commentId: Overload:ResultCommander.ISyncCommandHandler`2.Handle
+  isSpec: "True"
+  fullName: ResultCommander.ISyncCommandHandler<TCommand, TResult>.Handle
+  fullName.vb: ResultCommander.ISyncCommandHandler(Of TCommand, TResult).Handle
+  nameWithType: ISyncCommandHandler<TCommand, TResult>.Handle
+  nameWithType.vb: ISyncCommandHandler(Of TCommand, TResult).Handle
+- uid: ResultCommander.ISyncCommandHandlerBase
+  name: ISyncCommandHandlerBase
+  href: api/ResultCommander.ISyncCommandHandlerBase.html
+  commentId: T:ResultCommander.ISyncCommandHandlerBase
+  fullName: ResultCommander.ISyncCommandHandlerBase
+  nameWithType: ISyncCommandHandlerBase
+- uid: ResultCommander.ResultCommanderConfiguration
+  name: ResultCommanderConfiguration
+  href: api/ResultCommander.ResultCommanderConfiguration.html
+  commentId: T:ResultCommander.ResultCommanderConfiguration
+  fullName: ResultCommander.ResultCommanderConfiguration
+  nameWithType: ResultCommanderConfiguration
+- uid: ResultCommander.ResultCommanderConfiguration.DefaultHandlerLifetime
+  name: DefaultHandlerLifetime
+  href: api/ResultCommander.ResultCommanderConfiguration.html#ResultCommander_ResultCommanderConfiguration_DefaultHandlerLifetime
+  commentId: P:ResultCommander.ResultCommanderConfiguration.DefaultHandlerLifetime
+  fullName: ResultCommander.ResultCommanderConfiguration.DefaultHandlerLifetime
+  nameWithType: ResultCommanderConfiguration.DefaultHandlerLifetime
+- uid: ResultCommander.ResultCommanderConfiguration.DefaultHandlerLifetime*
+  name: DefaultHandlerLifetime
+  href: api/ResultCommander.ResultCommanderConfiguration.html#ResultCommander_ResultCommanderConfiguration_DefaultHandlerLifetime_
+  commentId: Overload:ResultCommander.ResultCommanderConfiguration.DefaultHandlerLifetime
+  isSpec: "True"
+  fullName: ResultCommander.ResultCommanderConfiguration.DefaultHandlerLifetime
+  nameWithType: ResultCommanderConfiguration.DefaultHandlerLifetime
+- uid: ResultCommander.ResultCommanderConfiguration.DefaultHandlerResolverLifetime
+  name: DefaultHandlerResolverLifetime
+  href: api/ResultCommander.ResultCommanderConfiguration.html#ResultCommander_ResultCommanderConfiguration_DefaultHandlerResolverLifetime
+  commentId: P:ResultCommander.ResultCommanderConfiguration.DefaultHandlerResolverLifetime
+  fullName: ResultCommander.ResultCommanderConfiguration.DefaultHandlerResolverLifetime
+  nameWithType: ResultCommanderConfiguration.DefaultHandlerResolverLifetime
+- uid: ResultCommander.ResultCommanderConfiguration.DefaultHandlerResolverLifetime*
+  name: DefaultHandlerResolverLifetime
+  href: api/ResultCommander.ResultCommanderConfiguration.html#ResultCommander_ResultCommanderConfiguration_DefaultHandlerResolverLifetime_
+  commentId: Overload:ResultCommander.ResultCommanderConfiguration.DefaultHandlerResolverLifetime
+  isSpec: "True"
+  fullName: ResultCommander.ResultCommanderConfiguration.DefaultHandlerResolverLifetime
+  nameWithType: ResultCommanderConfiguration.DefaultHandlerResolverLifetime
+- uid: ResultCommander.ServiceCollectionExtensions
+  name: ServiceCollectionExtensions
+  href: api/ResultCommander.ServiceCollectionExtensions.html
+  commentId: T:ResultCommander.ServiceCollectionExtensions
+  fullName: ResultCommander.ServiceCollectionExtensions
+  nameWithType: ServiceCollectionExtensions
+- uid: ResultCommander.ServiceCollectionExtensions.AddResultCommander(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{ResultCommander.ResultCommanderConfiguration},System.Reflection.Assembly[])
+  name: AddResultCommander(IServiceCollection, Action<ResultCommanderConfiguration>, Assembly[])
+  href: api/ResultCommander.ServiceCollectionExtensions.html#ResultCommander_ServiceCollectionExtensions_AddResultCommander_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Action_ResultCommander_ResultCommanderConfiguration__System_Reflection_Assembly___
+  commentId: M:ResultCommander.ServiceCollectionExtensions.AddResultCommander(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{ResultCommander.ResultCommanderConfiguration},System.Reflection.Assembly[])
+  name.vb: AddResultCommander(IServiceCollection, Action(Of ResultCommanderConfiguration), Assembly())
+  fullName: ResultCommander.ServiceCollectionExtensions.AddResultCommander(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Action<ResultCommander.ResultCommanderConfiguration>, System.Reflection.Assembly[])
+  fullName.vb: ResultCommander.ServiceCollectionExtensions.AddResultCommander(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Action(Of ResultCommander.ResultCommanderConfiguration), System.Reflection.Assembly())
+  nameWithType: ServiceCollectionExtensions.AddResultCommander(IServiceCollection, Action<ResultCommanderConfiguration>, Assembly[])
+  nameWithType.vb: ServiceCollectionExtensions.AddResultCommander(IServiceCollection, Action(Of ResultCommanderConfiguration), Assembly())
+- uid: ResultCommander.ServiceCollectionExtensions.AddResultCommander(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{ResultCommander.ResultCommanderConfiguration},System.Type[])
+  name: AddResultCommander(IServiceCollection, Action<ResultCommanderConfiguration>, Type[])
+  href: api/ResultCommander.ServiceCollectionExtensions.html#ResultCommander_ServiceCollectionExtensions_AddResultCommander_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Action_ResultCommander_ResultCommanderConfiguration__System_Type___
+  commentId: M:ResultCommander.ServiceCollectionExtensions.AddResultCommander(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{ResultCommander.ResultCommanderConfiguration},System.Type[])
+  name.vb: AddResultCommander(IServiceCollection, Action(Of ResultCommanderConfiguration), Type())
+  fullName: ResultCommander.ServiceCollectionExtensions.AddResultCommander(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Action<ResultCommander.ResultCommanderConfiguration>, System.Type[])
+  fullName.vb: ResultCommander.ServiceCollectionExtensions.AddResultCommander(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Action(Of ResultCommander.ResultCommanderConfiguration), System.Type())
+  nameWithType: ServiceCollectionExtensions.AddResultCommander(IServiceCollection, Action<ResultCommanderConfiguration>, Type[])
+  nameWithType.vb: ServiceCollectionExtensions.AddResultCommander(IServiceCollection, Action(Of ResultCommanderConfiguration), Type())
+- uid: ResultCommander.ServiceCollectionExtensions.AddResultCommander(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Collections.Generic.IEnumerable{System.Reflection.Assembly},System.Action{ResultCommander.ResultCommanderConfiguration})
+  name: AddResultCommander(IServiceCollection, IEnumerable<Assembly>, Action<ResultCommanderConfiguration>)
+  href: api/ResultCommander.ServiceCollectionExtensions.html#ResultCommander_ServiceCollectionExtensions_AddResultCommander_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Collections_Generic_IEnumerable_System_Reflection_Assembly__System_Action_ResultCommander_ResultCommanderConfiguration__
+  commentId: M:ResultCommander.ServiceCollectionExtensions.AddResultCommander(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Collections.Generic.IEnumerable{System.Reflection.Assembly},System.Action{ResultCommander.ResultCommanderConfiguration})
+  name.vb: AddResultCommander(IServiceCollection, IEnumerable(Of Assembly), Action(Of ResultCommanderConfiguration))
+  fullName: ResultCommander.ServiceCollectionExtensions.AddResultCommander(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Collections.Generic.IEnumerable<System.Reflection.Assembly>, System.Action<ResultCommander.ResultCommanderConfiguration>)
+  fullName.vb: ResultCommander.ServiceCollectionExtensions.AddResultCommander(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Collections.Generic.IEnumerable(Of System.Reflection.Assembly), System.Action(Of ResultCommander.ResultCommanderConfiguration))
+  nameWithType: ServiceCollectionExtensions.AddResultCommander(IServiceCollection, IEnumerable<Assembly>, Action<ResultCommanderConfiguration>)
+  nameWithType.vb: ServiceCollectionExtensions.AddResultCommander(IServiceCollection, IEnumerable(Of Assembly), Action(Of ResultCommanderConfiguration))
+- uid: ResultCommander.ServiceCollectionExtensions.AddResultCommander(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Collections.Generic.IEnumerable{System.Type},System.Action{ResultCommander.ResultCommanderConfiguration})
+  name: AddResultCommander(IServiceCollection, IEnumerable<Type>, Action<ResultCommanderConfiguration>)
+  href: api/ResultCommander.ServiceCollectionExtensions.html#ResultCommander_ServiceCollectionExtensions_AddResultCommander_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Collections_Generic_IEnumerable_System_Type__System_Action_ResultCommander_ResultCommanderConfiguration__
+  commentId: M:ResultCommander.ServiceCollectionExtensions.AddResultCommander(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Collections.Generic.IEnumerable{System.Type},System.Action{ResultCommander.ResultCommanderConfiguration})
+  name.vb: AddResultCommander(IServiceCollection, IEnumerable(Of Type), Action(Of ResultCommanderConfiguration))
+  fullName: ResultCommander.ServiceCollectionExtensions.AddResultCommander(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Collections.Generic.IEnumerable<System.Type>, System.Action<ResultCommander.ResultCommanderConfiguration>)
+  fullName.vb: ResultCommander.ServiceCollectionExtensions.AddResultCommander(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Collections.Generic.IEnumerable(Of System.Type), System.Action(Of ResultCommander.ResultCommanderConfiguration))
+  nameWithType: ServiceCollectionExtensions.AddResultCommander(IServiceCollection, IEnumerable<Type>, Action<ResultCommanderConfiguration>)
+  nameWithType.vb: ServiceCollectionExtensions.AddResultCommander(IServiceCollection, IEnumerable(Of Type), Action(Of ResultCommanderConfiguration))
+- uid: ResultCommander.ServiceCollectionExtensions.AddResultCommander(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Reflection.Assembly[])
+  name: AddResultCommander(IServiceCollection, Assembly[])
+  href: api/ResultCommander.ServiceCollectionExtensions.html#ResultCommander_ServiceCollectionExtensions_AddResultCommander_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Reflection_Assembly___
+  commentId: M:ResultCommander.ServiceCollectionExtensions.AddResultCommander(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Reflection.Assembly[])
+  name.vb: AddResultCommander(IServiceCollection, Assembly())
+  fullName: ResultCommander.ServiceCollectionExtensions.AddResultCommander(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Reflection.Assembly[])
+  fullName.vb: ResultCommander.ServiceCollectionExtensions.AddResultCommander(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Reflection.Assembly())
+  nameWithType: ServiceCollectionExtensions.AddResultCommander(IServiceCollection, Assembly[])
+  nameWithType.vb: ServiceCollectionExtensions.AddResultCommander(IServiceCollection, Assembly())
+- uid: ResultCommander.ServiceCollectionExtensions.AddResultCommander(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type[])
+  name: AddResultCommander(IServiceCollection, Type[])
+  href: api/ResultCommander.ServiceCollectionExtensions.html#ResultCommander_ServiceCollectionExtensions_AddResultCommander_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_Type___
+  commentId: M:ResultCommander.ServiceCollectionExtensions.AddResultCommander(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Type[])
+  name.vb: AddResultCommander(IServiceCollection, Type())
+  fullName: ResultCommander.ServiceCollectionExtensions.AddResultCommander(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Type[])
+  fullName.vb: ResultCommander.ServiceCollectionExtensions.AddResultCommander(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Type())
+  nameWithType: ServiceCollectionExtensions.AddResultCommander(IServiceCollection, Type[])
+  nameWithType.vb: ServiceCollectionExtensions.AddResultCommander(IServiceCollection, Type())
+- uid: ResultCommander.ServiceCollectionExtensions.AddResultCommander*
+  name: AddResultCommander
+  href: api/ResultCommander.ServiceCollectionExtensions.html#ResultCommander_ServiceCollectionExtensions_AddResultCommander_
+  commentId: Overload:ResultCommander.ServiceCollectionExtensions.AddResultCommander
+  isSpec: "True"
+  fullName: ResultCommander.ServiceCollectionExtensions.AddResultCommander
+  nameWithType: ServiceCollectionExtensions.AddResultCommander
+- uid: ResultCommander.SkipHandlerRegistrationAttribute
+  name: SkipHandlerRegistrationAttribute
+  href: api/ResultCommander.SkipHandlerRegistrationAttribute.html
+  commentId: T:ResultCommander.SkipHandlerRegistrationAttribute
+  fullName: ResultCommander.SkipHandlerRegistrationAttribute
+  nameWithType: SkipHandlerRegistrationAttribute
