@@ -11,7 +11,7 @@
     <RepositoryUrl>https://github.com/MikyM/ResultCommander</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <PackageReadmeFile>README.md</PackageReadmeFile>it add
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
