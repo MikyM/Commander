@@ -45,6 +45,11 @@ You can register multiple decorators and they'll be applied in the order that yo
 
 Documentation available at https://mikym.github.io/ResultCommander/.
 
+## Download
+
+- `ResultCommander` - [NuGet](https://www.nuget.org/packages/ResultCommander)
+- `ResultCommander.Autofac` - [NuGet](https://www.nuget.org/packages/ResultCommander.Autofac)
+
 ## Example usage
 
 <b> You should never throw exceptions from within handlers, they should be exception free - instead return appropriate error results (and catch possible exceptions).</b> Library offers a simple error catching, logging and exception to result error decorators for uses where writing try-catch blocks becomes a pain - but remember that these results will never be as informative as manually returned proper result error types.
@@ -75,7 +80,7 @@ public record SimpleCommandWithConcreteResult(bool IsSuccess) : ICommand<int>;
 
 And an asynchronous handler that handles it:
 ```csharp
-public SimpleSyncCommandHandlerWithConcreteResult : IAsyncCommandHandler<SimpleCommand, int>
+public SimpleAsyncCommandHandlerWithConcreteResult : IAsyncCommandHandler<SimpleCommand, int>
 {
     public async Task<Result<int>> Handle(SimpleCommand command)
     {
