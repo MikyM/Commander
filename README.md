@@ -1,6 +1,10 @@
-# ResultCommander
-
+[![NuGet](https://img.shields.io/nuget/v/ResultCommander)](https://www.nuget.org/packages/ResultCommander)[![NuGet](https://img.shields.io/nuget/dt/ResultCommander
+)](https://www.nuget.org/packages/ResultCommander)
 [![Build Status](https://github.com/MikyM/ResultCommander/actions/workflows/dotnet.yml/badge.svg)](https://github.com/MikyM/ResultCommander/actions)
+![GitHub License](https://img.shields.io/github/license/MikyM/ResultCommander)
+[![Static Badge](https://img.shields.io/badge/Documentation-ResultCommander-Green)](https://mikym.github.io/ResultCommander)
+
+# ResultCommander
 
 Library featuring a command handler pattern for both synchronous and asynchronous operations.
 
@@ -47,20 +51,14 @@ Documentation available at https://mikym.github.io/ResultCommander/.
 
 A command without a concrete result:
 ```csharp
-public SimpleCommand : ICommand
-{
-    public bool IsSuccess { get; }
-    
-    public SimpleCommand(bool isSuccess = true)
-        => IsSuccess = isSuccess;
-}
+public record SimpleCommand(bool IsSuccess) : ICommand;
 ```
 
 And a synchronous handler that handles it:
 ```csharp
-public SimpleSyncCommandHandler : ISyncCommandHandler<SimpleCommand>
+public class SimpleSyncCommandHandler : ISyncCommandHandler<SimpleCommand>
 {
-    Result Handle(SimpleCommand command)
+    public Result Handle(SimpleCommand command)
     {
         if (command.IsSuccess)
             return Result.FromSuccess();
@@ -72,20 +70,14 @@ public SimpleSyncCommandHandler : ISyncCommandHandler<SimpleCommand>
 
 A command with a concrete result:
 ```csharp
-public SimpleCommandWithConcreteResult : ICommand<int>
-{
-    public bool IsSuccess { get; }
-    
-    public SimpleCommand(bool isSuccess = true)
-        => IsSuccess = isSuccess;
-}
+public record SimpleCommandWithConcreteResult(bool IsSuccess) : ICommand<int>;
 ```
 
-And a synchronous handler that handles it:
+And an asynchronous handler that handles it:
 ```csharp
-public SimpleSyncCommandHandlerWithConcreteResult : ISyncCommandHandler<SimpleCommand, int>
+public SimpleSyncCommandHandlerWithConcreteResult : IAsyncCommandHandler<SimpleCommand, int>
 {
-    Result<int> Handle(SimpleCommand command)
+    public async Task<Result<int>> Handle(SimpleCommand command)
     {
         if (command.IsSuccess)
             return 1;
