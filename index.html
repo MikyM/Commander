@@ -118,6 +118,11 @@
 <p>You can register multiple decorators and they'll be applied in the order that you register them - read more at <a href="https://autofac.readthedocs.io/en/latest/advanced/adapters-decorators.html">Autofac's docs regarding decorators and adapters</a>.</p>
 <h2 id="documentation">Documentation</h2>
 <p>Documentation available at <a href="https://mikym.github.io/ResultCommander/">https://mikym.github.io/ResultCommander/</a>.</p>
+<h2 id="download">Download</h2>
+<ul>
+<li><code>ResultCommander</code> - <a href="https://www.nuget.org/packages/ResultCommander">NuGet</a></li>
+<li><code>ResultCommander.Autofac</code> - <a href="https://www.nuget.org/packages/ResultCommander.Autofac">NuGet</a></li>
+</ul>
 <h2 id="example-usage">Example usage</h2>
 <p><b> You should never throw exceptions from within handlers, they should be exception free - instead return appropriate error results (and catch possible exceptions).</b> Library offers a simple error catching, logging and exception to result error decorators for uses where writing try-catch blocks becomes a pain - but remember that these results will never be as informative as manually returned proper result error types.</p>
 <p>A command without a concrete result:</p>
@@ -139,7 +144,7 @@
 <pre><code class="lang-csharp">public record SimpleCommandWithConcreteResult(bool IsSuccess) : ICommand&lt;int&gt;;
 </code></pre>
 <p>And an asynchronous handler that handles it:</p>
-<pre><code class="lang-csharp">public SimpleSyncCommandHandlerWithConcreteResult : IAsyncCommandHandler&lt;SimpleCommand, int&gt;
+<pre><code class="lang-csharp">public SimpleAsyncCommandHandlerWithConcreteResult : IAsyncCommandHandler&lt;SimpleCommand, int&gt;
 {
     public async Task&lt;Result&lt;int&gt;&gt; Handle(SimpleCommand command)
     {
