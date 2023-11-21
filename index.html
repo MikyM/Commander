@@ -87,9 +87,12 @@
                         </div>
 
                     <article class="content wrap" id="_content" data-uid="">
-<h1 id="resultcommander">ResultCommander</h1>
 
-<p><a href="https://github.com/MikyM/ResultCommander/actions"><img src="https://github.com/MikyM/ResultCommander/actions/workflows/dotnet.yml/badge.svg" alt="Build Status"></a></p>
+<p><a href="https://www.nuget.org/packages/ResultCommander"><img src="https://img.shields.io/nuget/v/ResultCommander" alt="NuGet"></a><a href="https://www.nuget.org/packages/ResultCommander"><img src="https://img.shields.io/nuget/dt/ResultCommander" alt="NuGet"></a>
+<a href="https://github.com/MikyM/ResultCommander/actions"><img src="https://github.com/MikyM/ResultCommander/actions/workflows/dotnet.yml/badge.svg" alt="Build Status"></a>
+<img src="https://img.shields.io/github/license/MikyM/ResultCommander" alt="GitHub License">
+<a href="https://mikym.github.io/ResultCommander"><img src="https://img.shields.io/badge/Documentation-ResultCommander-Green" alt="Static Badge"></a></p>
+<h1 id="resultcommander">ResultCommander</h1>
 <p>Library featuring a command handler pattern for both synchronous and asynchronous operations.</p>
 <p>Uses a functional <a href="https://github.com/Remora/Remora.Results">Result</a> approach for failure-prone operations.</p>
 <p>To utilize all features using Autofac is required.</p>
@@ -118,18 +121,12 @@
 <h2 id="example-usage">Example usage</h2>
 <p><b> You should never throw exceptions from within handlers, they should be exception free - instead return appropriate error results (and catch possible exceptions).</b> Library offers a simple error catching, logging and exception to result error decorators for uses where writing try-catch blocks becomes a pain - but remember that these results will never be as informative as manually returned proper result error types.</p>
 <p>A command without a concrete result:</p>
-<pre><code class="lang-csharp">public SimpleCommand : ICommand
-{
-    public bool IsSuccess { get; }
-    
-    public SimpleCommand(bool isSuccess = true)
-        =&gt; IsSuccess = isSuccess;
-}
+<pre><code class="lang-csharp">public record SimpleCommand(bool IsSuccess) : ICommand;
 </code></pre>
 <p>And a synchronous handler that handles it:</p>
-<pre><code class="lang-csharp">public SimpleSyncCommandHandler : ISyncCommandHandler&lt;SimpleCommand&gt;
+<pre><code class="lang-csharp">public class SimpleSyncCommandHandler : ISyncCommandHandler&lt;SimpleCommand&gt;
 {
-    Result Handle(SimpleCommand command)
+    public Result Handle(SimpleCommand command)
     {
         if (command.IsSuccess)
             return Result.FromSuccess();
@@ -139,18 +136,12 @@
 }
 </code></pre>
 <p>A command with a concrete result:</p>
-<pre><code class="lang-csharp">public SimpleCommandWithConcreteResult : ICommand&lt;int&gt;
-{
-    public bool IsSuccess { get; }
-    
-    public SimpleCommand(bool isSuccess = true)
-        =&gt; IsSuccess = isSuccess;
-}
+<pre><code class="lang-csharp">public record SimpleCommandWithConcreteResult(bool IsSuccess) : ICommand&lt;int&gt;;
 </code></pre>
-<p>And a synchronous handler that handles it:</p>
-<pre><code class="lang-csharp">public SimpleSyncCommandHandlerWithConcreteResult : ISyncCommandHandler&lt;SimpleCommand, int&gt;
+<p>And an asynchronous handler that handles it:</p>
+<pre><code class="lang-csharp">public SimpleSyncCommandHandlerWithConcreteResult : IAsyncCommandHandler&lt;SimpleCommand, int&gt;
 {
-    Result&lt;int&gt; Handle(SimpleCommand command)
+    public async Task&lt;Result&lt;int&gt;&gt; Handle(SimpleCommand command)
     {
         if (command.IsSuccess)
             return 1;
