@@ -66,6 +66,20 @@ jobs:
       if: github.event_name == 'push'
       run: dotnet nuget push ./src/ResultCommander.Autofac/out/*.nupkg --skip-duplicate -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
       
+    - name: Prepare package upload as artifacts
+      if: github.event_name == 'push'
+      run: | 
+        mkdir nuget-packages
+        cp src/ResultCommander/out/* nuget-packages
+        cp src/ResultCommander.Autofac/out/* nuget-packages
+    
+    - name: Upload packages as artifacts
+      if: github.event_name == 'push'
+      uses: actions/upload-artifact@v3
+      with:
+        name: nuget-packages
+        path: nuget-packages
+
     - name: Build docs - copy readme and docfx metadata
       if: github.event_name == 'push' && !contains(format('{0} {1}', github.event.head_commit.message, github.event.pull_request.title), '[doc-skip]')
       run: cd ./docs && cp ../README.md index.md && dotnet docfx metadata
