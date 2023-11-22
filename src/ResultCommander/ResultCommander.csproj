@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <PackageId>ResultCommander</PackageId>
-    <Version>2.2.1</Version>
+    <Version>2.2.2</Version>
     <Authors>Krzysztof Kupisz</Authors>
     <PackageDescription>Library featuring a command handler pattern.</PackageDescription>
     <RepositoryUrl>https://github.com/MikyM/ResultCommander</RepositoryUrl>
@@ -26,18 +26,18 @@
   </ItemGroup>
 
   <ItemGroup Condition="('$(TargetFramework)' == 'net6.0')">
-    <PackageReference Include="AttributeBasedRegistration" Version="2.2.2" />
+    <PackageReference Include="AttributeBasedRegistration" Version="2.2.3" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="[6.0,)" />
-    <PackageReference Include="Remora.Results" Version="7.4.0" />
+    <PackageReference Include="Remora.Results" Version="7.4.1" />
   </ItemGroup>
   <PropertyGroup Condition="('$(TargetFramework)' == 'net6.0')">
     <DefineConstants>NET6_0</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup Condition="('$(TargetFramework)' == 'net7.0')">
-    <PackageReference Include="AttributeBasedRegistration" Version="2.2.2" />
+    <PackageReference Include="AttributeBasedRegistration" Version="2.2.3" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="[7.0,)" />
-    <PackageReference Include="Remora.Results" Version="7.4.0" />
+    <PackageReference Include="Remora.Results" Version="7.4.1" />
   </ItemGroup>
   <PropertyGroup Condition="('$(TargetFramework)' == 'net7.0')">
     <DefineConstants>NET7_0</DefineConstants>
