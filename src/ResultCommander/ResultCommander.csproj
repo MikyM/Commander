@@ -26,8 +26,8 @@
   </ItemGroup>
 
   <ItemGroup Condition="('$(TargetFramework)' == 'net6.0')">
-    <PackageReference Include="AttributeBasedRegistration" Version="2.2.5" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="[6.0,)" />
+    <PackageReference Include="AttributeBasedRegistration" Version="2.2.6" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="[6.0.0,)" />
     <PackageReference Include="Remora.Results" Version="7.4.1" />
   </ItemGroup>
   <PropertyGroup Condition="('$(TargetFramework)' == 'net6.0')">
@@ -35,8 +35,8 @@
   </PropertyGroup>
 
   <ItemGroup Condition="('$(TargetFramework)' == 'net7.0')">
-    <PackageReference Include="AttributeBasedRegistration" Version="2.2.5" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="[7.0,)" />
+    <PackageReference Include="AttributeBasedRegistration" Version="2.2.6" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="[7.0.0,)" />
     <PackageReference Include="Remora.Results" Version="7.4.1" />
   </ItemGroup>
   <PropertyGroup Condition="('$(TargetFramework)' == 'net7.0')">
@@ -44,8 +44,8 @@
   </PropertyGroup>
 
   <ItemGroup Condition="('$(TargetFramework)' == 'net8.0')">
-    <PackageReference Include="AttributeBasedRegistration" Version="2.2.5" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="[8.0.1,)" />
+    <PackageReference Include="AttributeBasedRegistration" Version="2.2.6" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="[8.0.0,)" />
     <PackageReference Include="Remora.Results" Version="7.4.1" />
   </ItemGroup>
   <PropertyGroup Condition="('$(TargetFramework)' == 'net8.0')">
